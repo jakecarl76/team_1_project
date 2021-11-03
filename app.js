@@ -3,6 +3,7 @@
 // Tyson: the somewhat sufficient
 
 //Imported pgks
+const PORT = process.env.PORT || 5000
 const mongoose = require('mongoose');
 const csurf = require('csurf');
 const expressSession = require('express-session');
@@ -15,7 +16,7 @@ const cors = require('cors');
 //vars
 require('dotenv').config();
 const PORT = process.env.PORT || 3005; //Server env | localhost
-const MONGODB_URL = process.env.MONGODB_URL || "MONGODB_URL var not set";//NEED FIX - need to set up env var in heroku app
+const MONGODB_URL = process.env.MONGODB_URL || "mongodb+srv://cse341Team1:dyJ2wI1RO5Sa4b5m@cluster0.s0nia.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env var at some point';//NEED FIX -need to set up var in heroku app
 
 //test.env
@@ -174,21 +175,29 @@ app.use((err, req, res, next) => {
 //setup CORS (allow other sites to access ours)
 //cors options
 const corsOptions = {
-  origin: "",//NEED FIX - Uncomment after establish heroku app, place app url here, eg: "https://cse-341-app-01.herokuapp.com/"
+  origin: "https://cse341team1.herokuapp.com/",
   optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
 
-/**** //NEED FIX - Uncomment after setup MongoDB
+const options = {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  family: 4
+};
+
+
 //set up Mongoose
-mongoose.connect(MONGODB_URL)
+mongoose.connect(MONGODB_URL, options)
 .then(result => {
   app.listen(PORT, () => console.log("App listening on port#: " + PORT));
 })
 .catch( err => console.log("Error starting app: " + err));
 
-*/
+
 
 //NEED FIX -- delete code below after MongoDB is set up and can use above commented-out code
 app.listen(PORT, () => console.log("App listening on port#: " + PORT));
