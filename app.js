@@ -1,4 +1,4 @@
-//NANCI NEWELL
+//NANCI NEWELL: The Favorite
 
 //Imported pgks
 const mongoose = require('mongoose');

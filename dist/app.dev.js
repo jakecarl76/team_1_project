@@ -1,6 +1,6 @@
 "use strict";
 
-//NANCI NEWELL
+//NANCI NEWELL: The Favorite
 //Imported pgks
 var mongoose = require('mongoose');
 
