@@ -1,4 +1,4 @@
-//NANCI NEWELL: The Favorite
+//NANCI NEWELL
 // Mikhail!
 // Tyson: the somewhat sufficient
 
