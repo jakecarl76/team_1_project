@@ -23,8 +23,7 @@ require('dotenv').config();
 
 var PORT = process.env.PORT || 3005; //Server env | localhost
 
-var MONGODB_URL = process.env.MONGODB_URL || "MONGODB_URL var not set"; //NEED FIX - need to set up env var in heroku app
-
+var MONGODB_URL = process.env.MONGODB_URL || "mongodb+srv://cse341Team1:dyJ2wI1RO5Sa4b5m@cluster0.s0nia.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 var SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env var at some point'; //NEED FIX -need to set up var in heroku app
 //test.env
 
@@ -160,21 +159,23 @@ app.use(function (err, req, res, next) {
 //cors options
 
 var corsOptions = {
-  origin: "",
-  //NEED FIX - Uncomment after establish heroku app, place app url here, eg: "https://cse-341-app-01.herokuapp.com/"
+  origin: "https://cse341team1.herokuapp.com/",
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
-/**** //NEED FIX - Uncomment after setup MongoDB
-//set up Mongoose
-mongoose.connect(MONGODB_URL)
-.then(result => {
-  app.listen(PORT, () => console.log("App listening on port#: " + PORT));
-})
-.catch( err => console.log("Error starting app: " + err));
+var options = {
+  autoIndex: false,
+  useUnifiedTopology: true,
+  useNewUrlParser: true
+}; //set up Mongoose
 
-*/
-//NEED FIX -- delete code below after MongoDB is set up and can use above commented-out code
+mongoose.connect(MONGODB_URL, options).then(function (result) {
+  app.listen(PORT, function () {
+    return console.log("App listening on port#: " + PORT);
+  });
+})["catch"](function (err) {
+  return console.log("Error starting app: " + err);
+}); //NEED FIX -- delete code below after MongoDB is set up and can use above commented-out code
 
 app.listen(PORT, function () {
   return console.log("App listening on port#: " + PORT);

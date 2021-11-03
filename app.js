@@ -3,7 +3,6 @@
 // Tyson: the somewhat sufficient
 
 //Imported pgks
-const PORT = process.env.PORT || 5000
 const mongoose = require('mongoose');
 const csurf = require('csurf');
 const expressSession = require('express-session');
@@ -182,11 +181,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 const options = {
+  autoIndex: false,
   useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  family: 4
+  useNewUrlParser: true
 };
 
 
