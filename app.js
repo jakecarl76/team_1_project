@@ -9,10 +9,15 @@ const cors = require('cors');
 
 
 //vars
+require('dotenv').config();
 const PORT = process.env.PORT || 3005; //Server env | localhost
-const MONGODB_URL = process.env.MONGODB_URL;//NEED FIX - need to set up env var in heroku app
+const MONGODB_URL = process.env.MONGODB_URL || "MONGODB_URL var not set";//NEED FIX - need to set up env var in heroku app
 const SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env var at some point';//NEED FIX -need to set up var in heroku app
 
+//test.env
+const test_var = process.env.TEST_VAR || "testvarnot set";
+
+console.log(test_var);
 
 //imported controllers
 //...

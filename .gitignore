@@ -1,0 +1,2 @@
+#ignore keys file/sensitive information
+.env
