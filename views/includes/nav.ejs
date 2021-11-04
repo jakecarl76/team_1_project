@@ -1,7 +1,16 @@
-<nav>
-  <ul>
-    <li>
-      <a href='/'> Home </a>
+<nav class="main-header-nav">
+  <ul class="nav-item-list">
+    <li class="main-nav-item">
+      <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
+    </li>
+    <li class="main-nav-item">
+      <a class="<%= path === '/Movies' ? 'active' : '' %>" href="/Movies">Movies</a>
+    </li>
+    <li class="main-nav-item">
+      <a class="<%= path === '/Books' ? 'active' : '' %>" href="/Books">Books</a>
+    </li>
+    <li class="main-nav-item">
+      <a class="<%= path === '/Games' ? 'active' : '' %>" href="/Games">Games</a>
     </li>
   </ul>
 </nav>
