@@ -16,6 +16,9 @@ const router = express.Router();
 //...
 
 
+router.get('signup', authCtrl.getSignup);
+
+
 //
 //router.get( '', authCtrl.getIndex);
 
