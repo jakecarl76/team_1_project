@@ -5,12 +5,11 @@
 //...
 
 
-//
-/*
-exports.get = (req, res, next) => {
-  res.render('general/index', {
-    pageTitle: "Welcome to the Entertainment Library!",
-    path: '/'
+
+exports.getSignup = (req, res, next) => {
+  res.render('auth/signup', {
+    pageTitle: "Signup For Your Entertainment Library!",
+    path: '/signup'
   });
 };
-*/
+

@@ -1,11 +1,8 @@
 const mongoose = require('mongoose');
-const schema = mongoose.Schema;
 
-const userSchema = new schema({
-  username: {
-    type: String,
-    requrired: true
-  },
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
   email: {
     type: String,
     required: true
@@ -14,18 +11,28 @@ const userSchema = new schema({
     type: String,
     required: true
   },
-  passwordToken: String,
-  passwordTokenExp: Date,
-  userImage: {
-    type: String,
-    required: true
-  },
-  bookLib: {favorites: [], lib: []},
-  gameLib: {favorites: [], lib: []},
-  movieLib: {favorites: [], lib: []}
+  resetToken: String,
+  resetTokenExpiration: Date,
+
+  favorites: {
+    items: [
+      {
+        bookId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Book',
+          required: false
+        },
+        movieId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Movie',
+            required: false
+          },
+        gameId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Game',
+        required: false
+        }
+      }
+    ]
+  }
 });
-
-//function example
-//userSchema.methods.function = function(params) {};
-
-module.exports = mongoose.model('User', userSchema);
