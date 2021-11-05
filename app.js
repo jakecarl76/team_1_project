@@ -1,6 +1,7 @@
 //NANCI NEWELL
 // Mikhail!
 // Tyson: the somewhat sufficient
+// Okay, am I doing this correctly?
 
 //Imported pgks
 const mongoose = require('mongoose');
