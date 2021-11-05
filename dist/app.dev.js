@@ -105,16 +105,21 @@ app.use(expressSession({
 //set up to use csurf middleware
 app.use(csurfMiddleware);
 */
-//NEED FIX - must create user model, mongodb collection for user, etc.
-//set up/attach user to req obj
+
+var User = require('./models/user'); //set up/attach user to req obj
+
 
 app.use(function (req, res, next) {
-  //check if use logged in
-  //find user
-  //check user found
-  //attach to req obj
-  //req.user = user
-  next();
+  if (!req.session.user) {
+    return next();
+  }
+
+  User.findById(req.session.user._id).then(function (user) {
+    req.user = user;
+    next();
+  })["catch"](function (err) {
+    return console.log(err);
+  });
 }); //attach common items to locals so .ejs can use them (saves from doing in each ctrl'er middleware)
 
 app.use(function (req, res, next) {
