@@ -12,7 +12,7 @@
         <fieldset id="item-fieldset">
             <legend><% if(editing){ %> Edit Item <% } else { %>Add an Item<% } %></legend>
             <div class="form-control">
-                <p>What would you like to <% if(editing){ %> add<% } else { %> update<% } %>? </p>
+                <p>What would you like to <% if(!editing){ %> add<% } else { %> update<% } %>? </p>
                 <div id="radio-div" onclick=displayFields()>
                     <input type="radio" name="item-type" id="type-book" value="book">
                     <label for="book">Book</label>
@@ -47,8 +47,8 @@
                 <input type="text" name="category" id="category" placeholder="Category" value="<% if(editing || hasError){ %><%= item.category %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %>">
             </div>
             <div class="form-control book movie game hidden">
-                <label for="image">Image</label>
-                <input type="file" name="image" id="image">
+                <label for="imageUploader">Image</label>
+                <input type="file" name="imageUploader" id="image">
             </div>
             <div class="form-control book movie game hidden">
                 <label for="description">Description</label>
@@ -60,7 +60,7 @@
             <div class="add-buttons">
                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                 <button class="btn" type="submit">
-                    <% if(editing) { %> Update <% } else { %> Add Book <% } %>
+                    <% if(editing) { %> Update <% } else { %> Add Item <% } %>
                 </button>
                 <% if(!editing) { %>
                 <input class="btn" type="submit" formaction='/add-another' value="Add Another">

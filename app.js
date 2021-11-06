@@ -92,7 +92,9 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(multer({
   storage: multerStorage,
   fileFilter: imgFileFilter
-}).array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
+}).single() //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
+
+//.array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 );
 
 //set up server sessions
@@ -167,7 +169,7 @@ console.log(test_var);
 
 //special error handling (ie. when a middleware calls next(err_obj) )
 app.use((err, req, res, next) => {
-  console.log("Special error handler:" + err)
+  console.log`Special error handler: ${err}`;
  // res.redirect('/500');
 });
 

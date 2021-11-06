@@ -15,7 +15,11 @@ const router = express.Router();
 //routes
 router.get('/add-item', /*isAuth,*/ generalCtrl.getAddItem);
 
+router.post('/add-item', /*isAuth,*/ generalCtrl. postAddItem);
+
 router.get('/edit-item/:itemId', /*isAuth,*/ generalCtrl.getEditItem);
+
+
 
 //main index
 router.get( '/', generalCtrl.getIndex);

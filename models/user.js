@@ -14,25 +14,7 @@ const userSchema = new Schema({
   resetToken: String,
   resetTokenExpiration: Date,
 
-  favorites: {
-    items: [
-      {
-        bookId: {
-          type: Schema.Types.ObjectId,
-          ref: 'Book',
-          required: false
-        },
-        movieId: {
-            type: Schema.Types.ObjectId,
-            ref: 'Movie',
-            required: false
-          },
-        gameId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Game',
-        required: false
-        }
-      }
-    ]
-  }
+  bookLib: {favorites: [], lib: []},
+  gameLib: {favorites: [], lib: []},
+  movieLib: {favorites: [], lib: []}
 });

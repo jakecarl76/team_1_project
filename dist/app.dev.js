@@ -1,5 +1,17 @@
 "use strict";
 
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["Special error handler: ", ""]);
+
+  _templateObject = function _templateObject() {
+    return data;
+  };
+
+  return data;
+}
+
+function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
 //imported models
 var User = require('./models/user'); //Imported pgks & vars
 
@@ -95,7 +107,8 @@ app.use('/images', express["static"](path.join(__dirname, 'images'))); //set app
 app.use(multer({
   storage: multerStorage,
   fileFilter: imgFileFilter
-}).array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
+}).single() //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
+//.array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 ); //set up server sessions
 
 app.use(expressSession({
@@ -161,7 +174,7 @@ app.use(libRoutes);
 console.log(test_var); //special error handling (ie. when a middleware calls next(err_obj) )
 
 app.use(function (err, req, res, next) {
-  console.log("Special error handler:" + err); // res.redirect('/500');
+  console.log(_templateObject(), err); // res.redirect('/500');
 }); //add error 500 error catcher
 //app.use('/500', error_ctrl.err_500)
 //set up 404 catch all
