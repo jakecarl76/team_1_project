@@ -19,11 +19,6 @@ const PORT = process.env.PORT || 3005; //Server env | localhost
 const MONGODB_URL = process.env.MONGODB_URL || "MONGODB_URL var not set";//NEED FIX - need to set up env var in heroku app
 const SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env var at some point';//NEED FIX -need to set up var in heroku app
 
-//test.env
-const test_var = process.env.TEST_VAR || "testvarnot set";
-
-console.log(test_var);
-
 //imported controllers
 //...
 
@@ -34,13 +29,12 @@ console.log(test_var);
 const generalRoutes = require('./routes/general');
 //...
 
-/*** UNCOMMENT AFTER SET UP MONGODB AND THE SERVER SESSIONS COLLECTION
 //set up session storage on mongodb database
 const sesionDB = new expressSession({
   uri: MONGODB_URL,
   collection: 'server_sessions'
 });
-****/
+
 
 //set up csurf
 const csurfMiddleware = csurf();
@@ -98,7 +92,6 @@ app.use(multer({
 .array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 );
 
-/******* CAN UN COMMENT AFTER MONGODB IS SET UP AND SESSION DB COLLECTION IS CREATED
 //set up server sessions
 app.use(expressSession({
   secret: SESSION_SECRET,
@@ -108,7 +101,7 @@ app.use(expressSession({
   store: sesionDB
 })
 );
-*/
+
 //NEED FIX -  uncomment after sessions is intergrated
   /*
 //set up to use csurf middleware
@@ -175,21 +168,15 @@ app.use((err, req, res, next) => {
 //setup CORS (allow other sites to access ours)
 //cors options
 const corsOptions = {
-  origin: "",//NEED FIX - Uncomment after establish heroku app, place app url here, eg: "https://cse-341-app-01.herokuapp.com/"
+  origin: "https://cse341team1.herokuapp.com/",
   optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
 
-/**** //NEED FIX - Uncomment after setup MongoDB
 //set up Mongoose
 mongoose.connect(MONGODB_URL)
 .then(result => {
   app.listen(PORT, () => console.log("App listening on port#: " + PORT));
 })
 .catch( err => console.log("Error starting app: " + err));
-
-*/
-
-//NEED FIX -- delete code below after MongoDB is set up and can use above commented-out code
-app.listen(PORT, () => console.log("App listening on port#: " + PORT));
