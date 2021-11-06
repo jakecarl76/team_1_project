@@ -11,6 +11,19 @@ exports.getIndex = function (req, res, next) {
     path: '/'
   });
 };
+
+exports.getAddItem = function (req, res, next) {
+  //send to add item page with page and authentication info
+  res.render('admin/edit-item', {
+    pageTitle: 'Add Item',
+    path: '/add-item',
+    editing: false,
+    //user: req.user.name,    Uncomment out after login working
+    errorMessage: [],
+    hasError: false,
+    validationErrors: []
+  });
+};
 /*cannot test until My Items page is created*/
 //get Edit Item
 
@@ -66,6 +79,7 @@ exports.getEditItem = function (req, res, next) {
       break;
 
     default:
+      displayEditItem();
       console.log("getEditItem case: default - Not accepted parameter.");
   }
 };
@@ -79,14 +93,14 @@ function displayEditItem(item, itemType, res, req) {
   } //if product found, send to edit product with product info
 
 
-  res.render('/edit-product', {
+  res.render('/edit-item', {
     pageTitle: 'Edit Item',
     path: '/edit-item',
     editing: editMode,
     itemType: itemType,
     item: item,
     hasError: false,
-    user: req.user.name,
+    //user: req.user.name,    Uncomment out once user login working
     errorMessage: "",
     validationErrors: []
   });

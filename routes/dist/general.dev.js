@@ -14,8 +14,10 @@ var generalCtrl = require('../controllers/general'); //...
 
 
 var router = express.Router(); //routes
-//...
 
+router.get('/add-item',
+/*isAuth,*/
+generalCtrl.getAddItem);
 router.get('/edit-item/:itemId',
 /*isAuth,*/
 generalCtrl.getEditItem); //main index

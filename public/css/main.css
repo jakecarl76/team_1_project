@@ -1,0 +1,119 @@
+/* MOBILE FIRST */
+/* * * * * * * * * * * * * * * * * * * * COLOR SCHEME HERE* * * * * * * * * * * * * * * 
+
+
+*/
+
+/* * * * * * * * * * * * * * * * * * * * FONTS HERE* * * * * * * * * * * * * * * */
+
+
+
+/* * * * * * * * * * * * * * * * * * * * GENERAL* * * * * * * * * * * * * * * */
+* {
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-rows: 7rem 1fr 3rem;
+    height: 100vh;
+    min-width: 340px;
+}
+
+header, footer{
+    background-color: #8e9db0;
+    padding: 1rem;
+}
+
+h1, h2, h3, h4, h5, h6{
+    /*font-family: , cursive;*/
+    
+ }
+
+ main {
+    padding: 2rem;
+    justify-self: center;
+    align-self: start;
+    width: 100vw;
+    max-width: 900px;
+    margin: auto;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+/* * * * * * * * * * HEADER* * * * * * * * * * */
+
+/* * * * * * * * * * FOOTER* * * * * * * * * * */
+
+/* * * * * * * * * * FORMS* * * * * * * * * * */
+form{
+    width: 100%;
+    max-width: 25rem;
+}
+
+fieldset{
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: 6px;
+}
+
+
+.form-control{
+    padding: .5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+input, textarea, select{
+    padding: .35rem;
+    margin: .25rem 0;
+    border-radius: 6px;
+    border: 1px #808080 solid;
+}
+
+.add-buttons{
+    padding: .5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    grid-gap: 2rem;
+}
+
+.btn{
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    border: 1px #808080 solid;
+}
+
+#radio-div{
+    padding: .5rem;
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    width: 100%;
+    max-width: 25rem;
+    height: 4rem;
+}
+
+.item-form p{
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display:grid;
+}
+
+
+
+/* * * * * * * * * * USER MESSAGE* * * * * * * * * * */
+.user-message{
+    height: 100%;
+}
