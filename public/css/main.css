@@ -43,6 +43,7 @@ h1, h2, h3, h4, h5, h6{
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
+    align-content: start;
 }
 
 /* * * * * * * * * * HEADER* * * * * * * * * * */
