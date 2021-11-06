@@ -1,0 +1,124 @@
+<%- include('../includes/head.ejs') %>
+<script src="/js/utils.js"></script>
+<style>
+  /*delete this style when intergrated in main.css */
+  .invalid
+  {
+    border: solid red 3px;
+  }
+  .valid
+  {
+    border: solid green 3px;
+  }
+</style>
+</head>
+<body>
+  <%- include('../includes/nav.ejs') %>
+  <main>
+    <!-- Delete this after intergratred into nav include-->
+    <form action="/logout" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="submit" value="logout">
+    </form>
+    <!-- Delete this after intergratred into nav include-->
+
+
+
+    <h1>
+      Welcome <%= userObj.username %>, to your Entertainment Library Profile!
+    </h1>
+    <div>
+      <%- include('../includes/msgs.ejs') %> 
+    </div>
+
+    <h2 id="largeUserName"><%= userObj.username %></h2>
+
+    <div>
+      <img alt="User's Profile Image" src="<%= userObj.userImage %>">
+    </div>
+
+    <div>
+      <h3 id="smallUserName"><%= userObj.username %></h3>
+    </div>
+
+    <div id="usernameOptionsDiv">
+      <input type="button" value="Change Username" 
+       onclick="toggleDivById('changeUsernameDiv'); toggleDiv(this.parentElement);">
+    </div>
+    <div id="changeUsernameDiv" class="hidden">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username"
+       value="<%= userObj.username %>">
+      <p id="usernameStatus"></p>
+      <input type="button" id="changeUsername" value="Change">
+      <input type="button" value="Cancel" 
+       onclick="toggleDivById('usernameOptionsDiv'); toggleDiv(this.parentElement);">
+    </div>
+
+    
+
+
+    <form action="/signup" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+      
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email"
+      value="<% if(locals.errValues && locals.errValues.email){ %><%= locals.errValues.email %><% } %>">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password">
+
+      <p>Password must be 9 characters or longer.</p>
+      
+      <label for="cPassword">Confirm Password</label>
+      <input type="password" id="cPassword" name="cPassword">
+
+      <input type="submit" value="Signup">
+      
+    </form>
+  </main>
+
+  <script>
+    //add auto checker to username
+    document.getElementById("username")
+    .addEventListener("input", function() {
+        let tmpData = {
+          username: this.value
+        };
+        fetch('/check-user-name', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data === 'free')
+          {
+            document.getElementById("username").classList.add("valid");
+            document.getElementById("username").classList.remove("invalid");
+            document.getElementById("usernameStatus").innerHTML = "That username is available.";
+          }
+          else
+          {
+            document.getElementById("username").classList.add("invalid");
+            document.getElementById("username").classList.remove("valid");
+            document.getElementById("usernameStatus").innerHTML = "That username is already taken.";
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHECK EVENT LISTENER
+
+    //add event listener to do fectch to change name
+      //make sure on success changes all instances of user name
+      //makse sure in the app side that checks session.user that is the same
+  </script>
+
+  <%- include('../includes/end.ejs') %>

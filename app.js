@@ -112,6 +112,7 @@ app.use(csrfProtection);
 
 //use flash
 app.use(flash());
+app.use(express.json());//body-parser is depricated
 
 //set up/attach user to req obj
 app.use((req, res, next) => {

@@ -15,7 +15,27 @@ const router = express.Router();
 //routes
 //...
 
-//router.get('/login', authCtrl.getSignup);
+
+
+router.post('/check-user-name', authCtrl.postCheckUsername);
+
+router.post('/logout', authCtrl.postLogout);
+
+router.get('/user-profile', authCtrl.getProfile);
+
+router.get('/login', authCtrl.getLogin);
+
+router.post('/login', 
+            body('email')
+            .notEmpty()
+            .withMessage("You must enter the email for your account to login.")
+            .isEmail()
+            .withMessage("Email is invalid. You must enter the email for your account to login.")
+            .normalizeEmail(),
+            body('password')
+            .notEmpty()
+            .withMessage("You must enter the password for your account to login."),
+            authCtrl.postLogin)
 
 router.get('/signup', authCtrl.getSignup);
 
