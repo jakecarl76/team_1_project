@@ -18,3 +18,5 @@ const userSchema = new Schema({
   gameLib: {favorites: [], lib: []},
   movieLib: {favorites: [], lib: []}
 });
+
+module.exports = mongoose.model('User', userSchema);

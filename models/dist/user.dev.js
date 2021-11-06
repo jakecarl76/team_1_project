@@ -27,3 +27,4 @@ var userSchema = new Schema({
     lib: []
   }
 });
+module.exports = mongoose.model('User', userSchema);
