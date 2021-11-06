@@ -5,7 +5,6 @@ const User = require('./models/user');
 const PORT = process.env.PORT || 3005; //Server env | 
 const path = require('path');
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const expressSession = require('express-session');
 const mongodbSession = require('connect-mongodb-session')(expressSession);
@@ -42,7 +41,7 @@ const multerStorage = multer.diskStorage({
     let err = null;
 
     //pass result back to cb_func, set file name to curr time number + original name
-    cb_func(err, (Date.now().toISOString().replace(':','-').replace(' ','-') + '-' + file.originalname));
+    cb_func(err, (new Date().toISOString().replace(':','-').replace(' ','-') + '-' + file.originalname));
   }
 });//END MULTER STORAGE OBJ
 
@@ -92,7 +91,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(multer({
   storage: multerStorage,
   fileFilter: imgFileFilter
-}).single() //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
+}).single('image') //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
 
 //.array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 );

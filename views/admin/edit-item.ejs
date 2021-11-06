@@ -47,8 +47,8 @@
                 <input type="text" name="category" id="category" placeholder="Category" value="<% if(editing || hasError){ %><%= item.category %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %>">
             </div>
             <div class="form-control book movie game hidden">
-                <label for="imageUploader">Image</label>
-                <input type="file" name="imageUploader" id="image">
+                <label for="image">Image</label>
+                <input type="file" name="image" id="image">
             </div>
             <div class="form-control book movie game hidden">
                 <label for="description">Description</label>

@@ -22,8 +22,6 @@ var path = require('path');
 
 var express = require('express');
 
-var bodyParser = require('body-parser');
-
 var mongoose = require('mongoose');
 
 var expressSession = require('express-session');
@@ -65,7 +63,7 @@ var multerStorage = multer.diskStorage({
     //could do error checking/etc stuff here
     var err = null; //pass result back to cb_func, set file name to curr time number + original name
 
-    cb_func(err, Date.now().toISOString().replace(':', '-').replace(' ', '-') + '-' + file.originalname);
+    cb_func(err, new Date().toISOString().replace(':', '-').replace(' ', '-') + '-' + file.originalname);
   }
 }); //END MULTER STORAGE OBJ
 //create multer filter for filtering allowed image file types
@@ -107,7 +105,7 @@ app.use('/images', express["static"](path.join(__dirname, 'images'))); //set app
 app.use(multer({
   storage: multerStorage,
   fileFilter: imgFileFilter
-}).single() //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
+}).single('image') //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
 //.array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 ); //set up server sessions
 
