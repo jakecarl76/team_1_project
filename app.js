@@ -5,6 +5,7 @@ const User = require('./models/user');
 const PORT = process.env.PORT || 3005; //Server env | 
 const path = require('path');
 const express = require('express');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const expressSession = require('express-session');
 const mongodbSession = require('connect-mongodb-session')(expressSession);
@@ -84,6 +85,7 @@ const generalRoutes = require('./routes/general');
 const authRoutes = require('./routes/auth');
 const libRoutes = require('./routes/lib');
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 

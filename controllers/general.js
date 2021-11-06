@@ -2,9 +2,9 @@
 //...
 
 //import models
-//...
-
-
+const Book = require('../models/book')
+const Movie = require('../models/movie')
+const Game = require('../models/game')
 //get index
 exports.getIndex = (req, res, next) => {
   res.render('general/index', {
@@ -111,7 +111,9 @@ function displayEditItem(item, itemType, res, req){
 
 exports.postAddItem = (req, res, next) => {
   //gather the info from the form
-  const itemType = req.body.item-type;
+console.log(req.body);
+
+  const itemType= req.body.itemType;
   const title = req.body.title;
   const author = req.body.author;
   const genre = req.body.genre;
@@ -135,23 +137,23 @@ exports.postAddItem = (req, res, next) => {
       validationErrors: []
     })
   }
-
+// *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
   //form validation
-  const errors = validationResult(req);
-  if(!errors.isEmpty()){
-    console.log`Error: postAddItem errors[] - ${errors.array()}`;
-    return res.status(422).render('admin/edit-item', {
-      pageTitle: 'Add Item',
-      path: '/add-item',
-      editing: false,
-      hasError: true,
-      // user: req.user.name,      Uncomment out once login implemented
-      isAuthenticated: false,
-      errorMessage: errors.array()[0].msg,
-      product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
-      validationErrors: errors.array()
-    })
-  }
+  // const errors = validationResult(req);
+  // if(!errors.isEmpty()){
+  //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
+  //   return res.status(422).render('admin/edit-item', {
+  //     pageTitle: 'Add Item',
+  //     path: '/add-item',
+  //     editing: false,
+  //     hasError: true,
+  //     // user: req.user.name,      Uncomment out once login implemented
+  //     isAuthenticated: false,
+  //     errorMessage: errors.array()[0].msg,
+  //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+  //     validationErrors: errors.array()
+  //   })
+  // }
 
   const imageUrl = image.path;
 
@@ -164,7 +166,7 @@ exports.postAddItem = (req, res, next) => {
         genre: genre,
         description: description, 
         imageUrl: imageUrl,
-        userId: null //req.user
+        userId: req.user
       });
       book.save()
       .then(result => {
@@ -173,7 +175,7 @@ exports.postAddItem = (req, res, next) => {
         res.redirect('/admin/products');
       })
       .catch(err => {
-        console.log(`postAddProduct - switch(book) catch: ${err}`);
+        console.log(`postAddItem - switch(book) catch: ${err}`);
         return res.status(422).render('admin/edit-product', {
           pageTitle: 'Add Item',
           path: '/add-item',

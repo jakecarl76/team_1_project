@@ -1,22 +1,15 @@
 "use strict";
 
-function _templateObject() {
-  var data = _taggedTemplateLiteral(["Error: postAddItem errors[] - ", ""]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
 //import modules
 //...
 //import models
-//...
-//get index
+var Book = require('../models/book');
+
+var Movie = require('../models/movie');
+
+var Game = require('../models/game'); //get index
+
+
 exports.getIndex = function (req, res, next) {
   res.render('general/index', {
     pageTitle: "Welcome to the Entertainment Library!",
@@ -120,7 +113,8 @@ function displayEditItem(item, itemType, res, req) {
 
 exports.postAddItem = function (req, res, next) {
   //gather the info from the form
-  var itemType = req.body.item - type;
+  console.log(req.body);
+  var itemType = req.body.itemType;
   var title = req.body.title;
   var author = req.body.author;
   var genre = req.body.genre;
@@ -149,32 +143,24 @@ exports.postAddItem = function (req, res, next) {
       },
       validationErrors: []
     });
-  } //form validation
+  } // *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
+  //form validation
+  // const errors = validationResult(req);
+  // if(!errors.isEmpty()){
+  //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
+  //   return res.status(422).render('admin/edit-item', {
+  //     pageTitle: 'Add Item',
+  //     path: '/add-item',
+  //     editing: false,
+  //     hasError: true,
+  //     // user: req.user.name,      Uncomment out once login implemented
+  //     isAuthenticated: false,
+  //     errorMessage: errors.array()[0].msg,
+  //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+  //     validationErrors: errors.array()
+  //   })
+  // }
 
-
-  var errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    console.log(_templateObject(), errors.array());
-    return res.status(422).render('admin/edit-item', {
-      pageTitle: 'Add Item',
-      path: '/add-item',
-      editing: false,
-      hasError: true,
-      // user: req.user.name,      Uncomment out once login implemented
-      isAuthenticated: false,
-      errorMessage: errors.array()[0].msg,
-      product: {
-        title: title,
-        author: author,
-        genre: genre,
-        rating: rating,
-        category: category,
-        description: description
-      },
-      validationErrors: errors.array()
-    });
-  }
 
   var imageUrl = image.path; //save item based on type
 
@@ -186,8 +172,7 @@ exports.postAddItem = function (req, res, next) {
         genre: genre,
         description: description,
         imageUrl: imageUrl,
-        userId: null //req.user
-
+        userId: req.user
       });
 
       _book.save().then(function (result) {
@@ -195,7 +180,7 @@ exports.postAddItem = function (req, res, next) {
         console.log('Created Book');
         res.redirect('/admin/products');
       })["catch"](function (err) {
-        console.log("postAddProduct - switch(book) catch: ".concat(err));
+        console.log("postAddItem - switch(book) catch: ".concat(err));
         return res.status(422).render('admin/edit-product', {
           pageTitle: 'Add Item',
           path: '/add-item',

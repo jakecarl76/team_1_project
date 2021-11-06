@@ -22,6 +22,8 @@ var path = require('path');
 
 var express = require('express');
 
+var bodyParser = require('body-parser');
+
 var mongoose = require('mongoose');
 
 var expressSession = require('express-session');
@@ -99,6 +101,9 @@ var authRoutes = require('./routes/auth');
 
 var libRoutes = require('./routes/lib');
 
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(express["static"](path.join(__dirname, 'public')));
 app.use('/images', express["static"](path.join(__dirname, 'images'))); //set app to use multer
 
