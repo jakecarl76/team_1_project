@@ -18,7 +18,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secr
 //test.env
 const test_var = process.env.TEST_VAR || "testvarnot set";
 
-const MONGODB_URL = process.env.MONGODB_URL || 'mongodb+srv://cse341Team1:dyJ2wI1RO5Sa4b5m@cluster0.s0nia.mongodb.net/myFirstDatabase?retryWrites=true'; //MOVE THIS LINK INTO YOUR .ENV FILE!
+const MONGODB_URL = process.env.MONGODB_URL || 'mongodb+srv://cse341Team1:dyJ2wI1RO5Sa4b5m@cluster0.s0nia.mongodb.net/cse341Team1Project?retryWrites=true'; //MOVE THIS LINK INTO YOUR .ENV FILE!
 
 
 //cors options
