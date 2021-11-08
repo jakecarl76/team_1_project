@@ -26,4 +26,4 @@ var gameSchema = new Schema({
     required: true
   }
 });
-module.exports = mongoose.model('Movie', movieSchema);
+module.exports = mongoose.model('Game', gameSchema);
