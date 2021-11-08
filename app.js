@@ -3,41 +3,23 @@
 // Tyson: the somewhat sufficient
 // Okay, am I doing this correctly?
 
-//Imported pgks
-const mongoose = require('mongoose');
-const csurf = require('csurf');
-const expressSession = require('express-session');
-const mongodbSession = require('connect-mongodb-session');
+//Imported pgks & vars
+// const PORT = process.env.PORT || 3005; //Server env | 
+const path = require('path');
 const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const mongodbSession = require('connect-mongodb-session')(expressSession);
+const csrf = require('csurf');
+const flash = require('connect-flash');
 const multer = require('multer');
 const cors = require('cors');
-
-
-//vars
+const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 3005; //Server env | localhost
 const MONGODB_URL = process.env.MONGODB_URL || "MONGODB_URL var not set";//NEED FIX - need to set up env var in heroku app
 const SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env var at some point';//NEED FIX -need to set up var in heroku app
-
-//imported controllers
-//...
-
-//imported models
-//...
-
-//import routes
-const generalRoutes = require('./routes/general');
-//...
-
-//set up session storage on mongodb database
-const sesionDB = new expressSession({
-  uri: MONGODB_URL,
-  collection: 'server_sessions'
-});
-
-
-//set up csurf
-const csurfMiddleware = csurf();
 
 //Multer Setup
 const multerStorage = multer.diskStorage({
@@ -53,7 +35,7 @@ const multerStorage = multer.diskStorage({
     let err = null;
 
     //pass result back to cb_func, set file name to curr time number + original name
-    cb_func(err, (Date.now() + '-' + file.originalname));
+    cb_func(err, (Date.now().toISOString().replace(':','-').replace(' ','-') + '-' + file.originalname));
   }
 });//END MULTER STORAGE OBJ
 
@@ -77,19 +59,33 @@ const imgFileFilter = (req, file, cb_func) => {
   }
 };//END MULTER IMGFILEFILTER FUNC
 
+//set up session storage on mongodb database
+const store = new mongodbSession({
+  uri: MONGODB_URL,
+  collection: 'server_sessions'
+});
 
-//init app
-const app = express();
+//set up csurf
+const csrfProtection = csrf();
 
 //set view engine
 app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+
+//import routes
+const generalRoutes = require('./routes/general');
+const authRoutes = require('./routes/auth');
+const libRoutes = require('./routes/lib');
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 //set app to use multer
 app.use(multer({
   storage: multerStorage,
   fileFilter: imgFileFilter
-})
-.array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
+}).array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 );
 
 //set up server sessions
@@ -98,34 +94,40 @@ app.use(expressSession({
   resave: false, //only make saves when there is a change
   saveUninitialized: false,
   //cookie: {maxAge: ....} //can set this if we feel we need to
-  store: sesionDB
+  store: store
 })
 );
 
-//NEED FIX -  uncomment after sessions is intergrated
-  /*
 //set up to use csurf middleware
-app.use(csurfMiddleware);
-*/
+app.use(csrfProtection);
 
-//NEED FIX - must create user model, mongodb collection for user, etc.
+
 //set up/attach user to req obj
 app.use((req, res, next) => {
-  //check if use logged in
-
-  //find user
-    //check user found
-    //attach to req obj
-    //req.user = user
-    next();
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id)
+      .then(user => {
+        req.user = user;
+        next();
+      })
+      .catch(err => console.log(err));
 });
+
+//attach csurf token
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken= req.csrfToken();
+  next();
+});
+
 
 //attach common items to locals so .ejs can use them (saves from doing in each ctrl'er middleware)
 app.use( (req, res, next) => {
-  //NEED FIX -  uncomment after sessions is intergrated
-  /*
+
   //check user logged in
-  res.locals.isLoggedin = req.sesion.isLoggedin;
+  res.locals.isLoggedin = req.session.isLoggedin;
   if(req.session.user)
   {
     //set user vars
@@ -136,28 +138,20 @@ app.use( (req, res, next) => {
     //set defaults for user inputs
     //eg: userImg = default/notlogged in img
   }
-*/
+
   //set default error message
   res.locals.error_msg = "";
   res.locals.msg = "";
-
-  //NEED FIX -  uncomment after sessions is intergrated
-  /*
-  //attach csurf token
-  res.locals.csrfToken = req.csrfToken();
-  */
   next();
 });
 
 //set up and use routes
 app.use(generalRoutes);
-//...
+app.use(authRoutes);
+app.use(libRoutes);
 
-//add error 500 error catcher
-//app.use('/500', error_ctrl.err_500)
 
-//set up 404 catch all
-//app.use(err_ctrl.err_404)
+// console.log(test_var);
 
 //special error handling (ie. when a middleware calls next(err_obj) )
 app.use((err, req, res, next) => {
@@ -172,10 +166,17 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions));
+//set up 404 catch all
+//app.use(err_ctrl.err_404)
+
+const options = {
+  autoIndex: false,
+  useUnifiedTopology: true,
+  useNewUrlParser: true
+};
 
 //set up Mongoose
-mongoose.connect(MONGODB_URL)
+mongoose.connect(MONGODB_URL, options)
 .then(result => {
   app.listen(PORT, () => console.log("App listening on port#: " + PORT));
 })
