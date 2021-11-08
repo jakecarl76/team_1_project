@@ -1,0 +1,23 @@
+<% if(locals.msgs) { %>
+    <% if(msgs.length > 0) { %>
+      <ul>
+        <% for(let msg of msgs) { %>
+          <li>
+            <%= msg %>
+          </li>
+        <% } %>
+      </ul>
+    <% } %>
+  <% } %>
+  
+  <% if(locals.errMsgs) { %>
+    <% if(errMsgs.length > 0) { %>
+      <ul >
+        <% for(let msg of errMsgs) { %>
+          <li>
+            <%= msg %>
+          </li>
+        <% } %>
+      </ul>
+    <% } %>
+  <% } %>

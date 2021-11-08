@@ -6,7 +6,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * FONTS HERE* * * * * * * * * * * * * * * */
 
-
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;700&display=swap');
 
 /* * * * * * * * * * * * * * * * * * * * GENERAL* * * * * * * * * * * * * * * */
 * {
@@ -20,6 +20,7 @@ body{
     grid-template-rows: 7rem 1fr 3rem;
     height: 100vh;
     min-width: 340px;
+    font-family: 'DM Sans', sans-serif;
 }
 
 header, footer{
@@ -28,7 +29,7 @@ header, footer{
 }
 
 h1, h2, h3, h4, h5, h6{
-    /*font-family: , cursive;*/
+    font-family: 'Anton', sans-serif;
     
  }
 
@@ -56,6 +57,10 @@ form{
     max-width: 25rem;
 }
 
+legend{
+    font-family: 'Anton', sans-serif;
+}
+
 fieldset{
     display: grid;
     grid-template-columns: 1fr;
@@ -74,6 +79,7 @@ input, textarea, select{
     margin: .25rem 0;
     border-radius: 6px;
     border: 1px #808080 solid;
+    font-family: 'DM Sans', sans-serif;
 }
 
 .add-buttons{
@@ -112,7 +118,14 @@ input, textarea, select{
     display:grid;
 }
 
-
+.invalid
+  {
+    border: solid red 3px;
+  }
+  .valid
+  {
+    border: solid green 3px;
+  }
 
 /* * * * * * * * * * USER MESSAGE* * * * * * * * * * */
 .user-message{
