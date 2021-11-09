@@ -1,7 +1,43 @@
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 900px) {
 
+        /*
+                Content CSS
+        */
 
+        .content-main {
+                width: 100%;
+        }
 
+        .content-cards {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                column-gap: 50px;
+                row-gap: 25px;
+        }
+
+        .content-card {
+                display: grid;
+                grid-template-columns: 1fr;
+        }
+
+        .left {
+                width: 100%;
+        }
+
+        .right {
+                width: 100%;
+                border: none;
+        }
     
         /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
+}
+
+/*  Extra-Wide Screens  */
+@media screen and (min-width: 1450px) {
+        .content-card {
+                display: flex;
+                flex-direction: row;
+        }
+
 }

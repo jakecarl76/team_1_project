@@ -27,7 +27,7 @@ exports.getAddItem= (req, res, next) => {
 // NEED FIX Dummy code, delete once database content is added
 const moviesObjectArray = [
   {
-    title: "Eternals",
+    title: "The Eternals",
     rating: "6.8",
     genre: "Action",
     description: `The Eternals, a race of immortal beings with superhuman powers who have secretly lived on Earth for thousands of years, reunite to battle the evil Deviants.`,
@@ -39,6 +39,13 @@ const moviesObjectArray = [
     genre: "Sci-Fi",
     description: `Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe to ensure the future of his family and his people. As malevolent forces explode into conflict over the planet's exclusive supply of the most precious resource in existence, only those who can conquer their own fear will survive.`,
     imageUrl: "images/dune_poster.jpg"
+  },
+  {
+    title: "The Suicide Squad",
+    rating: "7.3",
+    genre: "Action",
+    description: `The government sends the most dangerous supervillains in the world -- Bloodsport, Peacemaker, King Shark, Harley Quinn and others -- to the remote, enemy-infused island of Corto Maltese. Armed with high-tech weapons, they trek through the dangerous jungle on a search-and-destroy mission, with only Col. Rick Flag on the ground to make them behave.`,
+    imageUrl: "images/thesuicidesquad_poster.jpg"
   }
 ]
 
@@ -50,7 +57,7 @@ exports.getMovies = (req, res, next) => {
         pageTitle: 'Movies | Hermit Habitat',
         path: '/movies',
         // Swap moviesObjectArray for movies when db content is available
-        movies: moviesObjectArray
+        content: moviesObjectArray
       });
     });
 };
@@ -63,7 +70,7 @@ exports.getGames = (req, res, next) => {
       res.render('general/games', {
         pageTitle: 'Games | Hermit Habitat',
         path: '/games',
-        games: games
+        content: games
       });
     });
 };
@@ -75,7 +82,7 @@ exports.getBooks = (req, res, next) => {
       res.render('general/books', {
         pageTitle: 'Books | Hermit Habitat',
         path: '/books',
-        books: books
+        content: books
       });
     });
 };

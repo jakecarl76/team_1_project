@@ -7,10 +7,23 @@
 /* * * * * * * * * * * * * * * * * * * * FONTS HERE* * * * * * * * * * * * * * * */
 
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Nixie+One&family=Poiret+One&family=Yeseva+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Playfair+Display&display=swap');
 
 /* * * * * * * * * * * * * * * * * * * * GENERAL* * * * * * * * * * * * * * * */
+
+/* 
+* {
+    outline: 1px solid #f00 !important;
+  }  */
+
 * {
     box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
 }
 
 body{
@@ -26,11 +39,11 @@ body{
 header, footer{
     background-color: #8e9db0;
     padding: 1rem;
+    margin: 0;
 }
 
 h1, h2, h3, h4, h5, h6{
     font-family: 'Anton', sans-serif;
-    
  }
 
  main {
@@ -173,3 +186,66 @@ button:hover, a.btn:hover{
 .user-message{
     height: 100%;
 }
+
+/******************************
+        Content CSS
+******************************/
+.content-body {
+    background-color: #001011;
+    color: #97C8EB;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.content-main {
+    margin: 0 auto;
+}
+ .content-main-header {
+    font-family: "Playfair Display", sans-serif !important;
+    text-align: center;
+    letter-spacing: 0.2em;
+ }
+ 
+ .content-cards {
+    margin: 0;
+ }
+ 
+ .content-card {
+    display: flex;
+    border: 2px solid #3AAFB9;
+    margin-bottom: 3%; 
+    box-shadow: 0px 0px 10px whitesmoke;
+ }
+
+ .content-card h2, .content-card h3, .content-card h4, .content-card h5 {
+    font-family: "Playfair Display", sans-serif !important;
+ }
+ 
+ .content-card img {
+    width: 100%;    
+ }
+ 
+ .left {
+    width: 75%;
+    margin: 0;
+    padding: 0;
+ }
+
+
+ .right {
+    width: 75%;
+    font-size: 1em;
+    border: 2px solid #3AAFB9;
+    border: none;
+    border-left: solid;
+    text-align: left;
+    padding: 2%;
+ }
+
+ .hermit-nothing {
+    max-width: 75%;
+ }
+
+
