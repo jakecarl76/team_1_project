@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @media screen and (min-width: 900px) {
 
         /*
@@ -30,6 +31,38 @@
                 border: none;
         }
     
+=======
+@media screen and (min-width: 700px) {
+    main{
+        width: calc(100vw - 4rem);
+    }
+
+    section.grid{
+        width: calc(700px - 4rem);
+    }
+
+    section.grid .card-container{
+        width: 100%;
+    }
+
+        /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
+}
+
+
+@media screen and (min-width: 900px) {
+    main{
+        width: calc(100vw - 4rem);
+    }
+
+    section.grid{
+        width: calc(900px - 4rem);
+    }
+
+    section.grid .card-container{
+        width: 100%;
+    }
+
+>>>>>>> 501a1aaa44ee71f07054558d02e1877f5c955d47
         /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
 }
 
