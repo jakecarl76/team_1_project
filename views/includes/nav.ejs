@@ -1,3 +1,5 @@
+<link rel="stylesheet" href='/public/css/nav.css'>
+
 <nav class="main-header-nav">
   <ul class="nav-item-list">
     <li class="main-nav-item">
@@ -12,5 +14,23 @@
     <li class="main-nav-item">
       <a class="<%= path === '/Games' ? 'active' : '' %>" href="/Games">Games</a>
     </li>
+    <div class="authSection">
+     <%# <% if (!isAuthenticated) { %> %>
+        <li class="main-nav-item">
+            <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
+        </li>
+        <li class="main-nav-item">
+            <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+        </li>
+        <%# <% } else { %> %>
+        <!-- <li class="main-nav-item">
+            <form action="/logout" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit">Logout</button>
+            </form>
+        </li> -->
+        <%# <% } %> %>
+    </div>
   </ul>
 </nav>
+
