@@ -1,19 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title><%= pageTitle %></title>
-</head>
-<body>
+<%- include('../includes/head.ejs') %>
+<body class="content-body">
    <header>
-      <!-- Header and Nav can go here... -->
-      <!-- Dummy Header and Nav... -->
-      <div class="dummyHeaderSection"></div>
+      <%- include('../includes/nav.ejs') %>
    </header>
-   <main class="*-main">
-      <h1>Books</h1>
+   <main class="content-main">
+      <h1 class="content-main-header">Hermit Habitat's Books</h1>
+
+      <% if (content) { %>
+      <div class="content-cards">
+      <% for (let item of content) { %>
+            <div class="content-card">
+               <div class="left">
+               <img class="content-card-image" src="<%= item.imageUrl %>" alt="<%= item.title %>">
+               </div>
+               <div class="right">
+               <h2><%= item.title %></h2>
+               <h3>Author: <%= item.author %></h3>
+               <h4>Genre: <%= item.genre %></h4> 
+               <h5 class="description">Description: <%= item.description %></h5>
+               </div>
+            </div>
+         <% } %> 
+      </div>
+      <% } else { %>
+         <img class="hermit-nothing" src="images/hermit.png" alt="Hermit Crab">
+         <h2>Whoops! Looks like we have nothing here!</h2>
+      <% } %> 
    </main>
+   <%- include('../includes/end.ejs') %>
 </body>
 </html>
