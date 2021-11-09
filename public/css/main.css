@@ -21,6 +21,7 @@ body{
     height: 100vh;
     min-width: 340px;
     font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
 }
 
 header, footer{
@@ -53,8 +54,11 @@ h1, h2, h3, h4, h5, h6{
 
 /* * * * * * * * * * MAIN - INDEX* * * * * * * * * * */
 section.grid{
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
+    margin-top: 2rem;
 }
 
 section.grid h2{
@@ -67,6 +71,7 @@ section.grid article{
     border-radius: 10px;
     padding: 1rem;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
 }
 
 section.grid article:hover{
