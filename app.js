@@ -35,7 +35,7 @@ const multerStorage = multer.diskStorage({
     let err = null;
 
     //pass result back to cb_func, set file name to curr time number + original name
-    cb_func(err, (Date.now().toISOString().replace(':','-').replace(' ','-') + '-' + file.originalname));
+    cb_func(err, (new Date().toISOString().replace(':','-').replace(' ','-') + '-' + file.originalname));
   }
 });//END MULTER STORAGE OBJ
 
@@ -78,6 +78,7 @@ const generalRoutes = require('./routes/general');
 const authRoutes = require('./routes/auth');
 const libRoutes = require('./routes/lib');
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
@@ -85,7 +86,9 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(multer({
   storage: multerStorage,
   fileFilter: imgFileFilter
-}).array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
+}).single('image') //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
+
+//.array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 );
 
 //set up server sessions
@@ -155,7 +158,7 @@ app.use(libRoutes);
 
 //special error handling (ie. when a middleware calls next(err_obj) )
 app.use((err, req, res, next) => {
-  console.log("Special error handler:" + err)
+  console.log`Special error handler: ${err}`;
  // res.redirect('/500');
 });
 

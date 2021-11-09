@@ -1,5 +1,17 @@
 "use strict";
 
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["Special error handler: ", ""]);
+
+  _templateObject = function _templateObject() {
+    return data;
+  };
+
+  return data;
+}
+
+function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
 //imported models
 var User = require('./models/user'); //Imported pgks & vars
 
@@ -34,7 +46,7 @@ var SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret
 //test.env
 
 var test_var = process.env.TEST_VAR || "testvarnot set";
-var MONGODB_URL = process.env.MONGODB_URL || 'mongodb+srv://cse341Team1:dyJ2wI1RO5Sa4b5m@cluster0.s0nia.mongodb.net/myFirstDatabase?retryWrites=true'; //MOVE THIS LINK INTO YOUR .ENV FILE!
+var MONGODB_URL = process.env.MONGODB_URL || 'mongodb+srv://cse341Team1:dyJ2wI1RO5Sa4b5m@cluster0.s0nia.mongodb.net/cse341Team1Project?retryWrites=true'; //MOVE THIS LINK INTO YOUR .ENV FILE!
 //cors options
 
 var corsOptions = {
@@ -53,7 +65,7 @@ var multerStorage = multer.diskStorage({
     //could do error checking/etc stuff here
     var err = null; //pass result back to cb_func, set file name to curr time number + original name
 
-    cb_func(err, Date.now().toISOString().replace(':', '-').replace(' ', '-') + '-' + file.originalname);
+    cb_func(err, new Date().toISOString().replace(':', '-').replace(' ', '-') + '-' + file.originalname);
   }
 }); //END MULTER STORAGE OBJ
 //create multer filter for filtering allowed image file types
@@ -89,13 +101,17 @@ var authRoutes = require('./routes/auth');
 
 var libRoutes = require('./routes/lib');
 
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(express["static"](path.join(__dirname, 'public')));
 app.use('/images', express["static"](path.join(__dirname, 'images'))); //set app to use multer
 
 app.use(multer({
   storage: multerStorage,
   fileFilter: imgFileFilter
-}).array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
+}).single('image') //we are only using one input field, so only 1 image will ever be uploaded at a time -- Nanci
+//.array('imageUpload', 10) //this allows for uploading multiple images at once (instead of .single()), <input> el. will need to be named 'imageUploader'
 ); //set up server sessions
 
 app.use(expressSession({
@@ -161,7 +177,7 @@ app.use(libRoutes);
 console.log(test_var); //special error handling (ie. when a middleware calls next(err_obj) )
 
 app.use(function (err, req, res, next) {
-  console.log("Special error handler:" + err); // res.redirect('/500');
+  console.log(_templateObject(), err); // res.redirect('/500');
 }); //add error 500 error catcher
 //app.use('/500', error_ctrl.err_500)
 //set up 404 catch all
