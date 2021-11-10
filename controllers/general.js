@@ -24,7 +24,6 @@ exports.getAddItem= (req, res, next) => {
       for(let i=0; i < genresLength; i++){
         allGenres.push(genres[i]);
       }
-      console.log`allGenres[]: ${allGenres}`;
     }).then(
       Movie.find().distinct("genre")
       .then(genres => {
@@ -42,26 +41,36 @@ exports.getAddItem= (req, res, next) => {
             for(let i=0; i < categoriesLength; i++){
               gameCategories.push(categories[i]);
             }
-            console.log`gameCategories: ${gameCategories}`;
-            return gameCategories;
+            // return gameCategories;
+            res.render('admin/edit-item', {
+                  pageTitle: 'Add Item',
+                  path: '/add-item',
+                  editing: false,
+                  user: req.user.username,
+                  errorMessage: [],
+                  hasError: false,
+                  validationErrors: [],
+                  genres: allGenres,
+                  categories: gameCategories
+                })
           })
           .catch(err => {
             console.log`Error getAddItem-Game ${err}`;
           })
-      ).then(allGenres => {
-        //send to add item page with page and authentication info
-        res.render('admin/edit-item', {
-          pageTitle: 'Add Item',
-          path: '/add-item',
-          editing: false,
-          user: req.user.username,
-          errorMessage: [],
-          hasError: false,
-          validationErrors: [],
-          genres: allGenres,
-          categories: gameCategories
-        })
-      }
+      // ).then(allGenres => {
+      //   //send to add item page with page and authentication info
+      //   res.render('admin/edit-item', {
+      //     pageTitle: 'Add Item',
+      //     path: '/add-item',
+      //     editing: false,
+      //     user: req.user.username,
+      //     errorMessage: [],
+      //     hasError: false,
+      //     validationErrors: [],
+      //     genres: allGenres,
+      //     categories: gameCategories
+      //   })
+      // }
       ))
       .catch(err => {
         console.log`Error getAddItem-Movie ${err}`;
