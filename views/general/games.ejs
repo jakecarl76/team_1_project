@@ -1,0 +1,31 @@
+<%- include('../includes/head.ejs') %>
+<body class="content-body">
+   <header>
+      <%- include('../includes/nav.ejs') %>
+   </header>
+   <main class="content-main">
+      <h1 class="content-main-header">Hermit Habitat's Board Games</h1>
+
+      <% if (content) { %>
+      <div class="content-cards">
+      <% for (let item of content) { %>
+            <div class="content-card">
+               <div class="left">
+               <img class="content-card-image" src="<%= item.imageUrl %>" alt="<%= item.title %>">
+               </div>
+               <div class="right">
+               <h2><%= item.title %></h2>
+               <h3>Category: <%= item.category %></h3>
+               <h4 class="description">Description: <%= item.description %></h4>
+               </div>
+            </div>
+         <% } %> 
+      </div>
+      <% } else { %>
+         <img class="hermit-nothing" src="images/hermit.png" alt="Hermit Crab">
+         <h2>Whoops! Looks like we have nothing here!</h2>
+      <% } %> 
+   </main>
+   <%- include('../includes/end.ejs') %>
+</body>
+</html>

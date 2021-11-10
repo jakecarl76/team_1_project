@@ -1,10 +1,8 @@
-//import modules
-//...
-
 //import models
 const Book = require('../models/book')
 const Movie = require('../models/movie')
 const Game = require('../models/game')
+
 //get index
 exports.getIndex = (req, res, next) => {
   res.render('general/index', {
@@ -14,17 +12,186 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getAddItem= (req, res, next) => {
-  //send to add item page with page and authentication info
-  res.render('admin/edit-item', {
-    pageTitle: 'Add Item',
-    path: '/add-item',
-    editing: false,
-    //user: req.user.name,    Uncomment out after login working
-    errorMessage: [],
-    hasError: false,
-    validationErrors: []
-  });
+
+  let allGenres = [];
+  let gameCategories = [];
+
+  Book.find().distinct("genre")
+    .then(genres => {
+      let genresLength = genres.length;
+      for(let i=0; i < genresLength; i++){
+        allGenres.push(genres[i]);
+      }
+    }).then(
+      Movie.find().distinct("genre")
+      .then(genres => {
+        let genresLength = genres.length;
+        for(let i=0; i < genresLength; i++){
+          if(!allGenres.includes(genres[i])){
+            allGenres.push(genres[i]);
+          }
+        }
+        return allGenres;
+      }).then(
+        Game.find().distinct("category")
+          .then(categories => {
+            let categoriesLength = categories.length;
+            for(let i=0; i < categoriesLength; i++){
+              gameCategories.push(categories[i]);
+            }
+            // return gameCategories;
+            res.render('admin/edit-item', {
+                  pageTitle: 'Add Item',
+                  path: '/add-item',
+                  editing: false,
+                  user: req.user.username,
+                  errorMessage: [],
+                  hasError: false,
+                  validationErrors: [],
+                  genres: allGenres,
+                  categories: gameCategories
+                })
+          })
+          .catch(err => {
+            console.log`Error getAddItem-Game ${err}`;
+          })
+      // ).then(allGenres => {
+      //   //send to add item page with page and authentication info
+      //   res.render('admin/edit-item', {
+      //     pageTitle: 'Add Item',
+      //     path: '/add-item',
+      //     editing: false,
+      //     user: req.user.username,
+      //     errorMessage: [],
+      //     hasError: false,
+      //     validationErrors: [],
+      //     genres: allGenres,
+      //     categories: gameCategories
+      //   })
+      // }
+      ))
+      .catch(err => {
+        console.log`Error getAddItem-Movie ${err}`;
+      })
+    .catch(err => {
+      console.log`Error getAddItem-Book ${err}`;
+    });
 }
+
+// NEED FIX Dummy code, delete once database content is added
+const moviesObjectArray = [
+  {
+    title: "The Eternals",
+    rating: "6.8 / 10",
+    genre: "Action",
+    description: `The Eternals, a race of immortal beings with superhuman powers who have secretly lived on Earth for thousands of years, reunite to battle the evil Deviants.`,
+    imageUrl: "images/eternals_poster.jpg"
+  },
+  {
+    title: "Dune",
+    rating: "8.2 / 10",
+    genre: "Sci-Fi",
+    description: `Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe to ensure the future of his family and his people. As malevolent forces explode into conflict over the planet's exclusive supply of the most precious resource in existence, only those who can conquer their own fear will survive.`,
+    imageUrl: "images/dune_poster.jpg"
+  },
+  {
+    title: "The Suicide Squad",
+    rating: "7.3 / 10",
+    genre: "Action",
+    description: `The government sends the most dangerous supervillains in the world -- Bloodsport, Peacemaker, King Shark, Harley Quinn and others -- to the remote, enemy-infused island of Corto Maltese. Armed with high-tech weapons, they trek through the dangerous jungle on a search-and-destroy mission, with only Col. Rick Flag on the ground to make them behave.`,
+    imageUrl: "images/thesuicidesquad_poster.jpg"
+  }
+]
+
+// Get All Movies and render
+exports.getMovies = (req, res, next) => {
+  Movie.find()
+    .then(movies => {
+      res.render('general/movies', {
+        pageTitle: 'Movies | Hermit Habitat',
+        path: '/movies',
+        // Swap moviesObjectArray for movies when db content is available
+        content: moviesObjectArray
+      });
+    });
+};
+
+// NEED FIX Dummy code, delete once database content is added
+const gamesObjectArray = [
+  {
+    title: "The Settlers of Catan",
+    category: "Strategy, Negotiation",
+    description: `The players in the game represent settlers establishing settlements on the island of Catan. Players build settlements, cities, and roads to connect them as they settle the island. ... On each player's turn, two six-sided dice are rolled to determine which hexes produce resources.`,
+    imageUrl: "images/catan.jpg"
+  },
+  {
+    title: "One Night Ultimate Werewolf",
+    category: "Party, Strategy",
+    description: `One Night Ultimate Werewolf Daybreak is a fast game for 3-7 players where everyone gets a role: The cunning Alpha Wolf, the powerful Witch, the helpful Apprentice Seer, or others, each with a special ability. In the course of a single morning, your village will decide who among them is a werewolf. because all it takes is finding one werewolf to win!`,
+    imageUrl: "images/ultimatewerewolf.jpg"
+  },
+  {
+    title: "7 Wonders",
+    category: "Strategy",
+    description: `7 Wonders is a card drafting game that is played using three decks of cards featuring depictions of ancient civilizations, military conflicts, and commercial activity. The game is highly regarded, being one of the highest rated games on the board game discussion website BoardGameGeek.`,
+    imageUrl: "images/7wonders.jpg"
+  }
+]
+
+
+// Get All Games and render
+exports.getGames = (req, res, next) => {
+  Game.find()
+    .then(games => {
+      res.render('general/games', {
+        pageTitle: 'Games | Hermit Habitat',
+        path: '/games',
+        // Swap gamesObjectArray for games when db content is available
+        content: gamesObjectArray
+      });
+    });
+};
+
+// NEED FIX Dummy code, delete once database content is added
+const booksObjectArray = [
+  {
+    title: "Atomic Habits",
+    author: "James Clear",
+    genre: "Self-Improvement",
+    description: `Atomic Habits will reshape the way you think about progress and success, and give you the tools and strategies you need to transform your habits--whether you are a team looking to win a championship, an organization hoping to redefine an industry, or simply an individual who wishes to quit smoking, lose weight, reduce stress, or achieve any other goal.`,
+    imageUrl: "images/atomichabits.jpg"
+  },
+  {
+    title: "To Kill A Mockingbird",
+    author: "Harper Lee",
+    genre: "Fiction",
+    description: `The unforgettable novel of a childhood in a sleepy Southern town and the crisis of conscience that rocked it, To Kill A Mockingbird became both an instant bestseller and a critical success when it was first published in 1960. It went on to win the Pulitzer Prize in 1961 and was later made into an Academy Award-winning film, also a classic. Today it is regarded as a masterpiece of American literature.`,
+    imageUrl: "images/mockingbird.jpg"
+  },
+  {
+    title: "The Da Vinci Code",
+    author: "Dan Brown",
+    genre: "Thriller",
+    description: `While in Paris, Harvard symbologist Robert Langdon is awakened by a phone call in the dead of the night. The elderly curator of the Louvre has been murdered inside the museum, his body covered in baffling symbols. As Langdon and gifted French cryptologist Sophie Neveu sort through the bizarre riddles, they are stunned to discover a trail of clues hidden in the works of Leonardo da Vinci—clues visible for all to see and yet ingeniously disguised by the painter.`,
+    imageUrl: "images/thedavincicode.jpg"
+  }
+]
+
+// Get All Books and render
+exports.getBooks = (req, res, next) => {
+  Book.find()
+    .then(books => {
+      res.render('general/books', {
+        pageTitle: 'Books | Hermit Habitat',
+        path: '/books',
+        // Swap booksObjectArray for books when db content is available
+        content: booksObjectArray
+      });
+    });
+};
+
+
+
 
 /*cannot test until My Items page is created*/
 //get Edit Item
@@ -111,16 +278,25 @@ function displayEditItem(item, itemType, res, req){
 
 exports.postAddItem = (req, res, next) => {
   //gather the info from the form
-console.log(req.body);
-
   const itemType= req.body.itemType;
   const title = req.body.title;
   const author = req.body.author;
-  const genre = req.body.genre;
+  let genre = req.body.genre;
   const rating = req.body.rating;
-  const category = req.body.category;
+  let category = req.body.category;
   const image = req.file;
   const description = req.body.description;
+  const newGenre = req.body.newGenre;
+  const newCategory = req.body.newCategory;
+
+  //if it's a new genre, make it genre
+  if(genre == "newGenre"){
+    genre = newGenre;
+  }
+  //if it's a new category, make it category
+  if(category == "newCategory"){
+    category = newCategory;
+  }
 
   //image validation
   if(!image){
@@ -128,7 +304,7 @@ console.log(req.body);
       pageTitle: 'Add Item',
       path: '/add-item',
       editing: false,
-      //user: req.user.name,      Uncomment out once login implemented
+      user: req.user.username,
       isAuthenticated: false,
       errorMessage: 'Attached file is not a supported image type.',
       hasError: true,
@@ -180,7 +356,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -196,7 +372,7 @@ console.log(req.body);
         rating: rating,
         description: description, 
         imageUrl: imageUrl,
-        userId: null //req.user
+        userId: req.user
       });
       movie.save()
       .then(result => {
@@ -210,7 +386,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -225,7 +401,7 @@ console.log(req.body);
         category: category,
         description: description, 
         imageUrl: imageUrl,
-        userId: null //req.user
+        userId: req.user
       });
       game.save()
       .then(result => {
@@ -239,7 +415,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -254,7 +430,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
