@@ -14,16 +14,70 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getAddItem= (req, res, next) => {
-  //send to add item page with page and authentication info
-  res.render('admin/edit-item', {
-    pageTitle: 'Add Item',
-    path: '/add-item',
-    editing: false,
-    //user: req.user.name,    Uncomment out after login working
-    errorMessage: [],
-    hasError: false,
-    validationErrors: []
-  });
+
+  let allGenres = [];
+  let gameCategories = [];
+
+  Book.find().distinct("genre")
+    .then(genres => {
+      let genresLength = genres.length;
+      for(let i=0; i < genresLength; i++){
+        allGenres.push(genres[i]);
+      }
+    }).then(
+      Movie.find().distinct("genre")
+      .then(genres => {
+        let genresLength = genres.length;
+        for(let i=0; i < genresLength; i++){
+          if(!allGenres.includes(genres[i])){
+            allGenres.push(genres[i]);
+          }
+        }
+        return allGenres;
+      }).then(
+        Game.find().distinct("category")
+          .then(categories => {
+            let categoriesLength = categories.length;
+            for(let i=0; i < categoriesLength; i++){
+              gameCategories.push(categories[i]);
+            }
+            // return gameCategories;
+            res.render('admin/edit-item', {
+                  pageTitle: 'Add Item',
+                  path: '/add-item',
+                  editing: false,
+                  user: req.user.username,
+                  errorMessage: [],
+                  hasError: false,
+                  validationErrors: [],
+                  genres: allGenres,
+                  categories: gameCategories
+                })
+          })
+          .catch(err => {
+            console.log`Error getAddItem-Game ${err}`;
+          })
+      // ).then(allGenres => {
+      //   //send to add item page with page and authentication info
+      //   res.render('admin/edit-item', {
+      //     pageTitle: 'Add Item',
+      //     path: '/add-item',
+      //     editing: false,
+      //     user: req.user.username,
+      //     errorMessage: [],
+      //     hasError: false,
+      //     validationErrors: [],
+      //     genres: allGenres,
+      //     categories: gameCategories
+      //   })
+      // }
+      ))
+      .catch(err => {
+        console.log`Error getAddItem-Movie ${err}`;
+      })
+    .catch(err => {
+      console.log`Error getAddItem-Book ${err}`;
+    });
 }
 
 /*cannot test until My Items page is created*/
@@ -111,16 +165,25 @@ function displayEditItem(item, itemType, res, req){
 
 exports.postAddItem = (req, res, next) => {
   //gather the info from the form
-console.log(req.body);
-
   const itemType= req.body.itemType;
   const title = req.body.title;
   const author = req.body.author;
-  const genre = req.body.genre;
+  let genre = req.body.genre;
   const rating = req.body.rating;
-  const category = req.body.category;
+  let category = req.body.category;
   const image = req.file;
   const description = req.body.description;
+  const newGenre = req.body.newGenre;
+  const newCategory = req.body.newCategory;
+
+  //if it's a new genre, make it genre
+  if(genre == "newGenre"){
+    genre = newGenre;
+  }
+  //if it's a new category, make it category
+  if(category == "newCategory"){
+    category = newCategory;
+  }
 
   //image validation
   if(!image){
@@ -128,7 +191,7 @@ console.log(req.body);
       pageTitle: 'Add Item',
       path: '/add-item',
       editing: false,
-      //user: req.user.name,      Uncomment out once login implemented
+      user: req.user.username,
       isAuthenticated: false,
       errorMessage: 'Attached file is not a supported image type.',
       hasError: true,
@@ -180,7 +243,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -196,7 +259,7 @@ console.log(req.body);
         rating: rating,
         description: description, 
         imageUrl: imageUrl,
-        userId: null //req.user
+        userId: req.user
       });
       movie.save()
       .then(result => {
@@ -210,7 +273,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -225,7 +288,7 @@ console.log(req.body);
         category: category,
         description: description, 
         imageUrl: imageUrl,
-        userId: null //req.user
+        userId: req.user
       });
       game.save()
       .then(result => {
@@ -239,7 +302,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -254,7 +317,7 @@ console.log(req.body);
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,

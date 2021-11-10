@@ -65,3 +65,66 @@ function visibleClass(element) {
     element.classList.remove("hidden");
   }
 }
+
+function checkNewGenre() {
+  var newGenre = document.getElementById("new-genre");
+  var genres = document.getElementsByName("genre");
+  var errorMsg = document.getElementsByClassName("user-message")[0];
+  errorMsg.innerHTML = ""; //check to see if it's already in the list
+
+  var genreLength = genres.length;
+
+  for (var _i = 0; _i < genreLength; _i++) {
+    if (genres[_i].value.toString().toLowerCase() == newGenre.value.toString().toLowerCase()) {
+      errorMsg.innerHTML = "".concat(genres[_i].value.toString(), " is already in the Genre list.");
+      document.getElementById("genre").getElementsByTagName('option')[_i].selected = 'selected';
+      newGenre.innerHTML = "";
+      hiddenClass(newGenre);
+      return;
+    }
+  }
+}
+
+function checkNewCategory() {
+  var newCategory = document.getElementById("new-category");
+  var categories = document.getElementsByName("category");
+  var errorMsg = document.getElementsByClassName("user-message")[0];
+  errorMsg.innerHTML = ""; //check to see if it's already in the list
+
+  var categoryLength = categories.length;
+
+  for (var _i2 = 0; _i2 < categoryLength; _i2++) {
+    // console.log(`categories[${i}]: ${categories[i].value.toString().toLowerCase().split(" ").join("")}; newCategory: ${newCategory.toString().toLowerCase().split(" ").join("")}`);
+    // console.log(categories[i].value.toString().toLowerCase().split(" ").join(""));
+    if (categories[_i2].value.toString().toLowerCase().split(" ").join("") == newCategory.value.toString().toLowerCase().split(" ").join("")) {
+      errorMsg.innerHTML = "".concat(categories[_i2].value.toString(), " is already in the Category list.");
+      document.getElementById("category").getElementsByTagName('option')[_i2].selected = 'selected';
+      newCategory.innerHTML = "";
+      hiddenClass(newCategory);
+      return;
+    }
+  }
+}
+
+function showNewGenre() {
+  var genreSelect = document.getElementById("genre").value;
+  var newGenreInput = document.getElementById("new-genre");
+
+  if (genreSelect == "newGenre") {
+    visibleClass(newGenreInput);
+  } else {
+    hiddenClass(newGenreInput);
+  }
+}
+
+function showNewCategory() {
+  var categorySelect = document.getElementById("category").value;
+  var newCategoryInput = document.getElementById("new-category");
+
+  if (categorySelect == "newCategory") {
+    visibleClass(newCategoryInput);
+  } else {
+    hiddenClass(newCategoryInput);
+  }
+} // let newGenreInput = document.getElementById("new-genre");
+// newGenreInput.addEventListener(");
