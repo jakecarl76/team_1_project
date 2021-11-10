@@ -42,8 +42,8 @@
        onclick="toggleDivById('changeUserImgDiv'); toggleDiv(this.parentElement);">
     </div>
     <div id="changeUserImgDiv" class="hidden">
-      <label for="imageUpload">Change Profile Image</label>
-      <input type="file" id="imageUpload" name="imageUpload">
+      <label for="image">Change Profile Image</label>
+      <input type="file" id="image" name="image">
       <p id="userImgStatus"></p>
       <input type="button" id="changeUserImg" value="Change">
       <input type="button" value="Cancel" 
@@ -116,7 +116,7 @@
     .addEventListener("click", function() {
         let tmpData = new FormData();//this will auto set headers
         tmpData.append('userId', document.getElementById("userId").value);
-        tmpData.append('imageUpload', document.getElementById("imageUpload").files[0]);
+        tmpData.append('image', document.getElementById("image").files[0]);
 
         fetch('/change-user-image', {
           method: 'POST',

@@ -1,14 +1,112 @@
 "use strict";
 
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
+
+  _templateObject3 = function _templateObject3() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Game ", ""]);
+
+  _templateObject = function _templateObject() {
+    return data;
+  };
+
+  return data;
+}
+
+function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
 //import modules
 //...
 //import models
-//...
-//get index
+var Book = require('../models/book');
+
+var Movie = require('../models/movie');
+
+var Game = require('../models/game'); //get index
+
+
 exports.getIndex = function (req, res, next) {
   res.render('general/index', {
     pageTitle: "Welcome to the Entertainment Library!",
     path: '/'
+  });
+};
+
+exports.getAddItem = function (req, res, next) {
+  var allGenres = [];
+  var gameCategories = [];
+  Book.find().distinct("genre").then(function (genres) {
+    var genresLength = genres.length;
+
+    for (var i = 0; i < genresLength; i++) {
+      allGenres.push(genres[i]);
+    }
+  }).then(Movie.find().distinct("genre").then(function (genres) {
+    var genresLength = genres.length;
+
+    for (var i = 0; i < genresLength; i++) {
+      if (!allGenres.includes(genres[i])) {
+        allGenres.push(genres[i]);
+      }
+    }
+
+    return allGenres;
+  }).then(Game.find().distinct("category").then(function (categories) {
+    var categoriesLength = categories.length;
+
+    for (var i = 0; i < categoriesLength; i++) {
+      gameCategories.push(categories[i]);
+    } // return gameCategories;
+
+
+    res.render('admin/edit-item', {
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      user: req.user.username,
+      errorMessage: [],
+      hasError: false,
+      validationErrors: [],
+      genres: allGenres,
+      categories: gameCategories
+    });
+  })["catch"](function (err) {
+    console.log(_templateObject(), err);
+  }) // ).then(allGenres => {
+  //   //send to add item page with page and authentication info
+  //   res.render('admin/edit-item', {
+  //     pageTitle: 'Add Item',
+  //     path: '/add-item',
+  //     editing: false,
+  //     user: req.user.username,
+  //     errorMessage: [],
+  //     hasError: false,
+  //     validationErrors: [],
+  //     genres: allGenres,
+  //     categories: gameCategories
+  //   })
+  // }
+  ))["catch"](function (err) {
+    console.log(_templateObject2(), err);
+  })["catch"](function (err) {
+    console.log(_templateObject3(), err);
   });
 };
 /*cannot test until My Items page is created*/
@@ -66,6 +164,7 @@ exports.getEditItem = function (req, res, next) {
       break;
 
     default:
+      displayEditItem();
       console.log("getEditItem case: default - Not accepted parameter.");
   }
 };
@@ -79,15 +178,216 @@ function displayEditItem(item, itemType, res, req) {
   } //if product found, send to edit product with product info
 
 
-  res.render('/edit-product', {
+  res.render('/edit-item', {
     pageTitle: 'Edit Item',
     path: '/edit-item',
     editing: editMode,
     itemType: itemType,
     item: item,
     hasError: false,
-    user: req.user.name,
+    //user: req.user.name,    Uncomment out once user login working
     errorMessage: "",
     validationErrors: []
   });
 }
+
+exports.postAddItem = function (req, res, next) {
+  //gather the info from the form
+  var itemType = req.body.itemType;
+  var title = req.body.title;
+  var author = req.body.author;
+  var genre = req.body.genre;
+  var rating = req.body.rating;
+  var category = req.body.category;
+  var image = req.file;
+  var description = req.body.description;
+  var newGenre = req.body.newGenre;
+  var newCategory = req.body.newCategory; //if it's a new genre, make it genre
+
+  if (genre == "newGenre") {
+    genre = newGenre;
+  } //if it's a new category, make it category
+
+
+  if (category == "newCategory") {
+    category = newCategory;
+  } //image validation
+
+
+  if (!image) {
+    return res.status(422).render('admin/edit-item', {
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      user: req.user.username,
+      isAuthenticated: false,
+      errorMessage: 'Attached file is not a supported image type.',
+      hasError: true,
+      itemType: itemType,
+      item: {
+        title: title,
+        author: author,
+        genre: genre,
+        rating: rating,
+        category: category,
+        description: description
+      },
+      validationErrors: []
+    });
+  } // *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
+  //form validation
+  // const errors = validationResult(req);
+  // if(!errors.isEmpty()){
+  //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
+  //   return res.status(422).render('admin/edit-item', {
+  //     pageTitle: 'Add Item',
+  //     path: '/add-item',
+  //     editing: false,
+  //     hasError: true,
+  //     // user: req.user.name,      Uncomment out once login implemented
+  //     isAuthenticated: false,
+  //     errorMessage: errors.array()[0].msg,
+  //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+  //     validationErrors: errors.array()
+  //   })
+  // }
+
+
+  var imageUrl = image.path; //save item based on type
+
+  switch (itemType) {
+    case "book":
+      var _book = new Book({
+        title: title,
+        author: author,
+        genre: genre,
+        description: description,
+        imageUrl: imageUrl,
+        userId: req.user
+      });
+
+      _book.save().then(function (result) {
+        //log success and redirect to admin products
+        console.log('Created Book');
+        res.redirect('/admin/products');
+      })["catch"](function (err) {
+        console.log("postAddItem - switch(book) catch: ".concat(err));
+        return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Add Item',
+          path: '/add-item',
+          editing: false,
+          user: req.user.username,
+          isAuthenticated: false,
+          errorMessage: [],
+          hasError: false,
+          product: {
+            title: title,
+            author: author,
+            genre: genre,
+            rating: rating,
+            category: category,
+            description: description
+          },
+          validationErrors: errors.array()
+        });
+      });
+
+      break;
+
+    case "movie":
+      var _movie = new Movie({
+        title: title,
+        genre: genre,
+        rating: rating,
+        description: description,
+        imageUrl: imageUrl,
+        userId: req.user
+      });
+
+      _movie.save().then(function (result) {
+        //log success and redirect to admin products
+        console.log('Created Movie');
+        res.redirect('/admin/products');
+      })["catch"](function (err) {
+        console.log("postAddProduct - switch(movie) catch: ".concat(err));
+        return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Add Item',
+          path: '/add-item',
+          editing: false,
+          user: req.user.username,
+          isAuthenticated: false,
+          errorMessage: [],
+          hasError: false,
+          product: {
+            title: title,
+            author: author,
+            genre: genre,
+            rating: rating,
+            category: category,
+            description: description
+          },
+          validationErrors: errors.array()
+        });
+      });
+
+      break;
+
+    case "game":
+      var _game = new Game({
+        title: title,
+        category: category,
+        description: description,
+        imageUrl: imageUrl,
+        userId: req.user
+      });
+
+      _game.save().then(function (result) {
+        //log success and redirect to admin products
+        console.log('Created Game');
+        res.redirect('/admin/products');
+      })["catch"](function (err) {
+        console.log("postAddProduct - switch(game) catch: ".concat(err));
+        return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Add Item',
+          path: '/add-item',
+          editing: false,
+          user: req.user.username,
+          isAuthenticated: false,
+          errorMessage: [],
+          hasError: false,
+          product: {
+            title: title,
+            author: author,
+            genre: genre,
+            rating: rating,
+            category: category,
+            description: description
+          },
+          validationErrors: errors.array()
+        });
+      });
+
+      break;
+
+    default:
+      console.log("postAddProduct - switch(default): ".concat(itemType));
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Item',
+        path: '/add-item',
+        editing: false,
+        user: req.user.username,
+        isAuthenticated: false,
+        errorMessage: [],
+        hasError: false,
+        product: {
+          title: title,
+          author: author,
+          genre: genre,
+          rating: rating,
+          category: category,
+          description: description
+        },
+        validationErrors: []
+      });
+  }
+};

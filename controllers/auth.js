@@ -236,10 +236,10 @@ exports.postCreatePasswordReset = (req, res, next) => {
 
 exports.postChangeUserImage = (req, res, next) => {
   console.log("image Change Thing");
-  console.log(req.files);
+  console.log("req.file :", req.file);
 
   let userId = req.body.userId;
-  let newImgPath = req.files[0].filename;
+  let newImgPath = req.file.filename;//s[0].filename;
   let oldImgPath = "";
   let tmpUser = null;
 
@@ -517,6 +517,7 @@ exports.postChangeEmail = (req, res, next) => {
 exports.postCheckUsername = (req, res, next) => {
   //get user name
   console.log("UNAME CHECK");
+  console.log("username: " ,req.body.username);
   let username = req.body.username.toLowerCase().replace(/ /g, "");
 
   User.find({username: username})

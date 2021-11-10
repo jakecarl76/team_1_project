@@ -1,0 +1,85 @@
+@media screen and (min-width: 700px) {
+    main{
+        width: calc(100vw - 4rem);
+    }
+
+    section.grid{
+        width: calc(700px - 4rem);
+    }
+
+    section.grid .card-container{
+        width: 100%;
+    }
+
+
+        /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
+}
+
+
+@media screen and (min-width: 900px) {
+    main{
+        width: calc(100vw - 4rem);
+    }
+
+    section.grid{
+        width: calc(900px - 4rem);
+    }
+
+    section.grid .card-container{
+        width: 100%;
+    }
+
+    
+        /*
+                Content CSS
+        */
+
+        .content-main {
+                width: 100%;
+        }
+
+        .content-cards {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                column-gap: 50px;
+                row-gap: 25px;
+        }
+
+        .content-card {
+                display: grid;
+                grid-template-columns: 1fr;
+        }
+        
+        .description {
+                display: block;
+        }
+
+        .left {
+                width: 100%;
+        }
+
+        .right {
+                width: 95%;
+                border: none;
+        }
+
+        /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
+}
+
+/*  Extra-Wide Screens  */
+@media screen and (min-width: 1450px) {
+        .content-main {
+                max-width: 95%;
+        }
+        .content-card {
+                display: flex;
+                flex-direction: row;
+        }
+
+        .right {
+                width: 85%;
+                border-left: 2px solid #3AAFB9;
+        }
+
+}

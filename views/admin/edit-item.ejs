@@ -7,41 +7,81 @@
     <% if(errorMessage){ %>
         <div class="user-message"><%= errorMessage %></div>
     <% } %>
-    <label for="item-type">What would you like to add?</label>
-    <select name="item-type" id="item-type">
-        <option value="book" selected disabled>Select</option>
-        <option value="book">Book</option>
-        <option value="movie">Movie</option>
-        <option value="game">Game</option>
-    </select>
-
-    <form class="book-form" action=<% if(editing){ %> '/edit-book' <% }else{ %>"/add-book"<% } %> method="POST" enctype="multipart/form-data">
-        <fieldset>
-            <legend><% if(editing){ %> Edit Book <% }else{ %>Add A Book<% } %></legend>
+    <form class="item-form" action=<% if(editing){ %> '/edit-item' <% }else{ %>"/add-item"<% } %> method="POST" enctype="multipart/form-data">
+        <fieldset id="item-fieldset">
+            <legend><% if(editing){ %> Edit Item <% } else { %>Add an Item<% } %></legend>
             <div class="form-control">
+                <p>What would you like to <% if(!editing){ %> add<% } else { %> update<% } %>? </p>
+                <div id="radio-div" onclick=displayFields()>
+                    <input type="radio" name="itemType" id="type-book" value="book">
+                    <label for="book">Book</label>
+                    <input type="radio" name="itemType" id="type-movie" value="movie">
+                    <label for="movie">Movie</label>
+                    <input type="radio" name="itemType" id="type-game" value="game">
+                    <label for="game">Game</label>
+                </div>
+            </div>
+            <div class="form-control book movie game hidden" id="title">
                 <label for="title">Title</label>
-                <input type="text" name="title" id="title" placeholder="My Book Title" value="<% if(editing || hasError){ %><%= item.title %><% } %>" 
+                <input type="text" name="title" id="title" placeholder="My Title" value="<% if(editing || hasError){ %><%= item.title %><% } %>" 
                 class="<%= validationErrors.find(e => e.param === 'title') ? 'invalid' : ''  %>" >
             </div>
-            <div class="form-control">
-                <label for="author">Price</label>
+            <div class="form-control book hidden">
+                <label for="author">Author</label>
                 <input type="text" name="author" id="author" placeholder="Name of Author" value="<% if(editing || hasError){ %><%= item.author %><% } %>" class="<%= validationErrors.find(e => e.param === 'author') ? 'invalid' : ''  %>">
             </div>
-            <div class="form-control">
+            <div class="form-control book movie hidden">
+                <label for="genre">Genre</label>
+                <select name="genre" id="genre" onclick="showNewGenre()">
+                    <option selected disabled>Select</option>
+                    <% for( let genre of genres ){ %>
+                        <option name="genre" 
+                        value="<% if(editing || hasError){ %><%= item.genre %><% }else{ %><%= genre %><% } %>"><%= genre %></option>
+                    <% } %>
+                    <option name="genre" value="newGenre">New</option>
+                </select>
+                <input type="text" id="new-genre" name="newGenre" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
+            </div>
+            <div class="form-control movie hidden">
+                <label for="rating">Rating</label>
+                
+                <select name="rating" id="rating">
+                    <option selected disabled>Select</option>
+                    <option name="rating" value="G">G</option>
+                    <option name="rating" value="PG">PG</option>
+                    <option name="rating" value="PG13">PG13</option>
+                    <option name="rating" value="R">R</option>
+                </select>
+            </div>
+            <div class="form-control game hidden">
+                <label for="category">Category</label>
+
+                <select name="category" id="category" onclick="showNewCategory()">
+                    <option selected disabled>Select</option>
+                    <% for( let category of categories ){ %>
+                        <option name="category" 
+                        value="<%= category %>"><%= category %></option>
+                    <% } %>
+                    <option name="category" value="newCategory">New</option>
+                </select>
+                <input type="text" id="new-category" name="newCategory" onblur="checkNewCategory()" placeholder="New Category Name"  value="<% if(editing || hasError){ %><%= item.category %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %> hidden">
+                <%console.log(`edit-item.ejs   Categories: ${categories}; Genres: ${genres}`);%>
+            </div>
+            <div class="form-control book movie game hidden">
                 <label for="image">Image</label>
                 <input type="file" name="image" id="image">
             </div>
-            <div class="form-control">
+            <div class="form-control book movie game hidden">
                 <label for="description">Description</label>
-                <textarea name="description" id="description" rows="5" placeholder="Describe the Book" class="<%= validationErrors.find(e => e.param === 'description') ? 'invalid' : ''  %>"><% if(editing || hasError){ %><%= item.description %><% } %></textarea>
+                <textarea name="description" id="description" rows="5" placeholder="Describe the awesome-osity" class="<%= validationErrors.find(e => e.param === 'description') ? 'invalid' : ''  %>"><% if(editing || hasError){ %><%= item.description %><% } %></textarea>
             </div>
             <% if(editing) { %>
                 <input type="hidden" value="<%= item._id %>" name="itemId">
             <% } %>
-            <div class="add-buttons">
+            <div class="buttons">
                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                 <button class="btn" type="submit">
-                    <% if(editing) { %> Update <% } else { %> Add Book <% } %>
+                    <% if(editing) { %> Update <% } else { %> Add Item <% } %>
                 </button>
                 <% if(!editing) { %>
                 <input class="btn" type="submit" formaction='/add-another' value="Add Another">
@@ -49,7 +89,9 @@
             </div> 
         </fieldset>
     </form>
+    
 </main>
+
 <%- include('../includes/end.ejs'); %>
  
     
