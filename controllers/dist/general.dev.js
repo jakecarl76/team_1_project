@@ -1,5 +1,37 @@
 "use strict";
 
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
+
+  _templateObject3 = function _templateObject3() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Game ", ""]);
+
+  _templateObject = function _templateObject() {
+    return data;
+  };
+
+  return data;
+}
+
+function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
 //import modules
 //...
 //import models
@@ -18,15 +50,63 @@ exports.getIndex = function (req, res, next) {
 };
 
 exports.getAddItem = function (req, res, next) {
-  //send to add item page with page and authentication info
-  res.render('admin/edit-item', {
-    pageTitle: 'Add Item',
-    path: '/add-item',
-    editing: false,
-    //user: req.user.name,    Uncomment out after login working
-    errorMessage: [],
-    hasError: false,
-    validationErrors: []
+  var allGenres = [];
+  var gameCategories = [];
+  Book.find().distinct("genre").then(function (genres) {
+    var genresLength = genres.length;
+
+    for (var i = 0; i < genresLength; i++) {
+      allGenres.push(genres[i]);
+    }
+  }).then(Movie.find().distinct("genre").then(function (genres) {
+    var genresLength = genres.length;
+
+    for (var i = 0; i < genresLength; i++) {
+      if (!allGenres.includes(genres[i])) {
+        allGenres.push(genres[i]);
+      }
+    }
+
+    return allGenres;
+  }).then(Game.find().distinct("category").then(function (categories) {
+    var categoriesLength = categories.length;
+
+    for (var i = 0; i < categoriesLength; i++) {
+      gameCategories.push(categories[i]);
+    } // return gameCategories;
+
+
+    res.render('admin/edit-item', {
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      user: req.user.username,
+      errorMessage: [],
+      hasError: false,
+      validationErrors: [],
+      genres: allGenres,
+      categories: gameCategories
+    });
+  })["catch"](function (err) {
+    console.log(_templateObject(), err);
+  }) // ).then(allGenres => {
+  //   //send to add item page with page and authentication info
+  //   res.render('admin/edit-item', {
+  //     pageTitle: 'Add Item',
+  //     path: '/add-item',
+  //     editing: false,
+  //     user: req.user.username,
+  //     errorMessage: [],
+  //     hasError: false,
+  //     validationErrors: [],
+  //     genres: allGenres,
+  //     categories: gameCategories
+  //   })
+  // }
+  ))["catch"](function (err) {
+    console.log(_templateObject2(), err);
+  })["catch"](function (err) {
+    console.log(_templateObject3(), err);
   });
 };
 /*cannot test until My Items page is created*/
@@ -113,7 +193,6 @@ function displayEditItem(item, itemType, res, req) {
 
 exports.postAddItem = function (req, res, next) {
   //gather the info from the form
-  console.log(req.body);
   var itemType = req.body.itemType;
   var title = req.body.title;
   var author = req.body.author;
@@ -121,14 +200,26 @@ exports.postAddItem = function (req, res, next) {
   var rating = req.body.rating;
   var category = req.body.category;
   var image = req.file;
-  var description = req.body.description; //image validation
+  var description = req.body.description;
+  var newGenre = req.body.newGenre;
+  var newCategory = req.body.newCategory; //if it's a new genre, make it genre
+
+  if (genre == "newGenre") {
+    genre = newGenre;
+  } //if it's a new category, make it category
+
+
+  if (category == "newCategory") {
+    category = newCategory;
+  } //image validation
+
 
   if (!image) {
     return res.status(422).render('admin/edit-item', {
       pageTitle: 'Add Item',
       path: '/add-item',
       editing: false,
-      //user: req.user.name,      Uncomment out once login implemented
+      user: req.user.username,
       isAuthenticated: false,
       errorMessage: 'Attached file is not a supported image type.',
       hasError: true,
@@ -185,7 +276,7 @@ exports.postAddItem = function (req, res, next) {
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -210,8 +301,7 @@ exports.postAddItem = function (req, res, next) {
         rating: rating,
         description: description,
         imageUrl: imageUrl,
-        userId: null //req.user
-
+        userId: req.user
       });
 
       _movie.save().then(function (result) {
@@ -224,7 +314,7 @@ exports.postAddItem = function (req, res, next) {
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -248,8 +338,7 @@ exports.postAddItem = function (req, res, next) {
         category: category,
         description: description,
         imageUrl: imageUrl,
-        userId: null //req.user
-
+        userId: req.user
       });
 
       _game.save().then(function (result) {
@@ -262,7 +351,7 @@ exports.postAddItem = function (req, res, next) {
           pageTitle: 'Add Item',
           path: '/add-item',
           editing: false,
-          // user: req.user.name,      Uncomment out once login implemented
+          user: req.user.username,
           isAuthenticated: false,
           errorMessage: [],
           hasError: false,
@@ -286,7 +375,7 @@ exports.postAddItem = function (req, res, next) {
         pageTitle: 'Add Item',
         path: '/add-item',
         editing: false,
-        // user: req.user.name,      Uncomment out once login implemented
+        user: req.user.username,
         isAuthenticated: false,
         errorMessage: [],
         hasError: false,
