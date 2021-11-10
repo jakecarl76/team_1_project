@@ -7,7 +7,6 @@
     <% if(errorMessage){ %>
         <div class="user-message"><%= errorMessage %></div>
     <% } %>
-        
     <form class="item-form" action=<% if(editing){ %> '/edit-item' <% }else{ %>"/add-item"<% } %> method="POST" enctype="multipart/form-data">
         <fieldset id="item-fieldset">
             <legend><% if(editing){ %> Edit Item <% } else { %>Add an Item<% } %></legend>
