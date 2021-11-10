@@ -65,3 +65,42 @@ function visibleClass(element) {
     element.classList.remove("hidden");
   }
 }
+
+function checkNewGenre() {
+  var newGenre = document.getElementById("new-genre").value;
+  var genres = document.getElementsByName("genre");
+  var errorMsg = document.getElementsByClassName("user-message")[0];
+  errorMsg.innerHTML = ""; //check to see if it's already in the list
+
+  var genreLength = genres.length;
+
+  for (var _i = 0; _i < genreLength; _i++) {
+    if (genres[_i].value.toString().toLowerCase() == newGenre.toString().toLowerCase()) {
+      errorMsg.innerHTML = "".concat(genres[_i].value.toString(), " is already in the Genre list.");
+      return;
+    }
+  }
+}
+
+function showNewGenre() {
+  var genreSelect = document.getElementById("genre").value;
+  var newGenreInput = document.getElementById("new-genre");
+
+  if (genreSelect == "newGenre") {
+    visibleClass(newGenreInput);
+  } else {
+    hiddenClass(newGenreInput);
+  }
+}
+
+function showNewCategory() {
+  var categorySelect = document.getElementById("category").value;
+  var newCategoryInput = document.getElementById("new-category");
+
+  if (categorySelect == "newCategory") {
+    visibleClass(newCategoryInput);
+  } else {
+    hiddenClass(newCategoryInput);
+  }
+} // let newGenreInput = document.getElementById("new-genre");
+// newGenreInput.addEventListener(");

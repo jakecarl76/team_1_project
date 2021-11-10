@@ -34,17 +34,46 @@
                 <label for="author">Author</label>
                 <input type="text" name="author" id="author" placeholder="Name of Author" value="<% if(editing || hasError){ %><%= item.author %><% } %>" class="<%= validationErrors.find(e => e.param === 'author') ? 'invalid' : ''  %>">
             </div>
+
+
             <div class="form-control book movie hidden">
                 <label for="genre">Genre</label>
-                <input type="text" name="genre" id="genre" placeholder="Genre" value="<% if(editing || hasError){ %><%= item.genre %><% } %>" class="<%= validationErrors.find(e => e.param === 'author') ? 'invalid' : ''  %>">
+                <select name="genre" id="genre" onclick="showNewGenre()">
+                    <option selected disabled>Select</option>
+                    <% for( let genre of genres ){ %>
+                        <option name="genre" 
+                        value="<% if(editing || hasError){ %><%= item.genre %><% }else{ %><%= genre %><% } %>">
+                            <%= genre %>
+                        </option>
+                        
+                    <% } %>
+                    <option name="genre" value="newGenre">New</option>
+                </select>
+                <input type="text" id="new-genre" name="newGenre" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
+                
+                <!-- <input type="text" name="genre" id="genre" placeholder="Genre" value="<% if(editing || hasError){ %><%= item.genre %><% } %>" class="<%= validationErrors.find(e => e.param === 'genre') ? 'invalid' : ''  %>"> -->
             </div>
+
+
             <div class="form-control movie hidden">
                 <label for="rating">Rating</label>
                 <input type="text" name="rating" id="rating" placeholder="Rating" value="<% if(editing || hasError){ %><%= item.rating %><% } %>" class="<%= validationErrors.find(e => e.param === 'rating') ? 'invalid' : ''  %>">
             </div>
             <div class="form-control game hidden">
                 <label for="category">Category</label>
-                <input type="text" name="category" id="category" placeholder="Category" value="<% if(editing || hasError){ %><%= item.category %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %>">
+
+                <select name="category" id="category" onclick="showNewCategory()">
+                    <option selected disabled>Select</option>
+                    <% for( let category of categories ){ %>
+                        <option name="category" 
+                        value="<% if(editing || hasError){ %><%= item.category %><% }else{ %><%= category %><% } %>">
+                            <%= category %>
+                        </option>
+                        
+                    <% } %>
+                    <option name="category" value="newCategory">New</option>
+                </select>
+                <input type="text" id="new-category" name="newCategory" placeholder="New Category Name"  value="<% if(editing || hasError){ %><%= item.category %><% } else { %><%= categories %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %> hidden">
             </div>
             <div class="form-control book movie game hidden">
                 <label for="image">Image</label>
@@ -70,6 +99,7 @@
     </form>
     
 </main>
+
 <%- include('../includes/end.ejs'); %>
  
     

@@ -50,3 +50,45 @@ function visibleClass(element){
         element.classList.remove("hidden");
     }
 }
+
+function checkNewGenre(){
+    let newGenre = document.getElementById("new-genre").value;
+    let genres = document.getElementsByName("genre");
+    let errorMsg = document.getElementsByClassName("user-message")[0];
+    
+    errorMsg.innerHTML = "";
+
+//check to see if it's already in the list
+    let genreLength = genres.length;    
+    for(let i=0; i<genreLength; i++){
+        if(genres[i].value.toString().toLowerCase() == newGenre.toString().toLowerCase()){
+            errorMsg.innerHTML = `${genres[i].value.toString()} is already in the Genre list.`;
+            return;
+        }
+    }
+}
+
+function showNewGenre(){
+    let genreSelect = document.getElementById("genre").value;
+    let newGenreInput = document.getElementById("new-genre");
+
+    if(genreSelect == "newGenre"){
+        visibleClass(newGenreInput)
+    } else {
+        hiddenClass(newGenreInput)
+    }
+}
+
+function showNewCategory(){
+    let categorySelect = document.getElementById("category").value;
+    let newCategoryInput = document.getElementById("new-category");
+
+    if(categorySelect == "newCategory"){
+        visibleClass(newCategoryInput)
+    } else {
+        hiddenClass(newCategoryInput)
+    }
+}
+
+// let newGenreInput = document.getElementById("new-genre");
+// newGenreInput.addEventListener(");
