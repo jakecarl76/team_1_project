@@ -17,6 +17,10 @@ const userSchema = new Schema({
   },
   resetToken: String,
   resetTokenExpiration: Date,
+  userImage: {
+    type: String,
+    required: true
+  },
 
   bookLib: {favorites: [], lib: []},
   gameLib: {favorites: [], lib: []},

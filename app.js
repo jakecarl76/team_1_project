@@ -15,11 +15,13 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
 const cors = require('cors');
+const User = require('./models/user');
 const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 3005; //Server env | localhost
 const MONGODB_URL = process.env.MONGODB_URL || "MONGODB_URL var not set";//NEED FIX - need to set up env var in heroku app
 const SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env var at some point';//NEED FIX -need to set up var in heroku app
+
 
 //Multer Setup
 const multerStorage = multer.diskStorage({
@@ -79,6 +81,7 @@ const authRoutes = require('./routes/auth');
 const libRoutes = require('./routes/lib');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
@@ -121,7 +124,7 @@ app.use((req, res, next) => {
 //attach csurf token
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken= req.csrfToken();
+  res.locals.csrfToken = req.csrfToken();
   next();
 });
 
