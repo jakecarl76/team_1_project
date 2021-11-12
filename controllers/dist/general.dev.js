@@ -1,7 +1,17 @@
 "use strict";
 
-function _templateObject3() {
+function _templateObject4() {
   var data = _taggedTemplateLiteral(["Error getGenres-Book ", ""]);
+
+  _templateObject4 = function _templateObject4() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["Error getGenres-Movie ", ""]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -11,7 +21,7 @@ function _templateObject3() {
 }
 
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["Error getGenres-Movie ", ""]);
+  var data = _taggedTemplateLiteral(["postAddItem- image: ", ""]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -313,7 +323,8 @@ exports.postAddItem = function (req, res, next) {
   // }
 
 
-  var imageUrl = image.path; //save item based on type
+  var imageUrl = image.filename;
+  console.log(_templateObject2(), image); //save item based on type
 
   switch (itemType) {
     case "book":
@@ -476,9 +487,9 @@ function getGenres() {
               }
             }
           }))["catch"](function (err) {
-            console.log(_templateObject2(), err);
-          })["catch"](function (err) {
             console.log(_templateObject3(), err);
+          })["catch"](function (err) {
+            console.log(_templateObject4(), err);
           }));
 
         case 2:

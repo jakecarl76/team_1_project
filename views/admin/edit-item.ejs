@@ -75,7 +75,7 @@
             </div>
             <div class="form-control book movie game hidden">
                 <% if(editing){ %>
-                    <img src="../../<%= item.imageUrl %>" alt="image of <%= item.title %>">
+                    <img src="/images/<%= item.imageUrl %>" alt="image of <%= item.title %>" class="details-img">
                     <% } %>
                 <label for="image">Image</label>
                 <input type="file" name="image" id="image">

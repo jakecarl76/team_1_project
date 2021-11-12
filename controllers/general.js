@@ -293,8 +293,8 @@ exports.postAddItem = (req, res, next) => {
   //   })
   // }
 
-  const imageUrl = image.path;
-
+  const imageUrl = image.filename;
+console.log`postAddItem- image: ${image}`;
   //save item based on type
  switch(itemType){
    case "book": 

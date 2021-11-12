@@ -187,6 +187,10 @@ button:hover, a.btn:hover{
     border: solid green 3px;
   }
 
+.details-img{
+    max-width: 150px;
+}
+
 /* * * * * * * * * * USER MESSAGE* * * * * * * * * * */
 .user-message{
     height: 100%;
