@@ -23,7 +23,22 @@ router.post('/add-item',
 generalCtrl.postAddItem);
 router.get('/edit-item/:itemId/:itemType',
 /*isAuth,*/
-generalCtrl.getEditItem); //main index
+generalCtrl.getEditItem);
+router.post('/edit-item',
+/*isAuth,*/
+generalCtrl.postEditItem); // Get route: Movies
+
+router.get('/movies',
+/*isAuth,*/
+generalCtrl.getMovies); // Get route: Games
+
+router.get('/games',
+/*isAuth,*/
+generalCtrl.getGames); // Get route: Books
+
+router.get('/books',
+/*isAuth,*/
+generalCtrl.getBooks); //main index
 
 router.get('/', generalCtrl.getIndex); //export router
 

@@ -464,6 +464,160 @@ exports.postAddItem = function (req, res, next) {
   }
 };
 
+exports.postEditItem = function (req, res, next) {
+  //gather updated product info
+  var itemId = req.body.itemId;
+  var itemType = req.body.itemType;
+  var updatedTitle = req.body.title;
+  var updatedAuthor = req.body.author;
+  var updatedGenre = req.body.genre;
+  var updatedRating = req.body.rating;
+  var updatedCategory = req.body.category;
+  var image = req.file;
+  var updatedDescription = req.body.description;
+  var newGenre = req.body.newGenre;
+  var newCategory = req.body.newCategory; // *** Need to add validation
+  //check for validation errors
+  // const errors = validationResult(req);
+  // if(!errors.isEmpty()){
+  //   return res.status(422).render('admin/edit-product', {
+  //     pageTitle: 'Edit Product',
+  //     path: '/admin/edit-product',
+  //     editing: true,
+  //     product: {
+  //       title: updatedTitle,
+  //       price: updatedPrice,
+  //       description: updatedDesc
+  //     },
+  //     isAuthenticated: req.session.isLoggedIn,
+  //     hasError: true,
+  //     errorMessage: errors.array()[0].msg
+  //   });
+  // }
+  //locate existing product in db
+
+  switch (itemType) {
+    case "book":
+      Book.findById(itemId).then(function (book) {
+        if (book.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } //update book details
+
+
+        book.title = updatedTitle;
+        book.author = updatedAuthor;
+        book.genre = updatedGenre;
+        book.description = updatedDescription;
+
+        if (image) {
+          book.imageUrl = image.filename;
+        }
+
+        return book.save().then(function (result) {
+          //log the success and redirect to admin products  
+          console.log('UPDATED BOOK!');
+          res.redirect('/admin/products');
+        })["catch"](function (err) {
+          res.redirect('/admin/edit-item/:itemId');
+          console.log("postEditItem - book - Err: ".concat(err));
+        });
+      })["catch"](function (err) {
+        //res.redirect('/admin/edit-product/:itemId');
+        var error = new Error(err);
+        error.httpStatusCode = 500;
+        console.log('postEditItem - book - Err: ${err}');
+        return next(error);
+      });
+      break;
+
+    case "movie":
+      Movie.findById(itemId).then(function (movie) {
+        if (movie.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } //update movie details
+
+
+        movie.title = updatedTitle;
+        movie.rating = updatedRating;
+        movie.genre = updatedGenre;
+        movie.description = updatedDescription;
+
+        if (image) {
+          movie.imageUrl = image.filename;
+        }
+
+        return movie.save().then(function (result) {
+          //log the success and redirect to admin products  
+          console.log('UPDATED MOVIE!');
+          res.redirect('/admin/products');
+        })["catch"](function (err) {
+          res.redirect('/admin/edit-item/:itemId');
+          console.log("postEditItem - movie - Err: ".concat(err));
+        });
+      })["catch"](function (err) {
+        //res.redirect('/admin/edit-product/:itemId');
+        var error = new Error(err);
+        error.httpStatusCode = 500;
+        console.log('postEditItem - movie - Err: ${err}');
+        return next(error);
+      });
+      break;
+
+    case "game":
+      Game.findById(itemId).then(function (game) {
+        if (game.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+        } //update game details
+
+
+        game.title = updatedTitle;
+        game.category = updatedCategory;
+        game.description = updatedDescription;
+
+        if (image) {
+          game.imageUrl = image.filename;
+        }
+
+        return game.save().then(function (result) {
+          //log the success and redirect to admin products  
+          console.log('UPDATED GAME!');
+          res.redirect('/admin/products');
+        })["catch"](function (err) {
+          res.redirect('/admin/edit-item/:itemId');
+          console.log("postEditItem - game - Err: ".concat(err));
+        });
+      })["catch"](function (err) {
+        //res.redirect('/admin/edit-product/:itemId');
+        var error = new Error(err);
+        error.httpStatusCode = 500;
+        console.log('postEditItem - game - Err: ${err}');
+        return next(error);
+      });
+      break;
+
+    default:
+      console.log("postEditItem - switch(default): ".concat(itemType));
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Edit Item',
+        path: '/edit-item',
+        editing: true,
+        user: req.user.username,
+        isAuthenticated: false,
+        errorMessage: [],
+        hasError: false,
+        product: {
+          title: title,
+          author: author,
+          genre: genre,
+          rating: rating,
+          category: category,
+          description: description
+        },
+        validationErrors: []
+      });
+  }
+};
+
 function getGenres() {
   return regeneratorRuntime.async(function getGenres$(_context) {
     while (1) {

@@ -6,9 +6,6 @@ const isAuth = require('../middleware/is-auth');
 const generalCtrl = require('../controllers/general');
 //...
 
-
-
-
 //create router
 const router = express.Router();
 
@@ -18,6 +15,8 @@ router.get('/add-item', /*isAuth,*/ generalCtrl.getAddItem);
 router.post('/add-item', /*isAuth,*/ generalCtrl. postAddItem);
 
 router.get('/edit-item/:itemId/:itemType', /*isAuth,*/ generalCtrl.getEditItem);
+
+router.post('/edit-item', /*isAuth,*/ generalCtrl.postEditItem);
 
 // Get route: Movies
 router.get('/movies', /*isAuth,*/ generalCtrl.getMovies);
