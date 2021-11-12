@@ -126,5 +126,26 @@ function showNewCategory() {
   } else {
     hiddenClass(newCategoryInput);
   }
-} // let newGenreInput = document.getElementById("new-genre");
-// newGenreInput.addEventListener(");
+}
+
+function checkType(itemType) {
+  var bookRadio = document.getElementById("type-book");
+  var movieRadio = document.getElementById("type-movie");
+  var gameRadio = document.getElementById("type-game");
+
+  switch (itemType) {
+    case "book":
+      bookRadio.checked = true;
+      break;
+
+    case "movie":
+      movieRadio.checked = true;
+      break;
+
+    case "game":
+      gameRadio.checked = true;
+      break;
+  }
+
+  displayFields();
+}
