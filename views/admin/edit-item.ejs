@@ -4,7 +4,7 @@
 <%- include('../includes/nav.ejs'); %>
 <main>
     
-    <% console.log(`editing: ${editing}; itemType: ${itemType}; typeof itemType: ${typeof itemType}`);%>
+    <% console.log(`edit-item.ejs - editing: ${editing}; itemType: ${itemType}; typeof itemType: ${typeof itemType}`);%>
 
 
     <% if(errorMessage){ %>
@@ -38,9 +38,11 @@
                 <label for="genre">Genre</label>
                 <select name="genre" id="genre" onclick="showNewGenre()">
                     <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
+                    <% console.log(`edit-item.ejs genres: ${genres}`); %>
                     <% for( let genre of genres ){ %>
                         <option name="genre" 
-                        value="<% if(editing || hasError){ %><%= item.genre %><% }else{ %><%= genre %><% } %>" <% if(item.genre == genre){%> selected <% } %>> <%= genre %></option>
+                        value="<% if(editing || hasError){ %><%= item.genre %><% } else { %><%= genre %><% } %>" <% if(editing){
+                            if(item.genre == genre){%> selected <% }} %>> <%= genre %></option>
                     <% } %>
                     <option name="genre" value="newGenre">New</option>
                 </select>
@@ -69,7 +71,7 @@
                     <option name="category" value="newCategory">New</option>
                 </select>
                 <input type="text" id="new-category" name="newCategory" onblur="checkNewCategory()" placeholder="New Category Name"  value="<% if(editing || hasError){ %><%= item.category %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %> hidden">
-                <%console.log(`edit-item.ejs   Categories: ${categories}; Genres: ${genres}`);%>
+                <%console.log(`edit-item.ejs |   Categories: ${categories}; Genres: ${genres}`);%>
             </div>
             <div class="form-control book movie game hidden">
                 <% if(editing){ %>

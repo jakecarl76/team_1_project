@@ -1,27 +1,7 @@
 "use strict";
 
-function _templateObject5() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
-
-  _templateObject5 = function _templateObject5() {
-    return data;
-  };
-
-  return data;
-}
-
-function _templateObject4() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
-
-  _templateObject4 = function _templateObject4() {
-    return data;
-  };
-
-  return data;
-}
-
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
+  var data = _taggedTemplateLiteral(["Error getGenres-Book ", ""]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -31,7 +11,7 @@ function _templateObject3() {
 }
 
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
+  var data = _taggedTemplateLiteral(["Error getGenres-Movie ", ""]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -40,8 +20,10 @@ function _templateObject2() {
   return data;
 }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Game ", ""]);
+  var data = _taggedTemplateLiteral(["getAddItem - allGenres: ", ""]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -65,6 +47,7 @@ var gameCategories = []; //get index
 exports.getIndex = function (req, res, next) {
   getGenres();
   getCategories();
+  console.log("genres: ".concat(allGenres, "; categories: ").concat(gameCategories));
   res.render('general/index', {
     pageTitle: "Welcome to the Entertainment Library!",
     path: '/'
@@ -72,63 +55,21 @@ exports.getIndex = function (req, res, next) {
 };
 
 exports.getAddItem = function (req, res, next) {
-  var allGenres = [];
-  var gameCategories = [];
-  Book.find().distinct("genre").then(function (genres) {
-    var genresLength = genres.length;
-
-    for (var i = 0; i < genresLength; i++) {
-      allGenres.push(genres[i]);
-    }
-  }).then(Movie.find().distinct("genre").then(function (genres) {
-    var genresLength = genres.length;
-
-    for (var i = 0; i < genresLength; i++) {
-      if (!allGenres.includes(genres[i])) {
-        allGenres.push(genres[i]);
-      }
-    }
-
-    return allGenres;
-  }).then(Game.find().distinct("category").then(function (categories) {
-    var categoriesLength = categories.length;
-
-    for (var i = 0; i < categoriesLength; i++) {
-      gameCategories.push(categories[i]);
-    } // return gameCategories;
-
-
-    res.render('admin/edit-item', {
+  getGenres().then(function () {
+    console.log(_templateObject(), allGenres);
+    res.render('admin/edit-item', _defineProperty({
       pageTitle: 'Add Item',
       path: '/add-item',
       editing: false,
       user: req.user.username,
+      itemType: null,
+      item: null,
+      genres: allGenres,
+      categories: gameCategories,
       errorMessage: [],
       hasError: false,
-      validationErrors: [],
-      genres: allGenres,
-      categories: gameCategories
-    });
-  })["catch"](function (err) {
-    console.log(_templateObject(), err);
-  }) // ).then(allGenres => {
-  //   //send to add item page with page and authentication info
-  //   res.render('admin/edit-item', {
-  //     pageTitle: 'Add Item',
-  //     path: '/add-item',
-  //     editing: false,
-  //     user: req.user.username,
-  //     errorMessage: [],
-  //     hasError: false,
-  //     validationErrors: [],
-  //     genres: allGenres,
-  //     categories: gameCategories
-  //   })
-  // }
-  ))["catch"](function (err) {
-    console.log(_templateObject2(), err);
-  })["catch"](function (err) {
-    console.log(_templateObject3(), err);
+      validationErrors: []
+    }, "categories", gameCategories));
   });
 }; // NEED FIX Dummy code, delete once database content is added
 
@@ -513,30 +454,42 @@ exports.postAddItem = function (req, res, next) {
 };
 
 function getGenres() {
-  var genreList = [];
-  Book.find().distinct("genre").then(function (genres) {
-    var genresLength = genres.length;
+  return regeneratorRuntime.async(function getGenres$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return regeneratorRuntime.awrap(Book.find().distinct("genre").then(function (genres) {
+            var genresLength = genres.length;
 
-    for (var i = 0; i < genresLength; i++) {
-      genreList.push(genres[i]);
-    }
-  }).then(Movie.find().distinct("genre").then(function (genres) {
-    var genresLength = genres.length;
+            for (var i = 0; i < genresLength; i++) {
+              if (!allGenres.includes(genres[i])) {
+                allGenres.push(genres[i]);
+              }
+            }
+          }).then(Movie.find().distinct("genre").then(function (genres) {
+            var genresLength = genres.length;
 
-    for (var i = 0; i < genresLength; i++) {
-      if (!genreList.includes(genres[i])) {
-        genreList.push(genres[i]);
+            for (var i = 0; i < genresLength; i++) {
+              if (!allGenres.includes(genres[i])) {
+                allGenres.push(genres[i]);
+              }
+            }
+          }))["catch"](function (err) {
+            console.log(_templateObject2(), err);
+          })["catch"](function (err) {
+            console.log(_templateObject3(), err);
+          }));
+
+        case 2:
+          return _context.abrupt("return");
+
+        case 3:
+        case "end":
+          return _context.stop();
       }
     }
-
-    allGenres = genreList;
-    return;
-  }))["catch"](function (err) {
-    console.log(_templateObject4(), err);
-  })["catch"](function (err) {
-    console.log(_templateObject5(), err);
   });
-  return;
 }
 
 function getCategories() {

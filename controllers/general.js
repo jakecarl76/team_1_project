@@ -10,6 +10,7 @@ let gameCategories = [];
 exports.getIndex = (req, res, next) => {
   getGenres();
   getCategories();
+  console.log(`genres: ${allGenres}; categories: ${gameCategories}`);
   res.render('general/index', {
     pageTitle: "Welcome to the Entertainment Library!",
     path: '/'
@@ -17,70 +18,23 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getAddItem= (req, res, next) => {
-
-  let allGenres = [];
-  let gameCategories = [];
-
-  Book.find().distinct("genre")
-    .then(genres => {
-      let genresLength = genres.length;
-      for(let i=0; i < genresLength; i++){
-        allGenres.push(genres[i]);
-      }
-    }).then(
-      Movie.find().distinct("genre")
-      .then(genres => {
-        let genresLength = genres.length;
-        for(let i=0; i < genresLength; i++){
-          if(!allGenres.includes(genres[i])){
-            allGenres.push(genres[i]);
-          }
-        }
-        return allGenres;
-      }).then(
-        Game.find().distinct("category")
-          .then(categories => {
-            let categoriesLength = categories.length;
-            for(let i=0; i < categoriesLength; i++){
-              gameCategories.push(categories[i]);
-            }
-            // return gameCategories;
-            res.render('admin/edit-item', {
-                  pageTitle: 'Add Item',
-                  path: '/add-item',
-                  editing: false,
-                  user: req.user.username,
-                  errorMessage: [],
-                  hasError: false,
-                  validationErrors: [],
-                  genres: allGenres,
-                  categories: gameCategories
-                })
-          })
-          .catch(err => {
-            console.log`Error getAddItem-Game ${err}`;
-          })
-      // ).then(allGenres => {
-      //   //send to add item page with page and authentication info
-      //   res.render('admin/edit-item', {
-      //     pageTitle: 'Add Item',
-      //     path: '/add-item',
-      //     editing: false,
-      //     user: req.user.username,
-      //     errorMessage: [],
-      //     hasError: false,
-      //     validationErrors: [],
-      //     genres: allGenres,
-      //     categories: gameCategories
-      //   })
-      // }
-      ))
-      .catch(err => {
-        console.log`Error getAddItem-Movie ${err}`;
-      })
-    .catch(err => {
-      console.log`Error getAddItem-Book ${err}`;
-    });
+  getGenres().then(() => {
+    console.log`getAddItem - allGenres: ${allGenres}`;
+    res.render('admin/edit-item', {
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      user: req.user.username,
+      itemType: null,
+      item: null,
+      genres: allGenres,
+      categories: gameCategories,
+      errorMessage: [],
+      hasError: false,
+      validationErrors: [],
+      categories: gameCategories
+    })
+  })
 }
 
 // NEED FIX Dummy code, delete once database content is added
@@ -452,33 +406,31 @@ exports.postAddItem = (req, res, next) => {
 
 }
 
-function getGenres(){
-  let genreList = [];
-
-  Book.find().distinct("genre")
+async function getGenres(){
+  await Book.find().distinct("genre")
     .then(genres => {
       let genresLength = genres.length;
       for(let i=0; i < genresLength; i++){
-        genreList.push(genres[i]);
+        if(!allGenres.includes(genres[i])){
+          allGenres.push(genres[i]);
+        }
       }
     }).then(
       Movie.find().distinct("genre")
       .then(genres => {
         let genresLength = genres.length;
         for(let i=0; i < genresLength; i++){
-          if(!genreList.includes(genres[i])){
-            genreList.push(genres[i]);
+          if(!allGenres.includes(genres[i])){
+            allGenres.push(genres[i]);
           }
         }
-        allGenres = genreList;
-        return;
       })
       )
       .catch(err => {
-        console.log`Error getAddItem-Movie ${err}`;
+        console.log`Error getGenres-Movie ${err}`;
       })
     .catch(err => {
-      console.log`Error getAddItem-Book ${err}`;
+      console.log`Error getGenres-Book ${err}`;
     })
     return;
 }
