@@ -1,7 +1,37 @@
 "use strict";
 
-function _templateObject2() {
+function _templateObject5() {
   var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
+
+  _templateObject5 = function _templateObject5() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject4() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
+
+  _templateObject4 = function _templateObject4() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
+
+  _templateObject3 = function _templateObject3() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -11,7 +41,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
+  var data = _taggedTemplateLiteral(["Error getAddItem-Game ", ""]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -42,16 +72,63 @@ exports.getIndex = function (req, res, next) {
 };
 
 exports.getAddItem = function (req, res, next) {
-  res.render('admin/edit-item', {
-    pageTitle: 'Add Item',
-    path: '/add-item',
-    editing: false,
-    user: req.user.username,
-    errorMessage: [],
-    hasError: false,
-    validationErrors: [],
-    genres: allGenres,
-    categories: gameCategories
+  var allGenres = [];
+  var gameCategories = [];
+  Book.find().distinct("genre").then(function (genres) {
+    var genresLength = genres.length;
+
+    for (var i = 0; i < genresLength; i++) {
+      allGenres.push(genres[i]);
+    }
+  }).then(Movie.find().distinct("genre").then(function (genres) {
+    var genresLength = genres.length;
+
+    for (var i = 0; i < genresLength; i++) {
+      if (!allGenres.includes(genres[i])) {
+        allGenres.push(genres[i]);
+      }
+    }
+
+    return allGenres;
+  }).then(Game.find().distinct("category").then(function (categories) {
+    var categoriesLength = categories.length;
+
+    for (var i = 0; i < categoriesLength; i++) {
+      gameCategories.push(categories[i]);
+    } // return gameCategories;
+
+
+    res.render('admin/edit-item', {
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      user: req.user.username,
+      errorMessage: [],
+      hasError: false,
+      validationErrors: [],
+      genres: allGenres,
+      categories: gameCategories
+    });
+  })["catch"](function (err) {
+    console.log(_templateObject(), err);
+  }) // ).then(allGenres => {
+  //   //send to add item page with page and authentication info
+  //   res.render('admin/edit-item', {
+  //     pageTitle: 'Add Item',
+  //     path: '/add-item',
+  //     editing: false,
+  //     user: req.user.username,
+  //     errorMessage: [],
+  //     hasError: false,
+  //     validationErrors: [],
+  //     genres: allGenres,
+  //     categories: gameCategories
+  //   })
+  // }
+  ))["catch"](function (err) {
+    console.log(_templateObject2(), err);
+  })["catch"](function (err) {
+    console.log(_templateObject3(), err);
   });
 }; // NEED FIX Dummy code, delete once database content is added
 
@@ -159,11 +236,7 @@ exports.getEditItem = function (req, res, next) {
 
   if (!editMode) {
     return res.redirect('/');
-  }
-  /*NEED TO ADD ITEM TYPE TO EDIT LINK ON MY ITEMS*/
-
-  /*NEED TO ADD ITEM ID TO EDIT LINK ON MY ITEMS*/
-  //gather item id and type from params
+  } //gather item id and type from params
 
 
   var itemId = req.params.itemId;
@@ -172,6 +245,7 @@ exports.getEditItem = function (req, res, next) {
   switch (itemType) {
     case "book":
       Book.findById(itemId).then(function (item) {
+        console.log("case:book- item: ".concat(item));
         displayEditItem(item, itemType, editMode, res, req);
       })["catch"](function (err) {
         var error = new Error(err);
@@ -183,6 +257,7 @@ exports.getEditItem = function (req, res, next) {
 
     case game:
       Game.findById(itemId).then(function (item) {
+        console.log("getEditItem 4");
         displayEditItem(item, itemType, editMode, res, req);
       })["catch"](function (err) {
         var error = new Error(err);
@@ -194,6 +269,7 @@ exports.getEditItem = function (req, res, next) {
 
     case movie:
       Movie.findById(itemId).then(function (item) {
+        console.log("getEditItem 5");
         displayEditItem(item, itemType, editMode, res, req);
       })["catch"](function (err) {
         var error = new Error(err);
@@ -214,6 +290,7 @@ exports.getEditItem = function (req, res, next) {
 function displayEditItem(item, itemType, editMode, res, req) {
   //if no item, redirect Home
   if (!item) {
+    console.log("NO ITEM TO DISPLAY");
     return res.redirect('/');
   } //if product found, send to edit product with product info
 
@@ -227,7 +304,7 @@ function displayEditItem(item, itemType, editMode, res, req) {
     genres: allGenres,
     categories: gameCategories,
     hasError: false,
-    user: req.user.name,
+    //user: req.user.name,    Uncomment out once user login working
     errorMessage: "",
     validationErrors: []
   });
@@ -311,7 +388,6 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getGenres();
         console.log('Created Book');
-        getGenres();
         res.redirect('/admin/products');
       })["catch"](function (err) {
         console.log("postAddItem - switch(book) catch: ".concat(err));
@@ -350,7 +426,6 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getGenres();
         console.log('Created Movie');
-        getGenres();
         res.redirect('/admin/products');
       })["catch"](function (err) {
         console.log("postAddProduct - switch(movie) catch: ".concat(err));
@@ -389,7 +464,6 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
-        getCategories();
         res.redirect('/admin/products');
       })["catch"](function (err) {
         console.log("postAddProduct - switch(game) catch: ".concat(err));
@@ -456,24 +530,17 @@ function getGenres() {
     }
 
     allGenres = genreList;
-    console.log("getGenres- allGenres: ".concat(allGenres));
     return;
   }))["catch"](function (err) {
     console.log(_templateObject4(), err);
   })["catch"](function (err) {
     console.log(_templateObject5(), err);
-
   });
   return;
 }
 
 function getCategories() {
   Game.find().distinct("category").then(function (categories) {
-    // let categoriesLength = categories.length;
-    // for(let i=0; i < categoriesLength; i++){
-    //   gameCategories.push(categories[i]);
-    // }
     gameCategories = categories;
-    console.log("getCategories- gameCategories: ".concat(gameCategories));
   });
 }

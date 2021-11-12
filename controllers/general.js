@@ -204,16 +204,12 @@ exports.getBooks = (req, res, next) => {
 exports.getEditItem = (req, res, next) => {
   //Is the user in edit mode? Only allow access if in edit mode.
   const editMode = true; //req.query.edit;
-
+  
   //if not in edit mode, redirect Home
   if(!editMode){
     return res.redirect('/');
   }
-
-  /*NEED TO ADD ITEM TYPE TO EDIT LINK ON MY ITEMS*/
   
-
-/*NEED TO ADD ITEM ID TO EDIT LINK ON MY ITEMS*/
   //gather item id and type from params
   const itemId = req.params.itemId;
   const itemType = req.params.itemType.toString();
@@ -223,6 +219,7 @@ exports.getEditItem = (req, res, next) => {
     case "book":
       Book.findById(itemId)
       .then(item => {   
+        console.log(`case:book- item: ${item}`);
         displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
@@ -235,6 +232,7 @@ exports.getEditItem = (req, res, next) => {
     case game:
       Game.findById(itemId)
       .then(item => {   
+        console.log(`getEditItem 4`);
         displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
@@ -247,6 +245,7 @@ exports.getEditItem = (req, res, next) => {
     case movie:
       Movie.findById(itemId)
       .then(item => {   
+        console.log(`getEditItem 5`);
         displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
@@ -263,18 +262,21 @@ exports.getEditItem = (req, res, next) => {
 }
   
 /* used in getEditItem*/
-function displayEditItem(item, itemType, res, req){
+function displayEditItem(item, itemType, editMode, res, req){
   //if no item, redirect Home
   if (!item) {
+    console.log(`NO ITEM TO DISPLAY`);
     return res.redirect('/');
   }
   //if product found, send to edit product with product info
-  res.render('/edit-item', {
+  res.render('admin/edit-item', {
     pageTitle: 'Edit Item',
     path: '/edit-item',
     editing: editMode,
     itemType: itemType,
     item: item,
+    genres: allGenres,
+    categories: gameCategories,
     hasError: false,
     //user: req.user.name,    Uncomment out once user login working
     errorMessage: "",
@@ -469,7 +471,6 @@ function getGenres(){
           }
         }
         allGenres = genreList;
-        console.log(`getGenres- allGenres: ${allGenres}`);
         return;
       })
       )
@@ -486,11 +487,6 @@ function getGenres(){
 function getCategories(){
   Game.find().distinct("category")
     .then(categories => {
-      // let categoriesLength = categories.length;
-      // for(let i=0; i < categoriesLength; i++){
-      //   gameCategories.push(categories[i]);
-      // }
       gameCategories = categories;
-      console.log(`getCategories- gameCategories: ${gameCategories}`);
     })
 }
