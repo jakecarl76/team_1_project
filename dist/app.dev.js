@@ -12,12 +12,12 @@ function _templateObject() {
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
-//imported models
-var User = require('./models/user'); //Imported pgks & vars
-
-
-var PORT = process.env.PORT || 3005; //Server env | 
-
+//NANCI NEWELL
+// Mikhail!
+// Tyson: the somewhat sufficient
+// Okay, am I doing this correctly?
+//Imported pgks & vars
+// const PORT = process.env.PORT || 3005; //Server env | 
 var path = require('path');
 
 var express = require('express');
@@ -38,21 +38,18 @@ var multer = require('multer');
 
 var cors = require('cors');
 
+var User = require('./models/user');
+
 var app = express();
 
 require('dotenv').config();
 
-var SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env    var at some point'; //NEED FIX -need to set up var in heroku app
-//test.env
+var PORT = process.env.PORT || 3005; //Server env | localhost
 
-var test_var = process.env.TEST_VAR || "testvarnot set";
-var MONGODB_URL = process.env.MONGODB_URL || 'mongodb+srv://cse341Team1:dyJ2wI1RO5Sa4b5m@cluster0.s0nia.mongodb.net/cse341Team1Project?retryWrites=true'; //MOVE THIS LINK INTO YOUR .ENV FILE!
-//cors options
+var MONGODB_URL = process.env.MONGODB_URL || "MONGODB_URL var not set"; //NEED FIX - need to set up env var in heroku app
 
-var corsOptions = {
-  origin: "https://cse341team1.herokuapp.com/",
-  optionsSuccessStatus: 200
-}; //Multer Setup
+var SESSION_SECRET = process.env.SESSION_SECRET || 'a really long session secret string that we need to change to use a .env var at some point'; //NEED FIX -need to set up var in heroku app
+//Multer Setup
 
 var multerStorage = multer.diskStorage({
   destination: function destination(req, file, cb_func) {
@@ -65,7 +62,7 @@ var multerStorage = multer.diskStorage({
     //could do error checking/etc stuff here
     var err = null; //pass result back to cb_func, set file name to curr time number + original name
 
-    cb_func(err, new Date().toISOString().replace(':', '-').replace(' ', '-') + '-' + file.originalname);
+    cb_func(err, Date.now().toString() + '-' + file.originalname);
   }
 }); //END MULTER STORAGE OBJ
 //create multer filter for filtering allowed image file types
@@ -104,6 +101,7 @@ var libRoutes = require('./routes/lib');
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+app.use(express.json());
 app.use(express["static"](path.join(__dirname, 'public')));
 app.use('/images', express["static"](path.join(__dirname, 'images'))); //set app to use multer
 
@@ -121,13 +119,9 @@ app.use(expressSession({
   saveUninitialized: false,
   //cookie: {maxAge: ....} //can set this if we feel we need to
   store: store
-})); //setup CORS (allow other sites to access ours)
+})); //set up to use csurf middleware
 
-app.use(cors(corsOptions)); //setup csrf 
-
-app.use(csrfProtection); //use flash
-
-app.use(flash()); //set up/attach user to req obj
+app.use(csrfProtection); //set up/attach user to req obj
 
 app.use(function (req, res, next) {
   if (!req.session.user) {
@@ -149,23 +143,16 @@ app.use(function (req, res, next) {
 }); //attach common items to locals so .ejs can use them (saves from doing in each ctrl'er middleware)
 
 app.use(function (req, res, next) {
-  //NEED FIX -  uncomment after sessions is intergrated
-
-  /*
   //check user logged in
-  res.locals.isLoggedin = req.sesion.isLoggedin;
-  if(req.session.user)
-  {
-    //set user vars
+  res.locals.isLoggedin = req.session.isLoggedin;
+
+  if (req.session.user) {//set user vars
     //eg.: userImg
-  }
-  else
-  {
-    //set defaults for user inputs
+  } else {} //set defaults for user inputs
     //eg: userImg = default/notlogged in img
-  }
-  */
-  //set default error message
+    //set default error message
+
+
   res.locals.error_msg = "";
   res.locals.msg = "";
   next();
@@ -173,14 +160,18 @@ app.use(function (req, res, next) {
 
 app.use(generalRoutes);
 app.use(authRoutes);
-app.use(libRoutes);
-console.log(test_var); //special error handling (ie. when a middleware calls next(err_obj) )
+app.use(libRoutes); // console.log(test_var);
+//special error handling (ie. when a middleware calls next(err_obj) )
 
 app.use(function (err, req, res, next) {
   console.log(_templateObject(), err); // res.redirect('/500');
-}); //add error 500 error catcher
-//app.use('/500', error_ctrl.err_500)
-//set up 404 catch all
+}); //setup CORS (allow other sites to access ours)
+//cors options
+
+var corsOptions = {
+  origin: "https://cse341team1.herokuapp.com/",
+  optionsSuccessStatus: 200
+}; //set up 404 catch all
 //app.use(err_ctrl.err_404)
 
 var options = {
@@ -195,6 +186,4 @@ mongoose.connect(MONGODB_URL, options).then(function (result) {
   });
 })["catch"](function (err) {
   return console.log("Error starting app: " + err);
-}); //NEED FIX -- delete code below after MongoDB is set up and can use above commented-out code
-
-/*app.listen(PORT, () => console.log("App listening on port#: " + PORT));*/
+});
