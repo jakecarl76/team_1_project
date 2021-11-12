@@ -37,7 +37,7 @@ const multerStorage = multer.diskStorage({
     let err = null;
 
     //pass result back to cb_func, set file name to curr time number + original name
-    cb_func(err, (new Date().toISOString().replace(':','-').replace(' ','-') + '-' + file.originalname));
+    cb_func(err, (new Date().now() + '-' + file.originalname));
   }
 });//END MULTER STORAGE OBJ
 
@@ -115,6 +115,7 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
       .then(user => {
+        //attach user reference to current request
         req.user = user;
         next();
       })
@@ -123,7 +124,6 @@ app.use((req, res, next) => {
 
 //attach csurf token
 app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
 });
@@ -133,21 +133,28 @@ app.use((req, res, next) => {
 app.use( (req, res, next) => {
 
   //check user logged in
-  res.locals.isLoggedin = req.session.isLoggedin;
+  res.locals.isLoggedin = req.session.isLoggedin;//this var set when user logs in
   if(req.session.user)
   {
     //set user vars
     //eg.: userImg
+    res.locals.userObj = req.user;
   }
   else
   {
     //set defaults for user inputs
     //eg: userImg = default/notlogged in img
+    res.locals.userObj = new User({
+      username: "",
+      email: "",
+      password: "",
+      userImage: '/images/default-user-image.png'
+    });
   }
 
   //set default error message
-  res.locals.error_msg = "";
-  res.locals.msg = "";
+  res.locals.errMsgs = "";
+  res.locals.msgs = "";
   next();
 });
 
