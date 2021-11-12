@@ -1,6 +1,16 @@
 <%- include('../includes/head.ejs') %>
 <script src="/js/utils.js"></script>
-
+<style>
+  /*delete this style when intergrated in main.css */
+  .invalid
+  {
+    border: solid red 3px;
+  }
+  .valid
+  {
+    border: solid green 3px;
+  }
+</style>
 </head>
 <body>
   <%- include('../includes/nav.ejs') %>
@@ -15,7 +25,7 @@
 
 
     <h1>
-      Welcome <%= userObj.username %>, to your Entertainment Library Profile!
+      Welcome <span id="welcomeUsername"><%= userObj.username %></span>, to your Entertainment Library Profile!
     </h1>
     <div>
       <%- include('../includes/msgs.ejs') %> 
@@ -24,18 +34,33 @@
     <h2 id="largeUserName"><%= userObj.username %></h2>
 
     <div>
-      <img alt="User's Profile Image" src="<%= userObj.userImage %>">
+      <img id="userImg" alt="User's Profile Image" src="<%= userObj.userImage %>">
+    </div>
+
+    <div id="userImgOptionsDiv">
+      <input type="button" value="Change Profile Image" 
+       onclick="toggleDivById('changeUserImgDiv'); toggleDiv(this.parentElement);">
+    </div>
+    <div id="changeUserImgDiv" class="hidden">
+      <label for="image">Change Profile Image</label>
+      <input type="file" id="image" name="image">
+      <p id="userImgStatus"></p>
+      <input type="button" id="changeUserImg" value="Change">
+      <input type="button" value="Cancel" 
+       onclick="toggleDivById('userImgOptionsDiv'); toggleDiv(this.parentElement);">
     </div>
 
     <div>
       <h3 id="smallUserName"><%= userObj.username %></h3>
     </div>
 
-    <div id="usernameOptionsDiv" class="form-control">
-      <input type="button" value="Change Username" 
+    <input type="hidden" id="userId" value="<%= userObj._id %>">
+
+    <div id="usernameOptionsDiv">
+      <input type="button" value="Change Account Username" 
        onclick="toggleDivById('changeUsernameDiv'); toggleDiv(this.parentElement);">
     </div>
-    <div id="changeUsernameDiv" class="hidden2 form-control">
+    <div id="changeUsernameDiv" class="hidden">
       <label for="username">Username</label>
       <input type="text" id="username" name="username"
        value="<%= userObj.username %>">
@@ -45,30 +70,84 @@
        onclick="toggleDivById('usernameOptionsDiv'); toggleDiv(this.parentElement);">
     </div>
 
-    
+    <h3 id="smallEmail"><%= userObj.email %></h3>
 
-
-    <form action="/signup" method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
-      
+    <div id="emailOptionsDiv">
+      <input type="button" value="Change Account Email"
+       onclick="toggleDivById('changeEmailDiv'); toggleDiv(this.parentElement);">
+    </div>
+    <div id="changeEmailDiv" class="hidden">
       <label for="email">Email</label>
       <input type="email" id="email" name="email"
-      value="<% if(locals.errValues && locals.errValues.email){ %><%= locals.errValues.email %><% } %>">
+      value="<%= userObj.email %>">
+      <p id="emailStatus"></p>
+      <input type="button" id="changeEmail" value="Change">
+      <input type="button" value="Cancel" 
+       onclick="toggleDivById('emailOptionsDiv'); toggleDiv(this.parentElement);">
+    </div>
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password">
+    <div id="passwordOptionsDiv">
+      <input type="button" value="Change Account Password"
+       onclick="toggleDivById('changePasswordDiv'); toggleDiv(this.parentElement);">
+    </div>
+    <div id="changePasswordDiv" class="hidden">
+      <label for="oldPassword">Old Password</label>
+      <input type="password" id="oldPassword" name="oldPassword">
 
-      <p>Password must be 9 characters or longer.</p>
+      <p>New password must be at least 9 characters long.</p>
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" name="newPassword">
       
-      <label for="cPassword">Confirm Password</label>
-      <input type="password" id="cPassword" name="cPassword">
+      <label for="cNewPassword">Confirm New Password</label>
+      <input type="password" id="cNewPassword" name="cNewPassword">
+      <ul id="passwordStatus"></ul>
+      <input type="button" id="changePassword" value="Change">
+      <input type="button" value="Cancel" 
+       onclick="toggleDivById('passwordOptionsDiv'); toggleDiv(this.parentElement);">
+    </div>
 
-      <input type="submit" value="Signup">
-      
-    </form>
+
   </main>
 
   <script>
+    //USER IMAGE
+    //add 'submit' to change userIMG
+    document.getElementById("changeUserImg")
+    .addEventListener("click", function() {
+        let tmpData = new FormData();//this will auto set headers
+        tmpData.append('userId', document.getElementById("userId").value);
+        tmpData.append('image', document.getElementById("image").files[0]);
+
+        fetch('/change-user-image', {
+          method: 'POST',
+          headers: {
+            //'Content-Type': //not needed -> autoset by new FormData()
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: tmpData
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            document.getElementById("userImgStatus").innerHTML = data.msg;
+            //change all username refferences
+            document.getElementById("userImg").src = data.newImgURL;
+          }
+          else
+          {
+            document.getElementById("userImgStatus").innerHTML = data.errMsg;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHANGE IMG EVENT LISTENER
+
+    //USERNAME
     //add auto checker to username
     document.getElementById("username")
     .addEventListener("input", function() {
@@ -105,9 +184,329 @@
         });
       }
     );//END ADD CHECK EVENT LISTENER
-    //add event listener to do fectch to change name
-      //make sure on success changes all instances of user name
-      //makse sure in the app side that checks session.user that is the same
+
+    //add 'submit' to change username
+    document.getElementById("changeUsername")
+    .addEventListener("click", function() {
+        let tmpData = {
+          username: document.getElementById("username").value,
+          userId: document.getElementById("userId").value
+        };
+        fetch('/change-user-name', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            document.getElementById("usernameStatus").innerHTML = data.msg;
+            //change all username refferences
+            document.getElementById("welcomeUsername").innerHTML = data.newUsername;
+            document.getElementById("largeUserName").innerHTML = data.newUsername;
+            document.getElementById("smallUserName").innerHTML = data.newUsername;
+          }
+          else
+          {
+            document.getElementById("username").classList.add("invalid");
+            document.getElementById("username").classList.remove("valid");
+            document.getElementById("usernameStatus").innerHTML = data.errMsg;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHECK EVENT LISTENER
+
+    //EMAIL
+    //add auto checker to email
+    document.getElementById("email")
+    .addEventListener("input", function() {
+        let tmpData = {
+          email: this.value
+        };
+        fetch('/check-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            document.getElementById("email").classList.add("valid");
+            document.getElementById("email").classList.remove("invalid");
+            document.getElementById("emailStatus").innerHTML = data.msg;
+          }
+          else
+          {
+            document.getElementById("email").classList.add("invalid");
+            document.getElementById("email").classList.remove("valid");
+            document.getElementById("emailStatus").innerHTML = data.errMsg;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHECK EVENT LISTENER
+
+    //add 'submit' to change email
+    document.getElementById("changeEmail")
+    .addEventListener("click", function() {
+        let tmpData = {
+          email: document.getElementById("email").value,
+          userId: document.getElementById("userId").value
+        };
+        fetch('/change-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            document.getElementById("emailStatus").innerHTML = data.msg;
+            //change all username refferences
+            document.getElementById("smallEmail").innerHTML = data.newEmail;
+          }
+          else
+          {
+            document.getElementById("email").classList.add("invalid");
+            document.getElementById("email").classList.remove("valid");
+            document.getElementById("emailStatus").innerHTML = data.errMsg;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHECK EVENT LISTENER
+
+    //Password
+    function checkPassword()
+    {
+      let tmpPwd = document.getElementById("newPassword").value;
+      let lenCheck = true;
+      let secureCheck = true;
+      let isNewCheck = true;
+      let errs = [];
+
+      //check password
+      if(tmpPwd.length < 9)
+      {
+        lenCheck = false;
+        errs.push("Password must be at least 9 characters long.");
+      }
+
+      if(tmpPwd.toLowerCase() == "password" || tmpPwd == "123456789")
+      {
+        secureCheck = false;
+        errs.push("That password is insecure. Please choose another");
+      }
+
+      if(tmpPwd == document.getElementById('oldPassword').value)
+      {
+        isNewCheck = false;
+        errs.push("New Password cannot be the same as the old Password.")
+      }
+
+
+      if(lenCheck && secureCheck && isNewCheck)
+      {
+        document.getElementById("newPassword").classList.add("valid");
+        document.getElementById("newPassword").classList.remove("invalid");
+        document.getElementById("passwordStatus").innerHTML = "";
+        return true;
+      }
+      else
+      {
+        document.getElementById("newPassword").classList.add("invalid");
+        document.getElementById("newPassword").classList.remove("valid");
+        document.getElementById("passwordStatus").innerHTML = "";
+        //show errors
+        for(err of errs)
+        {console.log(err);
+          document.getElementById('passwordStatus').innerHTML += "<li>" + err + "</li>";
+        }
+        return false;
+      }//END IF CHECK ERRS
+
+    }//END FUNC CHECK PASSWORD
+
+    
+    function checkCNewPassword()
+    {
+      let tmpPwd = document.getElementById("cNewPassword").value;
+      let isSame = true;
+      let errs = [];
+
+      if(tmpPwd != document.getElementById('newPassword').value)
+      {
+        isSame = false;
+        errs.push("The confirm new password must match the new password.")
+      }
+
+
+      if(isSame)
+      {
+        document.getElementById("cNewPassword").classList.add("valid");
+        document.getElementById("cNewPassword").classList.remove("invalid");
+        document.getElementById("passwordStatus").innerHTML = "";
+        return true;
+      }
+      else
+      {
+        document.getElementById("cNewPassword").classList.add("invalid");
+        document.getElementById("cNewPassword").classList.remove("valid");
+        document.getElementById("passwordStatus").innerHTML = "";
+
+        //show errors
+        for(err of errs)
+        {console.log(err);
+          document.getElementById('passwordStatus').innerHTML += "<li>" + err + "</li>";
+        }
+        return false;
+      }//END IF CHECK ERRS
+
+    }//END FUNC CHECK CONFIRM PASSWORD
+
+    //add local auto checker to new password
+    document.getElementById("newPassword")
+    .addEventListener("input", checkPassword);
+
+    //add local auto checker to Confirm password
+    document.getElementById("cNewPassword")
+    .addEventListener("input", checkCNewPassword);
+    
+    //add event listener to password to change style when fixing it
+    document.getElementById('oldPassword')
+    .addEventListener('input', function() {
+      this.classList.remove('invalid');
+    })
+
+    //add 'submit' to change password
+    document.getElementById("changePassword")
+    .addEventListener("click", function() {
+        //Check inputs on clientside first
+        let newErrs = [];
+        let cPwdCheck = checkCNewPassword();
+        let pwdCheck = checkPassword();
+        let oldPwdCheck = true;
+        let cNewPwdCheck = true;
+        
+        //check old password is entered
+        if(document.getElementById('oldPassword').value == '')
+        {
+          newErrs.push("You must enter your old password to change it.");
+          oldPwdCheck = false;
+        }
+
+        //check cPassword matches new password
+        if(document.getElementById('cNewPassword').value != document.getElementById('newPassword').value)
+        {
+          newErrs.push("The Confirm New Password must match the New Password.");
+          cNewPwdCheck = false;
+        }
+        
+        //display new errs
+        for(err of newErrs)
+        {
+          document.getElementById('passwordStatus').innerHTML += "<li>" + err + "</li>";
+        }
+
+        //exit if any errors
+        if(!pwdCheck || !oldPwdCheck || !cNewPwdCheck)
+        {
+          return false;
+        }
+
+        //no errors found, send request to change password
+
+
+        let tmpData = {
+          oldPwd: document.getElementById("oldPassword").value,
+          newPwd: document.getElementById("newPassword").value,
+          cNewPwd: document.getElementById("cNewPassword").value,
+          userId: document.getElementById("userId").value
+        };
+        fetch('/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            document.getElementById("passwordStatus").innerHTML = data.msg;
+            //clear password fields
+            document.getElementById('oldPassword').value = "";
+            document.getElementById('newPassword').value = "";
+            document.getElementById('cNewPassword').value = "";
+          }
+          else
+          {
+            //clear messages
+            document.getElementById("passwordStatus").innerHTML = "";
+            //display err msgs
+            for(err of data.errMsg)
+            {
+              document.getElementById("passwordStatus").innerHTML += "<li>" + err + "</li>";
+            }
+
+            //hilgiht fields
+            for(errId of data.errIds)
+            {
+              if(errId == "newPwd")
+              {
+                document.getElementById("newPassword").classList.add("invalid");
+                document.getElementById("newPassword").classList.remove("valid");
+              }
+              else if(errId == "oldPwd")
+              {
+                document.getElementById("oldPassword").classList.add("invalid");
+                document.getElementById("oldPassword").classList.remove("valid");
+              }
+              else if(errId == "cNewPwd")
+              {
+                document.getElementById("cNewPassword").classList.add("invalid");
+                document.getElementById("cNewPassword").classList.remove("valid");
+              }
+            }
+
+            
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHANGE PASSWORD EVENT LISTENER
+
   </script>
 
   <%- include('../includes/end.ejs') %>
