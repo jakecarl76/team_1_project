@@ -1,37 +1,7 @@
 "use strict";
 
-function _templateObject5() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
-
-  _templateObject5 = function _templateObject5() {
-    return data;
-  };
-
-  return data;
-}
-
-function _templateObject4() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
-
-  _templateObject4 = function _templateObject4() {
-    return data;
-  };
-
-  return data;
-}
-
-function _templateObject3() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
-
-  _templateObject3 = function _templateObject3() {
-    return data;
-  };
-
-  return data;
-}
-
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
+  var data = _taggedTemplateLiteral(["Error getAddItem-Book ", ""]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -41,7 +11,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["Error getAddItem-Game ", ""]);
+  var data = _taggedTemplateLiteral(["Error getAddItem-Movie ", ""]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -72,63 +42,16 @@ exports.getIndex = function (req, res, next) {
 };
 
 exports.getAddItem = function (req, res, next) {
-  var allGenres = [];
-  var gameCategories = [];
-  Book.find().distinct("genre").then(function (genres) {
-    var genresLength = genres.length;
-
-    for (var i = 0; i < genresLength; i++) {
-      allGenres.push(genres[i]);
-    }
-  }).then(Movie.find().distinct("genre").then(function (genres) {
-    var genresLength = genres.length;
-
-    for (var i = 0; i < genresLength; i++) {
-      if (!allGenres.includes(genres[i])) {
-        allGenres.push(genres[i]);
-      }
-    }
-
-    return allGenres;
-  }).then(Game.find().distinct("category").then(function (categories) {
-    var categoriesLength = categories.length;
-
-    for (var i = 0; i < categoriesLength; i++) {
-      gameCategories.push(categories[i]);
-    } // return gameCategories;
-
-
-    res.render('admin/edit-item', {
-      pageTitle: 'Add Item',
-      path: '/add-item',
-      editing: false,
-      user: req.user.username,
-      errorMessage: [],
-      hasError: false,
-      validationErrors: [],
-      genres: allGenres,
-      categories: gameCategories
-    });
-  })["catch"](function (err) {
-    console.log(_templateObject(), err);
-  }) // ).then(allGenres => {
-  //   //send to add item page with page and authentication info
-  //   res.render('admin/edit-item', {
-  //     pageTitle: 'Add Item',
-  //     path: '/add-item',
-  //     editing: false,
-  //     user: req.user.username,
-  //     errorMessage: [],
-  //     hasError: false,
-  //     validationErrors: [],
-  //     genres: allGenres,
-  //     categories: gameCategories
-  //   })
-  // }
-  ))["catch"](function (err) {
-    console.log(_templateObject2(), err);
-  })["catch"](function (err) {
-    console.log(_templateObject3(), err);
+  res.render('admin/edit-item', {
+    pageTitle: 'Add Item',
+    path: '/add-item',
+    editing: false,
+    user: req.user.username,
+    errorMessage: [],
+    hasError: false,
+    validationErrors: [],
+    genres: allGenres,
+    categories: gameCategories
   });
 }; // NEED FIX Dummy code, delete once database content is added
 
@@ -288,21 +211,23 @@ exports.getEditItem = function (req, res, next) {
 /* used in getEditItem*/
 
 
-function displayEditItem(item, itemType, res, req) {
+function displayEditItem(item, itemType, editMode, res, req) {
   //if no item, redirect Home
   if (!item) {
     return res.redirect('/');
   } //if product found, send to edit product with product info
 
 
-  res.render('/edit-item', {
+  res.render('admin/edit-item', {
     pageTitle: 'Edit Item',
     path: '/edit-item',
     editing: editMode,
     itemType: itemType,
     item: item,
+    genres: allGenres,
+    categories: gameCategories,
     hasError: false,
-    //user: req.user.name,    Uncomment out once user login working
+    user: req.user.name,
     errorMessage: "",
     validationErrors: []
   });
@@ -386,6 +311,7 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getGenres();
         console.log('Created Book');
+        getGenres();
         res.redirect('/admin/products');
       })["catch"](function (err) {
         console.log("postAddItem - switch(book) catch: ".concat(err));
@@ -424,6 +350,7 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getGenres();
         console.log('Created Movie');
+        getGenres();
         res.redirect('/admin/products');
       })["catch"](function (err) {
         console.log("postAddProduct - switch(movie) catch: ".concat(err));
@@ -462,6 +389,7 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
+        getCategories();
         res.redirect('/admin/products');
       })["catch"](function (err) {
         console.log("postAddProduct - switch(game) catch: ".concat(err));
@@ -534,6 +462,7 @@ function getGenres() {
     console.log(_templateObject4(), err);
   })["catch"](function (err) {
     console.log(_templateObject5(), err);
+
   });
   return;
 }
