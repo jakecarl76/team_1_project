@@ -17,7 +17,7 @@ router.get('/add-item', /*isAuth,*/ generalCtrl.getAddItem);
 
 router.post('/add-item', /*isAuth,*/ generalCtrl. postAddItem);
 
-router.get('/edit-item/:itemId', /*isAuth,*/ generalCtrl.getEditItem);
+router.get('/edit-item/:itemId/:itemType', /*isAuth,*/ generalCtrl.getEditItem);
 
 // Get route: Movies
 router.get('/movies', /*isAuth,*/ generalCtrl.getMovies);

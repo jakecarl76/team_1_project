@@ -4,6 +4,10 @@
 <body>
 <%- include('../includes/nav.ejs'); %>
 <main>
+    
+    <% console.log(`editing: ${editing}; itemType: ${itemType}; typeof itemType: ${typeof itemType}`);%>
+
+
     <% if(errorMessage){ %>
         <div class="user-message"><%= errorMessage %></div>
     <% } %>
@@ -13,11 +17,12 @@
             <div class="form-control">
                 <p>What would you like to <% if(!editing){ %> add<% } else { %> update<% } %>? </p>
                 <div id="radio-div" onclick=displayFields()>
-                    <input type="radio" name="itemType" id="type-book" value="book">
+                    <input type="radio" name="itemType" id="type-book" value="book" 
+                    <% if(editing && itemType == 'book'){ %> checked<% } %> > 
                     <label for="book">Book</label>
-                    <input type="radio" name="itemType" id="type-movie" value="movie">
+                    <input type="radio" name="itemType" id="type-movie" value="movie" <% if(editing && itemType == 'movie'){ %>checked<% } %> >
                     <label for="movie">Movie</label>
-                    <input type="radio" name="itemType" id="type-game" value="game">
+                    <input type="radio" name="itemType" id="type-game" value="game" <% if(editing && itemType == 'game'){ %>checked<% } %> >
                     <label for="game">Game</label>
                 </div>
             </div>
@@ -33,10 +38,10 @@
             <div class="form-control book movie hidden">
                 <label for="genre">Genre</label>
                 <select name="genre" id="genre" onclick="showNewGenre()">
-                    <option selected disabled>Select</option>
+                    <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
                     <% for( let genre of genres ){ %>
                         <option name="genre" 
-                        value="<% if(editing || hasError){ %><%= item.genre %><% }else{ %><%= genre %><% } %>"><%= genre %></option>
+                        value="<% if(editing || hasError){ %><%= item.genre %><% }else{ %><%= genre %><% } %>" <% if(item.genre == genre){%> selected <% } %>> <%= genre %></option>
                     <% } %>
                     <option name="genre" value="newGenre">New</option>
                 </select>
@@ -68,6 +73,9 @@
                 <%console.log(`edit-item.ejs   Categories: ${categories}; Genres: ${genres}`);%>
             </div>
             <div class="form-control book movie game hidden">
+                <% if(editing){ %>
+                    <img src="../../<%= item.imageUrl %>" alt="image of <%= item.title %>">
+                    <% } %>
                 <label for="image">Image</label>
                 <input type="file" name="image" id="image">
             </div>
@@ -89,7 +97,7 @@
             </div> 
         </fieldset>
     </form>
-    
+    <script>displayFields();</script>
 </main>
 
 <%- include('../includes/end.ejs'); %>

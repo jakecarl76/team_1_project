@@ -21,7 +21,7 @@ generalCtrl.getAddItem);
 router.post('/add-item',
 /*isAuth,*/
 generalCtrl.postAddItem);
-router.get('/edit-item/:itemId',
+router.get('/edit-item/:itemId/:itemType',
 /*isAuth,*/
 generalCtrl.getEditItem); //main index
 
