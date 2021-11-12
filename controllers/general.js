@@ -1,7 +1,7 @@
 //import models
 const Book = require('../models/book')
 const Movie = require('../models/movie')
-const Game = require('../models/game');
+const Game = require('../models/game')
 
 let allGenres = [];
 let gameCategories = [];
@@ -17,18 +17,70 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getAddItem= (req, res, next) => {
-  res.render('admin/edit-item', {
-    pageTitle: 'Add Item',
-    path: '/add-item',
-    editing: false,
-    user: req.user.username,
-    errorMessage: [],
-    hasError: false,
-    validationErrors: [],
-    genres: allGenres,
-    categories: gameCategories
-  })
-  
+
+  let allGenres = [];
+  let gameCategories = [];
+
+  Book.find().distinct("genre")
+    .then(genres => {
+      let genresLength = genres.length;
+      for(let i=0; i < genresLength; i++){
+        allGenres.push(genres[i]);
+      }
+    }).then(
+      Movie.find().distinct("genre")
+      .then(genres => {
+        let genresLength = genres.length;
+        for(let i=0; i < genresLength; i++){
+          if(!allGenres.includes(genres[i])){
+            allGenres.push(genres[i]);
+          }
+        }
+        return allGenres;
+      }).then(
+        Game.find().distinct("category")
+          .then(categories => {
+            let categoriesLength = categories.length;
+            for(let i=0; i < categoriesLength; i++){
+              gameCategories.push(categories[i]);
+            }
+            // return gameCategories;
+            res.render('admin/edit-item', {
+                  pageTitle: 'Add Item',
+                  path: '/add-item',
+                  editing: false,
+                  user: req.user.username,
+                  errorMessage: [],
+                  hasError: false,
+                  validationErrors: [],
+                  genres: allGenres,
+                  categories: gameCategories
+                })
+          })
+          .catch(err => {
+            console.log`Error getAddItem-Game ${err}`;
+          })
+      // ).then(allGenres => {
+      //   //send to add item page with page and authentication info
+      //   res.render('admin/edit-item', {
+      //     pageTitle: 'Add Item',
+      //     path: '/add-item',
+      //     editing: false,
+      //     user: req.user.username,
+      //     errorMessage: [],
+      //     hasError: false,
+      //     validationErrors: [],
+      //     genres: allGenres,
+      //     categories: gameCategories
+      //   })
+      // }
+      ))
+      .catch(err => {
+        console.log`Error getAddItem-Movie ${err}`;
+      })
+    .catch(err => {
+      console.log`Error getAddItem-Book ${err}`;
+    });
 }
 
 // NEED FIX Dummy code, delete once database content is added
@@ -211,22 +263,20 @@ exports.getEditItem = (req, res, next) => {
 }
   
 /* used in getEditItem*/
-function displayEditItem(item, itemType,  editMode, res, req){
+function displayEditItem(item, itemType, res, req){
   //if no item, redirect Home
   if (!item) {
     return res.redirect('/');
   }
   //if product found, send to edit product with product info
-  res.render('admin/edit-item', {
+  res.render('/edit-item', {
     pageTitle: 'Edit Item',
     path: '/edit-item',
     editing: editMode,
     itemType: itemType,
     item: item,
-    genres: allGenres,
-    categories: gameCategories,
     hasError: false,
-    user: req.user.name,
+    //user: req.user.name,    Uncomment out once user login working
     errorMessage: "",
     validationErrors: []
   })
@@ -303,8 +353,8 @@ exports.postAddItem = (req, res, next) => {
       book.save()
       .then(result => {
         //log success and redirect to admin products
-        console.log('Created Book');
         getGenres();
+        console.log('Created Book');
         res.redirect('/admin/products');
       })
       .catch(err => {
@@ -334,8 +384,8 @@ exports.postAddItem = (req, res, next) => {
       movie.save()
       .then(result => {
         //log success and redirect to admin products
-        console.log('Created Movie');
         getGenres();
+        console.log('Created Movie');
         res.redirect('/admin/products');
       })
       .catch(err => {
@@ -364,8 +414,8 @@ exports.postAddItem = (req, res, next) => {
       game.save()
       .then(result => {
         //log success and redirect to admin products
-        console.log('Created Game');
         getCategories();
+        console.log('Created Game');
         res.redirect('/admin/products');
       })
       .catch(err => {
@@ -399,7 +449,6 @@ exports.postAddItem = (req, res, next) => {
  }
 
 }
-
 
 function getGenres(){
   let genreList = [];
