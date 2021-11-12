@@ -115,5 +115,19 @@ function showNewCategory(){
     }
 }
 
-// let newGenreInput = document.getElementById("new-genre");
-// newGenreInput.addEventListener(");
+function checkType(itemType){
+    let bookRadio = document.getElementById("type-book");
+    let movieRadio = document.getElementById("type-movie");
+    let gameRadio = document.getElementById("type-game");
+
+    switch(itemType){
+        case "book": bookRadio.checked = true;
+            break;
+        case "movie": movieRadio.checked = true;
+            break;
+        case "game": gameRadio.checked = true;
+        break;
+    }
+
+    displayFields();
+}

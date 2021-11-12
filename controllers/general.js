@@ -4,9 +4,15 @@
 //import models
 const Book = require('../models/book')
 const Movie = require('../models/movie')
-const Game = require('../models/game')
+const Game = require('../models/game');
+
+let allGenres = [];
+let gameCategories = [];
+
 //get index
 exports.getIndex = (req, res, next) => {
+  getGenres();
+  getCategories();
   res.render('general/index', {
     pageTitle: "Welcome to the Entertainment Library!",
     path: '/'
@@ -14,77 +20,26 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getAddItem= (req, res, next) => {
-
-  let allGenres = [];
-  let gameCategories = [];
-
-  Book.find().distinct("genre")
-    .then(genres => {
-      let genresLength = genres.length;
-      for(let i=0; i < genresLength; i++){
-        allGenres.push(genres[i]);
-      }
-    }).then(
-      Movie.find().distinct("genre")
-      .then(genres => {
-        let genresLength = genres.length;
-        for(let i=0; i < genresLength; i++){
-          if(!allGenres.includes(genres[i])){
-            allGenres.push(genres[i]);
-          }
-        }
-        return allGenres;
-      }).then(
-        Game.find().distinct("category")
-          .then(categories => {
-            let categoriesLength = categories.length;
-            for(let i=0; i < categoriesLength; i++){
-              gameCategories.push(categories[i]);
-            }
-            // return gameCategories;
-            res.render('admin/edit-item', {
-                  pageTitle: 'Add Item',
-                  path: '/add-item',
-                  editing: false,
-                  user: req.user.username,
-                  errorMessage: [],
-                  hasError: false,
-                  validationErrors: [],
-                  genres: allGenres,
-                  categories: gameCategories
-                })
-          })
-          .catch(err => {
-            console.log`Error getAddItem-Game ${err}`;
-          })
-      // ).then(allGenres => {
-      //   //send to add item page with page and authentication info
-      //   res.render('admin/edit-item', {
-      //     pageTitle: 'Add Item',
-      //     path: '/add-item',
-      //     editing: false,
-      //     user: req.user.username,
-      //     errorMessage: [],
-      //     hasError: false,
-      //     validationErrors: [],
-      //     genres: allGenres,
-      //     categories: gameCategories
-      //   })
-      // }
-      ))
-      .catch(err => {
-        console.log`Error getAddItem-Movie ${err}`;
-      })
-    .catch(err => {
-      console.log`Error getAddItem-Book ${err}`;
-    });
+  res.render('admin/edit-item', {
+    pageTitle: 'Add Item',
+    path: '/add-item',
+    editing: false,
+    user: req.user.username,
+    errorMessage: [],
+    hasError: false,
+    validationErrors: [],
+    genres: allGenres,
+    categories: gameCategories
+  })
+  
 }
 
 /*cannot test until My Items page is created*/
+// link to add for edit item: "edit-item/6189b7e12defcea0f68bdc6b/game"
 //get Edit Item
 exports.getEditItem = (req, res, next) => {
   //Is the user in edit mode? Only allow access if in edit mode.
-  const editMode = req.query.edit;
+  const editMode = true; //req.query.edit;
 
   //if not in edit mode, redirect Home
   if(!editMode){
@@ -97,14 +52,14 @@ exports.getEditItem = (req, res, next) => {
 /*NEED TO ADD ITEM ID TO EDIT LINK ON MY ITEMS*/
   //gather item id and type from params
   const itemId = req.params.itemId;
-  const itemType = req.params.type;
+  const itemType = req.params.itemType.toString();
 
   //locate product
   switch (itemType){
-    case book:
+    case "book":
       Book.findById(itemId)
       .then(item => {   
-        displayEditItem(item, itemType, res, req);
+        displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
         const error = new Error(err);
@@ -116,7 +71,7 @@ exports.getEditItem = (req, res, next) => {
     case game:
       Game.findById(itemId)
       .then(item => {   
-        displayEditItem(item, itemType, res, req);
+        displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
         const error = new Error(err);
@@ -128,7 +83,7 @@ exports.getEditItem = (req, res, next) => {
     case movie:
       Movie.findById(itemId)
       .then(item => {   
-        displayEditItem(item, itemType, res, req);
+        displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
         const error = new Error(err);
@@ -144,20 +99,22 @@ exports.getEditItem = (req, res, next) => {
 }
   
 /* used in getEditItem*/
-function displayEditItem(item, itemType, res, req){
+function displayEditItem(item, itemType,  editMode, res, req){
   //if no item, redirect Home
   if (!item) {
     return res.redirect('/');
   }
   //if product found, send to edit product with product info
-  res.render('/edit-item', {
+  res.render('admin/edit-item', {
     pageTitle: 'Edit Item',
     path: '/edit-item',
     editing: editMode,
     itemType: itemType,
     item: item,
+    genres: allGenres,
+    categories: gameCategories,
     hasError: false,
-    //user: req.user.name,    Uncomment out once user login working
+    user: req.user.name,
     errorMessage: "",
     validationErrors: []
   })
@@ -235,6 +192,7 @@ exports.postAddItem = (req, res, next) => {
       .then(result => {
         //log success and redirect to admin products
         console.log('Created Book');
+        getGenres();
         res.redirect('/admin/products');
       })
       .catch(err => {
@@ -265,6 +223,7 @@ exports.postAddItem = (req, res, next) => {
       .then(result => {
         //log success and redirect to admin products
         console.log('Created Movie');
+        getGenres();
         res.redirect('/admin/products');
       })
       .catch(err => {
@@ -294,6 +253,7 @@ exports.postAddItem = (req, res, next) => {
       .then(result => {
         //log success and redirect to admin products
         console.log('Created Game');
+        getCategories();
         res.redirect('/admin/products');
       })
       .catch(err => {
@@ -326,4 +286,50 @@ exports.postAddItem = (req, res, next) => {
         })
  }
 
+}
+
+
+function getGenres(){
+  let genreList = [];
+
+  Book.find().distinct("genre")
+    .then(genres => {
+      let genresLength = genres.length;
+      for(let i=0; i < genresLength; i++){
+        genreList.push(genres[i]);
+      }
+    }).then(
+      Movie.find().distinct("genre")
+      .then(genres => {
+        let genresLength = genres.length;
+        for(let i=0; i < genresLength; i++){
+          if(!genreList.includes(genres[i])){
+            genreList.push(genres[i]);
+          }
+        }
+        allGenres = genreList;
+        console.log(`getGenres- allGenres: ${allGenres}`);
+        return;
+      })
+      )
+      .catch(err => {
+        console.log`Error getAddItem-Movie ${err}`;
+      })
+    .catch(err => {
+      console.log`Error getAddItem-Book ${err}`;
+    })
+    return;
+}
+
+
+function getCategories(){
+  Game.find().distinct("category")
+    .then(categories => {
+      // let categoriesLength = categories.length;
+      // for(let i=0; i < categoriesLength; i++){
+      //   gameCategories.push(categories[i]);
+      // }
+      gameCategories = categories;
+      console.log(`getCategories- gameCategories: ${gameCategories}`);
+    })
 }
