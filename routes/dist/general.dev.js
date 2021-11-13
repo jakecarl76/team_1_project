@@ -21,6 +21,9 @@ generalCtrl.getAddItem);
 router.post('/add-item',
 /*isAuth,*/
 generalCtrl.postAddItem);
+router.post('/add-another',
+/*isAuth,*/
+generalCtrl.postAddAnother);
 router.get('/edit-item/:itemId/:itemType',
 /*isAuth,*/
 generalCtrl.getEditItem);
