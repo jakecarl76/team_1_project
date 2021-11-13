@@ -350,7 +350,7 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getGenres();
         console.log('Created Book');
-        res.redirect('/admin/products');
+        res.redirect('/my-library');
       })["catch"](function (err) {
         console.log("postAddItem - switch(book) catch: ".concat(err));
         return res.status(422).render('admin/edit-product', {
@@ -388,7 +388,7 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getGenres();
         console.log('Created Movie');
-        res.redirect('/admin/products');
+        res.redirect('/my-library');
       })["catch"](function (err) {
         console.log("postAddProduct - switch(movie) catch: ".concat(err));
         return res.status(422).render('admin/edit-product', {
@@ -426,7 +426,7 @@ exports.postAddItem = function (req, res, next) {
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
-        res.redirect('/admin/products');
+        res.redirect('/my-library');
       })["catch"](function (err) {
         console.log("postAddProduct - switch(game) catch: ".concat(err));
         return res.status(422).render('admin/edit-product', {
@@ -875,3 +875,38 @@ function getCategories() {
     gameCategories = categories;
   });
 }
+
+exports.getMyLibrary = function (req, res, next) {
+  var bookList = [];
+  var movieList = [];
+  var gameList = [];
+  Book.find({
+    userId: req.user._id
+  }).then(function (books) {
+    bookList = books;
+    Movie.find({
+      userId: req.user._id
+    }).then(function (movies) {
+      movieList = movies;
+      Game.find({
+        userId: req.user._id
+      }).then(function (games) {
+        gameList = games; //render the page using those items
+
+        res.render('admin/my-library', {
+          books: bookList,
+          movies: movieList,
+          games: gameList,
+          pageTitle: 'My Library',
+          path: '/my-library',
+          user: req.user.name
+        });
+      });
+    });
+  })["catch"](function (err) {
+    var error = new Error(err);
+    error.httpStatusCode = 500;
+    console.log('admin-controller 20');
+    return next(error);
+  });
+};

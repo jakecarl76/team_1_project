@@ -29,7 +29,10 @@ router.get('/edit-item/:itemId/:itemType',
 generalCtrl.getEditItem);
 router.post('/edit-item',
 /*isAuth,*/
-generalCtrl.postEditItem); // Get route: Movies
+generalCtrl.postEditItem);
+router.get('/my-library',
+/*isAuth,*/
+generalCtrl.getMyLibrary); // Get route: Movies
 
 router.get('/movies',
 /*isAuth,*/
