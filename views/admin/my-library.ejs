@@ -22,7 +22,7 @@
                             <form action="/admin/delete-book" method="POST">
                                 <input class="btn" type="hidden" value="<%= book.id %>" name="bookId">
                                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="details-btn btn" type="submit">Delete</button>
+                                <button class="delete-btn btn" type="submit">Delete</button>
                             </form>
                         </div>
                     </article>
@@ -52,7 +52,7 @@
                             <form action="/admin/delete-movie" method="POST">
                                 <input class="btn" type="hidden" value="<%= movie.id %>" name="movieId">
                                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="details-btn btn" type="submit">Delete</button>
+                                <button class="delete-btn btn" type="submit">Delete</button>
                             </form>
                         </div>
                     </article>
@@ -81,7 +81,7 @@
                             <form action="/admin/delete-game" method="POST">
                                 <input class="btn" type="hidden" value="<%= game.id %>" name="gameId">
                                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="details-btn btn" type="submit">Delete</button>
+                                <button class="delete-btn btn" type="submit">Delete</button>
                             </form>
                         </div>
                     </article>
