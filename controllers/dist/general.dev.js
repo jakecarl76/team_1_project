@@ -1,7 +1,17 @@
 "use strict";
 
-function _templateObject4() {
+function _templateObject5() {
   var data = _taggedTemplateLiteral(["Error getGenres-Book ", ""]);
+
+  _templateObject5 = function _templateObject5() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject4() {
+  var data = _taggedTemplateLiteral(["Error getGenres-Movie ", ""]);
 
   _templateObject4 = function _templateObject4() {
     return data;
@@ -11,7 +21,7 @@ function _templateObject4() {
 }
 
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["Error getGenres-Movie ", ""]);
+  var data = _taggedTemplateLiteral(["postAddItem- image: ", ""]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -464,6 +474,209 @@ exports.postAddItem = function (req, res, next) {
   }
 };
 
+exports.postAddAnother = function (req, res, next) {
+  //gather the info from the form
+  var itemType = req.body.itemType;
+  var title = req.body.title;
+  var author = req.body.author;
+  var genre = req.body.genre;
+  var rating = req.body.rating;
+  var category = req.body.category;
+  var image = req.file;
+  var description = req.body.description;
+  var newGenre = req.body.newGenre;
+  var newCategory = req.body.newCategory; //if it's a new genre, make it genre
+
+  if (genre == "newGenre") {
+    genre = newGenre;
+  } //if it's a new category, make it category
+
+
+  if (category == "newCategory") {
+    category = newCategory;
+  } //image validation
+
+
+  if (!image) {
+    return res.status(422).render('admin/edit-item', {
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      user: req.user.username,
+      isAuthenticated: false,
+      errorMessage: 'Attached file is not a supported image type.',
+      hasError: true,
+      itemType: itemType,
+      item: {
+        title: title,
+        author: author,
+        genre: genre,
+        rating: rating,
+        category: category,
+        description: description
+      },
+      validationErrors: []
+    });
+  } // *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
+  //form validation
+  // const errors = validationResult(req);
+  // if(!errors.isEmpty()){
+  //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
+  //   return res.status(422).render('admin/edit-item', {
+  //     pageTitle: 'Add Item',
+  //     path: '/add-item',
+  //     editing: false,
+  //     hasError: true,
+  //     // user: req.user.name,      Uncomment out once login implemented
+  //     isAuthenticated: false,
+  //     errorMessage: errors.array()[0].msg,
+  //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+  //     validationErrors: errors.array()
+  //   })
+  // }
+
+
+  var imageUrl = image.filename;
+  console.log(_templateObject3(), image); //save item based on type
+
+  switch (itemType) {
+    case "book":
+      var book = new Book({
+        title: title,
+        author: author,
+        genre: genre,
+        description: description,
+        imageUrl: imageUrl,
+        userId: req.user
+      });
+      book.save().then(function (result) {
+        //log success and redirect to admin products
+        getGenres();
+        console.log('Created Book');
+        res.redirect('/add-item');
+      })["catch"](function (err) {
+        console.log("postAddItem - switch(book) catch: ".concat(err));
+        return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Add Item',
+          path: '/add-item',
+          editing: false,
+          user: req.user.username,
+          isAuthenticated: false,
+          errorMessage: [],
+          hasError: false,
+          product: {
+            title: title,
+            author: author,
+            genre: genre,
+            rating: rating,
+            category: category,
+            description: description
+          },
+          validationErrors: errors.array()
+        });
+      });
+      break;
+
+    case "movie":
+      var _movie2 = new Movie({
+        title: title,
+        genre: genre,
+        rating: rating,
+        description: description,
+        imageUrl: imageUrl,
+        userId: req.user
+      });
+
+      _movie2.save().then(function (result) {
+        //log success and redirect to admin products
+        getGenres();
+        console.log('Created Movie');
+        res.redirect('/add-item');
+      })["catch"](function (err) {
+        console.log("postAddProduct - switch(movie) catch: ".concat(err));
+        return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Add Item',
+          path: '/add-item',
+          editing: false,
+          user: req.user.username,
+          isAuthenticated: false,
+          errorMessage: [],
+          hasError: false,
+          product: {
+            title: title,
+            author: author,
+            genre: genre,
+            rating: rating,
+            category: category,
+            description: description
+          },
+          validationErrors: errors.array()
+        });
+      });
+
+      break;
+
+    case "game":
+      var _game2 = new Game({
+        title: title,
+        category: category,
+        description: description,
+        imageUrl: imageUrl,
+        userId: req.user
+      });
+
+      _game2.save().then(function (result) {
+        //log success and redirect to admin products
+        getCategories();
+        console.log('Created Game');
+        res.redirect('/add-item');
+      })["catch"](function (err) {
+        console.log("postAddProduct - switch(game) catch: ".concat(err));
+        return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Add Item',
+          path: '/add-item',
+          editing: false,
+          user: req.user.username,
+          isAuthenticated: false,
+          errorMessage: [],
+          hasError: false,
+          product: {
+            title: title,
+            author: author,
+            genre: genre,
+            rating: rating,
+            category: category,
+            description: description
+          },
+          validationErrors: errors.array()
+        });
+      });
+
+      break;
+
+    default:
+      console.log("postAddProduct - switch(default): ".concat(itemType));
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Item',
+        path: '/add-item',
+        editing: false,
+        user: req.user.username,
+        isAuthenticated: false,
+        errorMessage: [],
+        hasError: false,
+        product: {
+          title: title,
+          author: author,
+          genre: genre,
+          rating: rating,
+          category: category,
+          description: description
+        },
+        validationErrors: []
+      });
+  }
+};
+
 exports.postEditItem = function (req, res, next) {
   //gather updated product info
   var itemId = req.body.itemId;
@@ -641,9 +854,9 @@ function getGenres() {
               }
             }
           }))["catch"](function (err) {
-            console.log(_templateObject3(), err);
-          })["catch"](function (err) {
             console.log(_templateObject4(), err);
+          })["catch"](function (err) {
+            console.log(_templateObject5(), err);
           }));
 
         case 2:
