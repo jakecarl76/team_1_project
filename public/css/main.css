@@ -93,6 +93,13 @@ section.grid article:hover{
 
 .card img{
     width: 200px;
+    align-self: center;
+}
+
+.card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /* * * * * * * * * * FORMS* * * * * * * * * * */
@@ -124,11 +131,16 @@ input, textarea, select, button, a.btn{
     border-radius: 6px;
     border: 1px #808080 solid;
     font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    align-self: center;
+    color: #808080;
 }
 a.btn{
     text-decoration: none;
     text-align: center;
     color: #808080;
+    display: grid;
+    align-items: center;
 }
 button, a.btn{
     transition: 0.3s;
@@ -144,7 +156,8 @@ button:hover, a.btn:hover{
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    grid-gap: 2rem;
+    grid-gap: 1rem;
+    justify-self: end;
 }
 
 .one-button{
@@ -195,6 +208,11 @@ button:hover, a.btn:hover{
     max-width: 150px;
 }
 
+.delete-btn{
+    margin: 0;
+    padding: .75rem;
+    background-color: #fff;
+}
 /* * * * * * * * * * USER MESSAGE* * * * * * * * * * */
 .user-message{
     height: 100%;
