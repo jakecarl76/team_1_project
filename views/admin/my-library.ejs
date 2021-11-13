@@ -1,0 +1,95 @@
+<%- include('../includes/head.ejs') %>
+</head>
+<body>
+    <%- include('../includes/nav.ejs') %>
+<main>
+    <section class="grid">
+        <h2>Books</h2>
+        
+    <% if (books.length > 0) { %>
+        <div class="card-container">
+                <% for (let book of books) { %>
+                    <article class="card">
+                        <h3 class="title"><%= book.title %></h3>
+                        <img src="/images/<%= book.imageUrl %>" alt="Image of <%= book.title %>">
+                        <div class="card_content">
+                            <p><%= book.author %></p>
+                            <p><%= book.genre %></p>
+                            <p class="description"><%= book.description %></p>
+                        </div>
+                        <div class="buttons">
+                            <a href="/admin/edit-item/<%= book.id %>?edit=true" class="details-btn btn">Edit</a>
+                            <form action="/admin/delete-book" method="POST">
+                                <input class="btn" type="hidden" value="<%= book.id %>" name="bookId">
+                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                                <button class="details-btn btn" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </article>
+            <% } %>
+        </div>
+    <% } else { %>
+        <h1>No Books Found</h1>
+    <% } %>
+    </section>
+
+    <section class="grid">
+        <h2>Movies</h2>
+        
+    <% if (movies.length > 0) { %>
+        <div class="card-container">
+                <% for (let movie of movies) { %>
+                    <article class="card">
+                        <h3 class="title"><%= movie.title %></h3>
+                        <img src="/images/<%= movie.imageUrl %>" alt="Image of <%= movie.title %>">
+                        <div class="card_content">
+                            <p><%= movie.rating %></p>
+                            <p><%= movie.genre %></p>
+                            <p class="description"><%= movie.description %></p>
+                        </div>
+                        <div class="buttons">
+                            <a href="/admin/edit-item/<%= movie.id %>?edit=true" class="details-btn btn">Edit</a>
+                            <form action="/admin/delete-movie" method="POST">
+                                <input class="btn" type="hidden" value="<%= movie.id %>" name="movieId">
+                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                                <button class="details-btn btn" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </article>
+            <% } %>
+        </div>
+    <% } else { %>
+        <h1>No Books Found</h1>
+    <% } %>
+    </section>
+
+    <section class="grid">
+        <h2>Games</h2>
+        
+    <% if (games.length > 0) { %>
+        <div class="card-container">
+                <% for (let game of games) { %>
+                    <article class="card">
+                        <h3 class="title"><%= game.title %></h3>
+                        <img src="/images/<%= game.imageUrl %>" alt="Image of <%= game.title %>">
+                        <div class="card_content">
+                            <p><%= game.category %></p>
+                            <p class="description"><%= game.description %></p>
+                        </div>
+                        <div class="buttons">
+                            <a href="/admin/edit-item/<%= game.id %>?edit=true" class="details-btn btn">Edit</a>
+                            <form action="/admin/delete-game" method="POST">
+                                <input class="btn" type="hidden" value="<%= game.id %>" name="gameId">
+                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                                <button class="details-btn btn" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </article>
+            <% } %>
+        </div>
+    <% } else { %>
+        <h1>No Books Found</h1>
+    <% } %>
+    </section>
+</main>
+<%- include('../includes/end.ejs') %>

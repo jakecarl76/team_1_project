@@ -311,7 +311,7 @@ console.log`postAddItem- image: ${image}`;
         //log success and redirect to admin products
         getGenres();
         console.log('Created Book');
-        res.redirect('/admin/products');
+        res.redirect('/my-library');
       })
       .catch(err => {
         console.log(`postAddItem - switch(book) catch: ${err}`);
@@ -342,7 +342,7 @@ console.log`postAddItem- image: ${image}`;
         //log success and redirect to admin products
         getGenres();
         console.log('Created Movie');
-        res.redirect('/admin/products');
+        res.redirect('/my-library');
       })
       .catch(err => {
         console.log(`postAddProduct - switch(movie) catch: ${err}`);
@@ -372,7 +372,7 @@ console.log`postAddItem- image: ${image}`;
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
-        res.redirect('/admin/products');
+        res.redirect('/my-library');
       })
       .catch(err => {
         console.log(`postAddProduct - switch(game) catch: ${err}`);
@@ -761,4 +761,39 @@ function getCategories(){
     .then(categories => {
       gameCategories = categories;
     })
+}
+
+exports.getMyLibrary = (req, res, next) => {
+  let bookList = [];
+  let movieList = [];
+  let gameList = [];
+
+  Book.find({userId: req.user._id})
+  .then(books => {
+    bookList = books;
+    Movie.find({userId: req.user._id})
+    .then(movies => {
+      movieList = movies;
+      Game.find({userId: req.user._id})
+      .then(games => {
+        gameList = games;
+
+        //render the page using those items
+        res.render('admin/my-library', {
+          books: bookList,
+          movies: movieList,
+          games: gameList,
+          pageTitle: 'My Library',
+          path: '/my-library',
+          user: req.user.name
+        });
+      })
+    })
+  })
+  .catch(err => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    console.log('admin-controller 20');
+    return next(error);
+  });
 }
