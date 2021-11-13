@@ -150,14 +150,12 @@ exports.getBooks = (req, res, next) => {
 };
 
 
-
-
 /*cannot test until My Items page is created*/
 // link to add for edit item: "edit-item/6189b7e12defcea0f68bdc6b/game"
 //get Edit Item
 exports.getEditItem = (req, res, next) => {
   //Is the user in edit mode? Only allow access if in edit mode.
-  const editMode = true; //req.query.edit;
+  const editMode = req.query.edit;
   
   //if not in edit mode, redirect Home
   if(!editMode){
@@ -173,7 +171,6 @@ exports.getEditItem = (req, res, next) => {
     case "book":
       Book.findById(itemId)
       .then(item => {   
-        console.log(`case:book- item: ${item}`);
         displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
@@ -186,7 +183,6 @@ exports.getEditItem = (req, res, next) => {
     case game:
       Game.findById(itemId)
       .then(item => {   
-        console.log(`getEditItem 4`);
         displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
@@ -199,7 +195,6 @@ exports.getEditItem = (req, res, next) => {
     case movie:
       Movie.findById(itemId)
       .then(item => {   
-        console.log(`getEditItem 5`);
         displayEditItem(item, itemType, editMode, res, req);
         })
       .catch(err => {
@@ -628,7 +623,7 @@ exports.postEditItem = (req, res, next) => {
           .then(result => {
             //log the success and redirect to admin products  
             console.log('UPDATED BOOK!');
-            res.redirect('/admin/products');
+            res.redirect('/my-library');
           })
           .catch(err => {
             res.redirect('/admin/edit-item/:itemId');
@@ -661,7 +656,7 @@ exports.postEditItem = (req, res, next) => {
           .then(result => {
             //log the success and redirect to admin products  
             console.log('UPDATED MOVIE!');
-            res.redirect('/admin/products');
+            res.redirect('/my-library');
           })
           .catch(err => {
             res.redirect('/admin/edit-item/:itemId');
@@ -693,7 +688,7 @@ exports.postEditItem = (req, res, next) => {
           .then(result => {
             //log the success and redirect to admin products  
             console.log('UPDATED GAME!');
-            res.redirect('/admin/products');
+            res.redirect('/my-library');
           })
           .catch(err => {
             res.redirect('/admin/edit-item/:itemId');
@@ -723,8 +718,6 @@ exports.postEditItem = (req, res, next) => {
         })
       }
 };
-
-
 
 async function getGenres(){
   await Book.find().distinct("genre")
@@ -796,4 +789,54 @@ exports.getMyLibrary = (req, res, next) => {
     console.log('admin-controller 20');
     return next(error);
   });
+}
+
+exports.postAddFavorite = (req, res, next) => {
+  
+  // const user = req.user;
+  // const itemType = req.body.itemType.toString();
+  // const id = req.body.id.toString();
+
+   console.log("inside postAddFavorite");
+
+  // User.findById(user)
+  //   .then(user => {
+  //     //is it already in Favorites?
+  //     switch(itemType){
+  //       case "book":
+  //         user.bookLib.favorites.findById(id)
+  //           .then(results => {
+  //             if(!results){
+  //               user.bookLib.favorites.push(id);
+  //               console.log("Book added to book favorites");
+  //             }
+  //             res.redirect('/my-library');
+  //           })
+  //           .then()
+  //         break;
+  //       case "movie":
+  //         user.movieLib.favorites.findById(id)
+  //           .then(results => {
+  //             if(!results){
+  //               user.movieLib.favorites.push(id);
+  //               console.log("Movie added to movie favorites");
+  //             }
+  //             res.redirect('/my-library');
+  //           })
+  //         break;
+  //       case "game":
+  //         user.gameLib.favorites.findById(id)
+  //           .then(results => {
+  //             if(!results){
+  //               user.gameLib.favorites.push(id);
+  //               console.log("Game added to game favorites");
+  //             }
+  //             res.redirect('/my-library');
+  //           })
+  //         break;
+  //       default:
+          
+  //     }
+  //   })
+
 }

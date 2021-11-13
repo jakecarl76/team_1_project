@@ -192,8 +192,7 @@ exports.getBooks = function (req, res, next) {
 
 exports.getEditItem = function (req, res, next) {
   //Is the user in edit mode? Only allow access if in edit mode.
-  var editMode = true; //req.query.edit;
-  //if not in edit mode, redirect Home
+  var editMode = req.query.edit; //if not in edit mode, redirect Home
 
   if (!editMode) {
     return res.redirect('/');
@@ -206,7 +205,6 @@ exports.getEditItem = function (req, res, next) {
   switch (itemType) {
     case "book":
       Book.findById(itemId).then(function (item) {
-        console.log("case:book- item: ".concat(item));
         displayEditItem(item, itemType, editMode, res, req);
       })["catch"](function (err) {
         var error = new Error(err);
@@ -218,7 +216,6 @@ exports.getEditItem = function (req, res, next) {
 
     case game:
       Game.findById(itemId).then(function (item) {
-        console.log("getEditItem 4");
         displayEditItem(item, itemType, editMode, res, req);
       })["catch"](function (err) {
         var error = new Error(err);
@@ -230,7 +227,6 @@ exports.getEditItem = function (req, res, next) {
 
     case movie:
       Movie.findById(itemId).then(function (item) {
-        console.log("getEditItem 5");
         displayEditItem(item, itemType, editMode, res, req);
       })["catch"](function (err) {
         var error = new Error(err);
@@ -729,7 +725,7 @@ exports.postEditItem = function (req, res, next) {
         return book.save().then(function (result) {
           //log the success and redirect to admin products  
           console.log('UPDATED BOOK!');
-          res.redirect('/admin/products');
+          res.redirect('/my-library');
         })["catch"](function (err) {
           res.redirect('/admin/edit-item/:itemId');
           console.log("postEditItem - book - Err: ".concat(err));
@@ -762,7 +758,7 @@ exports.postEditItem = function (req, res, next) {
         return movie.save().then(function (result) {
           //log the success and redirect to admin products  
           console.log('UPDATED MOVIE!');
-          res.redirect('/admin/products');
+          res.redirect('/my-library');
         })["catch"](function (err) {
           res.redirect('/admin/edit-item/:itemId');
           console.log("postEditItem - movie - Err: ".concat(err));
@@ -794,7 +790,7 @@ exports.postEditItem = function (req, res, next) {
         return game.save().then(function (result) {
           //log the success and redirect to admin products  
           console.log('UPDATED GAME!');
-          res.redirect('/admin/products');
+          res.redirect('/my-library');
         })["catch"](function (err) {
           res.redirect('/admin/edit-item/:itemId');
           console.log("postEditItem - game - Err: ".concat(err));
@@ -909,4 +905,48 @@ exports.getMyLibrary = function (req, res, next) {
     console.log('admin-controller 20');
     return next(error);
   });
+};
+
+exports.postAddFavorite = function (req, res, next) {
+  // const user = req.user;
+  // const itemType = req.body.itemType.toString();
+  // const id = req.body.id.toString();
+  console.log("inside postAddFavorite"); // User.findById(user)
+  //   .then(user => {
+  //     //is it already in Favorites?
+  //     switch(itemType){
+  //       case "book":
+  //         user.bookLib.favorites.findById(id)
+  //           .then(results => {
+  //             if(!results){
+  //               user.bookLib.favorites.push(id);
+  //               console.log("Book added to book favorites");
+  //             }
+  //             res.redirect('/my-library');
+  //           })
+  //           .then()
+  //         break;
+  //       case "movie":
+  //         user.movieLib.favorites.findById(id)
+  //           .then(results => {
+  //             if(!results){
+  //               user.movieLib.favorites.push(id);
+  //               console.log("Movie added to movie favorites");
+  //             }
+  //             res.redirect('/my-library');
+  //           })
+  //         break;
+  //       case "game":
+  //         user.gameLib.favorites.findById(id)
+  //           .then(results => {
+  //             if(!results){
+  //               user.gameLib.favorites.push(id);
+  //               console.log("Game added to game favorites");
+  //             }
+  //             res.redirect('/my-library');
+  //           })
+  //         break;
+  //       default:
+  //     }
+  //   })
 };
