@@ -3,23 +3,23 @@ const Book = require('../models/book')
 const Movie = require('../models/movie')
 const Game = require('../models/game')
 
-let allGenres = [];
+let bookGenres = [];
+let movieGenres = [];
 let gameCategories = [];
 
 //get index
-exports.getIndex = (req, res, next) => {
-  getGenres();
-  getCategories();
-  console.log(`genres: ${allGenres}; categories: ${gameCategories}`);
+exports.getIndex = async (req, res, next) => {
   res.render('general/index', {
     pageTitle: "Welcome to the Entertainment Library!",
     path: '/'
   });
 };
 
-exports.getAddItem= (req, res, next) => {
-  getGenres().then(() => {
-    console.log`getAddItem - allGenres: ${allGenres}`;
+exports.getAddItem= async (req, res, next) => {
+  await getBookGenres();
+  await getMovieGenres();
+  await getCategories();
+  console.log(`bookGenres: ${bookGenres}; movieGenres: ${movieGenres}; categories: ${gameCategories}`);
     res.render('admin/edit-item', {
       pageTitle: 'Add Item',
       path: '/add-item',
@@ -27,15 +27,15 @@ exports.getAddItem= (req, res, next) => {
       user: req.user.username,
       itemType: null,
       item: null,
-      genres: allGenres,
+      bookGenres: bookGenres,
+      movieGenres: movieGenres,
       categories: gameCategories,
       errorMessage: [],
       hasError: false,
       validationErrors: [],
       categories: gameCategories
     })
-  })
-}
+  }
 
 // NEED FIX Dummy code, delete once database content is added
 const moviesObjectArray = [
@@ -150,12 +150,18 @@ exports.getBooks = (req, res, next) => {
 };
 
 
+
+
 /*cannot test until My Items page is created*/
 // link to add for edit item: "edit-item/6189b7e12defcea0f68bdc6b/game"
 //get Edit Item
-exports.getEditItem = (req, res, next) => {
+exports.getEditItem = async (req, res, next) => {
+  await getBookGenres();
+  await getMovieGenres();
+  await getCategories();
+  
   //Is the user in edit mode? Only allow access if in edit mode.
-  const editMode = req.query.edit;
+  const editMode = true; //req.query.edit;
   
   //if not in edit mode, redirect Home
   if(!editMode){
@@ -176,7 +182,7 @@ exports.getEditItem = (req, res, next) => {
       .catch(err => {
         const error = new Error(err);
         error.httpStatusCode = 500;
-        console.log('getEditItem case:book catch');
+        console.log(`getEditItem case:book catch; item: ${item}`);
         return next(error);
       });
       break;
@@ -188,7 +194,7 @@ exports.getEditItem = (req, res, next) => {
       .catch(err => {
         const error = new Error(err);
         error.httpStatusCode = 500;
-        console.log('getEditItem case:game catch');
+        console.log(`getEditItem case:game catch; item: ${item}`);
         return next(error);
       });
       break;
@@ -200,13 +206,13 @@ exports.getEditItem = (req, res, next) => {
       .catch(err => {
         const error = new Error(err);
         error.httpStatusCode = 500;
-        console.log('getEditItem case:movie catch');
+        console.log(`getEditItem case:movie catch; item: ${item}`);
         return next(error);
       });
       break;
     default:
       displayEditItem();
-      console.log("getEditItem case: default - Not accepted parameter.")
+      console.log(`getEditItem case: default - Not accepted parameter. itemType: ${itemType}`)
   }
 }
   
@@ -224,7 +230,8 @@ function displayEditItem(item, itemType, editMode, res, req){
     editing: editMode,
     itemType: itemType,
     item: item,
-    genres: allGenres,
+    bookGenres: bookGenres,
+    movieGenres: movieGenres,
     categories: gameCategories,
     hasError: false,
     //user: req.user.name,    Uncomment out once user login working
@@ -238,17 +245,23 @@ exports.postAddItem = (req, res, next) => {
   const itemType= req.body.itemType;
   const title = req.body.title;
   const author = req.body.author;
-  let genre = req.body.genre;
+  let bookGenre = req.body.bookGenre;
+  let movieGenre = req.body.movieGenre;
   const rating = req.body.rating;
   let category = req.body.category;
   const image = req.file;
   const description = req.body.description;
-  const newGenre = req.body.newGenre;
+  const newBookGenre = req.body.newBookGenre;
+  const newMovieGenre = req.body.newMovieGenre
   const newCategory = req.body.newCategory;
 
-  //if it's a new genre, make it genre
-  if(genre == "newGenre"){
-    genre = newGenre;
+  //if it's a new book genre, make it genre
+  if(bookGenre == "newGenre"){
+    bookGenre = newBookGenre;
+  }
+   //if it's a new movie genre, make it genre
+   if(movieGenre == "newGenre"){
+    movieGenre = newMovieGenre;
   }
   //if it's a new category, make it category
   if(category == "newCategory"){
@@ -304,7 +317,6 @@ console.log`postAddItem- image: ${image}`;
       book.save()
       .then(result => {
         //log success and redirect to admin products
-        getGenres();
         console.log('Created Book');
         res.redirect('/my-library');
       })
@@ -335,7 +347,6 @@ console.log`postAddItem- image: ${image}`;
       movie.save()
       .then(result => {
         //log success and redirect to admin products
-        getGenres();
         console.log('Created Movie');
         res.redirect('/my-library');
       })
@@ -472,7 +483,6 @@ console.log`postAddItem- image: ${image}`;
       book.save()
       .then(result => {
         //log success and redirect to admin products
-        getGenres();
         console.log('Created Book');
         res.redirect('/add-item');
       })
@@ -503,7 +513,6 @@ console.log`postAddItem- image: ${image}`;
       movie.save()
       .then(result => {
         //log success and redirect to admin products
-        getGenres();
         console.log('Created Movie');
         res.redirect('/add-item');
       })
@@ -575,14 +584,30 @@ exports.postEditItem = (req, res, next) => {
   const itemType= req.body.itemType;
   const updatedTitle = req.body.title;
   const updatedAuthor = req.body.author;
-  let updatedGenre = req.body.genre;
+  let updatedBookGenre = req.body.bookGenre;
+  let updatedMovieGenre = req.body.movieGenre;
   const updatedRating = req.body.rating;
   let updatedCategory = req.body.category;
   const image = req.file;
   const updatedDescription = req.body.description;
-  const newGenre = req.body.newGenre;
+  const newBookGenre = req.body.newBookGenre;
+  const newMovieGenre = req.body.newMovieGenre;
   const newCategory = req.body.newCategory;
+  
+console.log(`postEditItem updatedBookGenre: ${updatedBookGenre}`)
 
+  //if it's a new book genre, make it genre
+  if(updatedBookGenre == "newGenre"){
+    updatedBookGenre = newBookGenre;
+  }
+   //if it's a new movie genre, make it genre
+   if(updatedMovieGenre == "newGenre"){
+    updatedMovieGenre = newMovieGenre;
+  }
+  //if it's a new category, make it category
+  if(updatedCategory == "newCategory"){
+    category = newCategory;
+  }
   
 // *** Need to add validation
   //check for validation errors
@@ -614,7 +639,7 @@ exports.postEditItem = (req, res, next) => {
         //update book details
         book.title = updatedTitle;
         book.author = updatedAuthor;
-        book.genre = updatedGenre;
+        book.genre = updatedBookGenre;
         book.description = updatedDescription;
         if(image){
           book.imageUrl = image.filename;
@@ -626,7 +651,7 @@ exports.postEditItem = (req, res, next) => {
             res.redirect('/my-library');
           })
           .catch(err => {
-            res.redirect('/admin/edit-item/:itemId');
+            res.redirect('/my-library');
             console.log(`postEditItem - book - Err: ${err}`)
           });
       })
@@ -647,7 +672,7 @@ exports.postEditItem = (req, res, next) => {
         //update movie details
         movie.title = updatedTitle;
         movie.rating = updatedRating;
-        movie.genre = updatedGenre;
+        movie.genre = updatedMovieGenre;
         movie.description = updatedDescription;
         if(image){
           movie.imageUrl = image.filename;
@@ -659,7 +684,7 @@ exports.postEditItem = (req, res, next) => {
             res.redirect('/my-library');
           })
           .catch(err => {
-            res.redirect('/admin/edit-item/:itemId');
+            res.redirect('/my-library');
             console.log(`postEditItem - movie - Err: ${err}`)
           });
       })
@@ -691,7 +716,7 @@ exports.postEditItem = (req, res, next) => {
             res.redirect('/my-library');
           })
           .catch(err => {
-            res.redirect('/admin/edit-item/:itemId');
+            res.redirect('/my-library');
             console.log(`postEditItem - game - Err: ${err}`)
           });
       })
@@ -719,33 +744,37 @@ exports.postEditItem = (req, res, next) => {
       }
 };
 
-async function getGenres(){
+
+
+async function getBookGenres(){
   await Book.find().distinct("genre")
     .then(genres => {
       let genresLength = genres.length;
       for(let i=0; i < genresLength; i++){
-        if(!allGenres.includes(genres[i])){
-          allGenres.push(genres[i]);
+        if(!bookGenres.includes(genres[i])){
+          bookGenres.push(genres[i]);
         }
       }
-    }).then(
-      Movie.find().distinct("genre")
-      .then(genres => {
-        let genresLength = genres.length;
-        for(let i=0; i < genresLength; i++){
-          if(!allGenres.includes(genres[i])){
-            allGenres.push(genres[i]);
-          }
-        }
-      })
-      )
-      .catch(err => {
-        console.log`Error getGenres-Movie ${err}`;
-      })
+    })      
     .catch(err => {
       console.log`Error getGenres-Book ${err}`;
     })
     return;
+}
+
+async function getMovieGenres(){
+await Movie.find().distinct("genre")
+  .then(genres => {
+    let genresLength = genres.length;
+    for(let i=0; i < genresLength; i++){
+      if(!movieGenres.includes(genres[i])){
+        movieGenres.push(genres[i]);
+      }
+    }
+  })
+.catch(err => {
+  console.log`Error getGenres-Movie ${err}`;
+})
 }
 
 
