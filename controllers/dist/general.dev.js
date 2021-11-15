@@ -959,8 +959,20 @@ function getMovieGenres() {
 }
 
 function getCategories() {
-  Game.find().distinct("category").then(function (categories) {
-    gameCategories = categories;
+  return regeneratorRuntime.async(function getCategories$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.next = 2;
+          return regeneratorRuntime.awrap(Game.find().distinct("category").then(function (categories) {
+            gameCategories = categories;
+          }));
+
+        case 2:
+        case "end":
+          return _context6.stop();
+      }
+    }
   });
 }
 
@@ -1003,10 +1015,8 @@ exports.postAddFavorite = function (req, res, next) {
   var user = req.user;
   var itemType = req.body.itemType.toString();
   var id = req.body.id.toString();
-  console.log("inside postAddFavorite");
   User.findById(user).then(function (user) {
-    console.log("user: ".concat(user)); //is it already in Favorites?
-
+    //is it already in Favorites?
     switch (itemType) {
       case "book":
         if (!user.bookLib.favorites.includes(id)) {

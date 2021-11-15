@@ -778,8 +778,8 @@ await Movie.find().distinct("genre")
 }
 
 
-function getCategories(){
-  Game.find().distinct("category")
+async function getCategories(){
+  await Game.find().distinct("category")
     .then(categories => {
       gameCategories = categories;
     })
@@ -826,11 +826,8 @@ exports.postAddFavorite = (req, res, next) => {
   const itemType = req.body.itemType.toString();
   const id = req.body.id.toString();
 
-   console.log("inside postAddFavorite");
-
   User.findById(user)
     .then(user => {
-      console.log(`user: ${user}`);
       //is it already in Favorites?
       switch(itemType){
         case "book":
