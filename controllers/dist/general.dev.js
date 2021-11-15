@@ -51,6 +51,8 @@ var Movie = require('../models/movie');
 
 var Game = require('../models/game');
 
+var User = require('../models/user');
+
 var bookGenres = [];
 var movieGenres = [];
 var gameCategories = []; //get index
@@ -998,45 +1000,66 @@ exports.getMyLibrary = function (req, res, next) {
 };
 
 exports.postAddFavorite = function (req, res, next) {
-  // const user = req.user;
-  // const itemType = req.body.itemType.toString();
-  // const id = req.body.id.toString();
-  console.log("inside postAddFavorite"); // User.findById(user)
-  //   .then(user => {
-  //     //is it already in Favorites?
-  //     switch(itemType){
-  //       case "book":
-  //         user.bookLib.favorites.findById(id)
-  //           .then(results => {
-  //             if(!results){
-  //               user.bookLib.favorites.push(id);
-  //               console.log("Book added to book favorites");
-  //             }
-  //             res.redirect('/my-library');
-  //           })
-  //           .then()
-  //         break;
-  //       case "movie":
-  //         user.movieLib.favorites.findById(id)
-  //           .then(results => {
-  //             if(!results){
-  //               user.movieLib.favorites.push(id);
-  //               console.log("Movie added to movie favorites");
-  //             }
-  //             res.redirect('/my-library');
-  //           })
-  //         break;
-  //       case "game":
-  //         user.gameLib.favorites.findById(id)
-  //           .then(results => {
-  //             if(!results){
-  //               user.gameLib.favorites.push(id);
-  //               console.log("Game added to game favorites");
-  //             }
-  //             res.redirect('/my-library');
-  //           })
-  //         break;
-  //       default:
-  //     }
-  //   })
+  var user = req.user;
+  var itemType = req.body.itemType.toString();
+  var id = req.body.id.toString();
+  console.log("inside postAddFavorite");
+  User.findById(user).then(function (user) {
+    console.log("user: ".concat(user)); //is it already in Favorites?
+
+    switch (itemType) {
+      case "book":
+        if (!user.bookLib.favorites.includes(id)) {
+          user.bookLib.favorites.push(id);
+          user.save().then(function (results) {
+            console.log("Book added to bookLib.favorites");
+            console.log("".concat(user.username, ".bookLib: ").concat(user.bookLib));
+          })["catch"](function (err) {
+            var error = new Error(err);
+            error.httpStatusCode = 500;
+            console.log('postAddFavorites user.save (book) error: ${err}');
+            return next(error);
+          });
+        } // res.redirect('/my-library');
+
+
+        break;
+
+      case "movie":
+        if (!user.movieLib.favorites.includes(id)) {
+          user.movieLib.favorites.push(id);
+          user.save().then(function (results) {
+            console.log("Movie added to movieLib.favorites");
+            console.log("".concat(user.username, ".movieLib: ").concat(user.movieLib));
+          })["catch"](function (err) {
+            var error = new Error(err);
+            error.httpStatusCode = 500;
+            console.log('postAddFavorites user.save (movie) error: ${err}');
+            return next(error);
+          });
+        } // res.redirect('/my-library');
+
+
+        break;
+
+      case "game":
+        if (!user.gameLib.favorites.includes(id)) {
+          user.gameLib.favorites.push(id);
+          user.save().then(function (results) {
+            console.log("Game added to gameLib.favorites");
+            console.log("".concat(user.username, ".gameLib: ").concat(user.gameLib));
+          })["catch"](function (err) {
+            var error = new Error(err);
+            error.httpStatusCode = 500;
+            console.log('postAddFavorites user.save (game) error: ${err}');
+            return next(error);
+          });
+        } // res.redirect('/my-library');
+
+
+        break;
+
+      default:
+    }
+  });
 };

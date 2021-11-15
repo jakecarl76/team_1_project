@@ -1,8 +1,8 @@
 //import models
-const Book = require('../models/book')
-const Movie = require('../models/movie')
-const Game = require('../models/game')
-
+const Book = require('../models/book');
+const Movie = require('../models/movie');
+const Game = require('../models/game');
+const User = require('../models/user');
 let bookGenres = [];
 let movieGenres = [];
 let gameCategories = [];
@@ -822,50 +822,74 @@ exports.getMyLibrary = (req, res, next) => {
 
 exports.postAddFavorite = (req, res, next) => {
   
-  // const user = req.user;
-  // const itemType = req.body.itemType.toString();
-  // const id = req.body.id.toString();
+  const user = req.user;
+  const itemType = req.body.itemType.toString();
+  const id = req.body.id.toString();
 
    console.log("inside postAddFavorite");
 
-  // User.findById(user)
-  //   .then(user => {
-  //     //is it already in Favorites?
-  //     switch(itemType){
-  //       case "book":
-  //         user.bookLib.favorites.findById(id)
-  //           .then(results => {
-  //             if(!results){
-  //               user.bookLib.favorites.push(id);
-  //               console.log("Book added to book favorites");
-  //             }
-  //             res.redirect('/my-library');
-  //           })
-  //           .then()
-  //         break;
-  //       case "movie":
-  //         user.movieLib.favorites.findById(id)
-  //           .then(results => {
-  //             if(!results){
-  //               user.movieLib.favorites.push(id);
-  //               console.log("Movie added to movie favorites");
-  //             }
-  //             res.redirect('/my-library');
-  //           })
-  //         break;
-  //       case "game":
-  //         user.gameLib.favorites.findById(id)
-  //           .then(results => {
-  //             if(!results){
-  //               user.gameLib.favorites.push(id);
-  //               console.log("Game added to game favorites");
-  //             }
-  //             res.redirect('/my-library');
-  //           })
-  //         break;
-  //       default:
+  User.findById(user)
+    .then(user => {
+      console.log(`user: ${user}`);
+      //is it already in Favorites?
+      switch(itemType){
+        case "book":
+          if(!user.bookLib.favorites.includes(id)){
+            user.bookLib.favorites.push(id);
+            user.save()
+              .then(results => {
+                console.log("Book added to bookLib.favorites");
+                console.log(`${user.username}.bookLib: ${user.bookLib}`);
+              })
+              .catch(err => {
+                const error = new Error(err);
+                error.httpStatusCode = 500;
+                console.log('postAddFavorites user.save (book) error: ${err}');
+                return next(error);
+              })
+            
+          }
+            
+              // res.redirect('/my-library');
+            
+          break;
+        case "movie":
+          if(!user.movieLib.favorites.includes(id)){
+            user.movieLib.favorites.push(id);
+            user.save()
+              .then(results => {
+                console.log("Movie added to movieLib.favorites");
+            console.log(`${user.username}.movieLib: ${user.movieLib}`);
+              })
+              .catch(err => {
+                const error = new Error(err);
+                error.httpStatusCode = 500;
+                console.log('postAddFavorites user.save (movie) error: ${err}');
+                return next(error);
+              })
+          }
+          // res.redirect('/my-library');
+          break;
+        case "game":
+          if(!user.gameLib.favorites.includes(id)){
+            user.gameLib.favorites.push(id);
+            user.save()
+              .then(results => {
+                console.log("Game added to gameLib.favorites");
+            console.log(`${user.username}.gameLib: ${user.gameLib}`);
+              })
+              .catch(err => {
+                const error = new Error(err);
+                error.httpStatusCode = 500;
+                console.log('postAddFavorites user.save (game) error: ${err}');
+                return next(error);
+              })
+          }
+          // res.redirect('/my-library');
+          break;
+        default:
           
-  //     }
-  //   })
+      }
+    })
 
 }
