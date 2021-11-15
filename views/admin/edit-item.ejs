@@ -31,6 +31,7 @@
                 <input type="text" name="author" id="author" placeholder="Name of Author" value="<% if(editing || hasError){ %><%= item.author %><% } %>" class="<%= validationErrors.find(e => e.param === 'author') ? 'invalid' : ''  %>">
             </div>
             <div class="form-control book hidden">
+
                 <label for="bookGenre">Genre</label>
                 <select name="bookGenre" id="genre-book" onclick="showNewGenre()">
                     <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
