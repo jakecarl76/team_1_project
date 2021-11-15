@@ -34,19 +34,33 @@
                 <label for="author">Author</label>
                 <input type="text" name="author" id="author" placeholder="Name of Author" value="<% if(editing || hasError){ %><%= item.author %><% } %>" class="<%= validationErrors.find(e => e.param === 'author') ? 'invalid' : ''  %>">
             </div>
-            <div class="form-control book movie hidden">
-                <label for="genre">Genre</label>
-                <select name="genre" id="genre" onclick="showNewGenre()">
+            <div class="form-control book hidden">
+                <label for="genre-book">Genre</label>
+                <select name="genre-book" id="genre-book" onclick="showNewGenre()">
                     <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
-                    <% console.log(`edit-item.ejs genres: ${genres}`); %>
-                    <% for( let genre of genres ){ %>
-                        <option name="genre" 
-                        value="<% if(editing || hasError){ %><%= item.genre %><% } else { %><%= genre %><% } %>" <% if(editing){
+                    <% console.log(`edit-item.ejs bookGenres: ${bookGenres}`); %>
+                    <% for( let genre of bookGenres ){ %>
+                        <option name="genre-book" 
+                        value="<%= genre %>" <% if(editing){
                             if(item.genre == genre){%> selected <% }} %>> <%= genre %></option>
                     <% } %>
                     <option name="genre" value="newGenre">New</option>
                 </select>
-                <input type="text" id="new-genre" name="newGenre" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
+                <input type="text" id="new-genre-book" name="newGenreBook" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
+            </div>
+            <div class="form-control movie hidden">
+                <label for="genre-movie">Genre</label>
+                <select name="genre-movie" id="genre-movie" onclick="showNewGenre()">
+                    <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
+                    <% console.log(`edit-item.ejs movieGenres: ${movieGenres}`); %>
+                    <% for( let genre of movieGenres ){ %>
+                        <option name="genre-movie" 
+                        value="<%= genre %>" <% if(editing){
+                            if(item.genre == genre){%> selected <% }} %>> <%= genre %></option>
+                    <% } %>
+                    <option name="genre" value="newGenre">New</option>
+                </select>
+                <input type="text" id="new-genre-movie" name="newGenreMovie" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
             </div>
             <div class="form-control movie hidden">
                 <label for="rating">Rating</label>
@@ -71,7 +85,7 @@
                     <option name="category" value="newCategory">New</option>
                 </select>
                 <input type="text" id="new-category" name="newCategory" onblur="checkNewCategory()" placeholder="New Category Name"  value="<% if(editing || hasError){ %><%= item.category %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %> hidden">
-                <%console.log(`edit-item.ejs |   Categories: ${categories}; Genres: ${genres}`);%>
+                <%console.log(`edit-item.ejs |   Categories: ${categories}; bookGenres: ${bookGenres}; movieGenres: ${movieGenres};`);%>
             </div>
             <div class="form-control book movie game hidden">
                 <% if(editing){ %>

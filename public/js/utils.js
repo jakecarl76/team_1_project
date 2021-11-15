@@ -62,8 +62,21 @@ function visibleClass(element){
 }
 
 function checkNewGenre(){
-    let newGenre = document.getElementById("new-genre");
-    let genres = document.getElementsByName("genre");
+    let itemType = document.getElementById("radio-div").value;
+
+    let newGenre, genres;
+    
+    switch(itemType){
+        case "book": 
+            newGenre = document.getElementById("new-genre-book");
+            genres = document.getElementsByName("genre-book");
+            break;
+        case "movie":
+            newGenre = document.getElementById("new-genre-movie");
+            genres = document.getElementsByName("genre-movie");
+    }
+    
+    
     let errorMsg = document.getElementsByClassName("user-message")[0];
     
     errorMsg.innerHTML = "";
@@ -80,6 +93,7 @@ function checkNewGenre(){
         }
     }
 }
+
 
 function checkNewCategory(){
     let newCategory = document.getElementById("new-category");
