@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.get('/reset-password/:token', authCtrl.getResetPassword);
 
-router.post('/reset-password', 
+router.put('/reset-password', 
             body('email')
               .notEmpty()
               .withMessage("You must enter your email.")
@@ -38,9 +38,10 @@ router.post('/reset-password',
 
                 return true;
               })
-              .withMessage("That password is insecure. Please try another one.")
+              .withMessage("That password is insecure. Please try another one."),
+              body('cPassword')
               .custom( (value, {req}) => {
-                if(req.body.cPassword !== value)
+                if(req.body.password !== value)
                 {
                   return false;
                 }
@@ -57,7 +58,7 @@ router.post('/create-password-reset',authCtrl.postCreatePasswordReset);
 
 router.post('/change-user-image', authCtrl.postChangeUserImage);
 
-router.post('/change-password',
+router.put('/change-password',
             body('oldPwd', 'You must enter your old password in order to change it.')
             .notEmpty(),
             body('newPwd')
@@ -93,18 +94,18 @@ router.post('/change-password',
             .withMessage("The Confirm Password does not match the New Password."),
             authCtrl.postChangePassword);
 
-router.post('/check-user-name', authCtrl.postCheckUsername);
+router.put('/check-user-name', authCtrl.postCheckUsername);
 
-router.post('/change-user-name', authCtrl.postChangeUsername);
+router.put('/change-user-name', authCtrl.postChangeUsername);
 
-router.post('/check-email',
+router.put('/check-email',
             body('email', "Email is invalid. You must enter a valid email.")
             .notEmpty()
             .isEmail()
             .normalizeEmail(),
             authCtrl.postCheckEmail);
 
-router.post('/change-email',
+router.put('/change-email',
             body('email', "Email is invalid. You must enter a valid email.")
             .notEmpty()
             .isEmail()

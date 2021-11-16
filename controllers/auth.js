@@ -41,7 +41,6 @@ exports.postResetPassword = (req, res, next) => {
   {
 
     //set error messages to send
-
     for(err of vErrs.array())
     {
       errMsgs.push(err.msg);
@@ -49,17 +48,11 @@ exports.postResetPassword = (req, res, next) => {
     }
 
     //return with errors
-    return res.render('auth/reset-password', {
-      pageTitle: "Reset Your Password!",
-      path: '/reset',
-      token: tmpToken,
+    return res.status(422).json({
       errMsgs: errMsgs,
-      errIds: errIds,
-      errValues: {
-        email: email
-      }
+      errIds: errIds
     });
-  }
+  }//END CHECK FOR VERRS
 
 
   //get user by email
@@ -68,15 +61,9 @@ exports.postResetPassword = (req, res, next) => {
     
     if(!user)
     { 
-      return res.render('auth/reset-password', {
-        pageTitle: "Reset Your Password!",
-        path: '/reset',
-        token: tmpToken,
+      return res.status(422).json({
         errMsgs: ["Email is invalid. Please enter the email for your account."],
-        errIds: ["email"],
-        errValues: {
-          email: email
-        }
+        errIds: ["email"]
       });
     }
     else
@@ -85,26 +72,19 @@ exports.postResetPassword = (req, res, next) => {
       //check token is correct for user
       if(user.resetToken != tmpToken)
       {
+        console.log(user.resetToken);
+        console.log(tmpToken);
         //error invalid token
-        return res.render('auth/reset-password', {
-          pageTitle: "Reset Your Password!",
-          path: '/reset',
-          token: tmpToken,
+        return res.status(422).json({
           errMsgs: ["The token is invalid for this email. Please use the email for your account."],
-          errIds: ["email"],
-          errValues: {
-            email: email
-          }
+          errIds: ["email"]
         });
       }
       else if(Number(user.resetTokenExpiration) < Number(Date.now()))
       {
         //error token expired
-        return res.render('auth/login', {
-          pageTitle: "Reset Your Password!",
-          path: '/reset',
-          token: tmpToken,
-          errMsgs: ["The reset time for this email has expired."],
+        return res.status(401).json({
+          errMsgs: ["The reset time for this email has expired. You can create a new reset from the <a href='/login'>login</a> page."],
           errIds: []
         });
       }
@@ -122,11 +102,8 @@ exports.postResetPassword = (req, res, next) => {
           tmpUser.resetTokenExpiration = null;
           tmpUser.save()
           .then(result => {
-            return res.render('auth/login', {
-              pageTitle: "Reset Your Password!",
-              path: '/reset',
-              token: tmpToken,
-              msgs: ["Password has been reset! Please login with your new password."]
+            return res.status(200).json({
+              msgs: ["Password has been reset! Please <a href='/login'>login</a> with your new password."]
             });
           })
           .catch(err => {
@@ -165,7 +142,8 @@ exports.postCreatePasswordReset = (req, res, next) => {
     {
       if(!user)
       {
-        throw new Error("Invalid email entered for password reset! Possible abuse!");
+        console.log("Invalid email entered for password reset! Possible abuse!");
+        return res.status(422).json({errMsgs: ["Invalid email. Please enter the email for your account."]})
       }
       else
       {
@@ -210,6 +188,8 @@ exports.postCreatePasswordReset = (req, res, next) => {
 
 */
 
+            //send response to tell user reset created
+            res.status(201).json({msgs: ["A reset link has been sent. Please check your email."]});
             
           })
           .catch(err => {
@@ -222,8 +202,6 @@ exports.postCreatePasswordReset = (req, res, next) => {
   .catch(err => {
     console.log(err);
   })
-  
-  res.redirect('/');
 
 };//END GENERATE PASSWORD RESET TOKEN
 

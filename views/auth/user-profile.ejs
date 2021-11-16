@@ -155,7 +155,7 @@
           username: this.value
         };
         fetch('/check-user-name', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -193,7 +193,7 @@
           userId: document.getElementById("userId").value
         };
         fetch('/change-user-name', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -233,7 +233,7 @@
           email: this.value
         };
         fetch('/check-email', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -271,7 +271,7 @@
           userId: document.getElementById("userId").value
         };
         fetch('/change-email', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -449,7 +449,7 @@
           userId: document.getElementById("userId").value
         };
         fetch('/change-password', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
