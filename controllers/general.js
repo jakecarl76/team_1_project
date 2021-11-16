@@ -234,7 +234,7 @@ function displayEditItem(item, itemType, editMode, res, req){
     movieGenres: movieGenres,
     categories: gameCategories,
     hasError: false,
-    //user: req.user.name,    Uncomment out once user login working
+    user: req.user,
     errorMessage: "",
     validationErrors: []
   })
@@ -807,7 +807,7 @@ exports.getMyLibrary = (req, res, next) => {
           games: gameList,
           pageTitle: 'My Library',
           path: '/my-library',
-          user: req.user.name
+          user: req.user
         });
       })
     })
@@ -825,7 +825,7 @@ exports.postAddFavorite = (req, res, next) => {
   const user = req.user;
   const itemType = req.body.itemType.toString();
   const id = req.body.id.toString();
-
+  let msg;
   User.findById(user)
     .then(user => {
       //is it already in Favorites?
@@ -833,9 +833,15 @@ exports.postAddFavorite = (req, res, next) => {
         case "book":
           if(!user.bookLib.favorites.includes(id)){
             user.bookLib.favorites.push(id);
+            msg = "Book added to bookLib.favorites.";}
+            else{
+              let index = user.bookLib.favorites.findIndex(index => index == parseInt(id));
+              user.bookLib.favorites.splice(index, 1);
+              msg = "Book removed from bookLib.favorites.";
+            }
             user.save()
               .then(results => {
-                console.log("Book added to bookLib.favorites");
+                console.log(msg);
                 console.log(`${user.username}.bookLib: ${user.bookLib}`);
               })
               .catch(err => {
@@ -844,10 +850,7 @@ exports.postAddFavorite = (req, res, next) => {
                 console.log('postAddFavorites user.save (book) error: ${err}');
                 return next(error);
               })
-            
-          }
-            
-              // res.redirect('/my-library');
+            res.redirect('/my-library');
             
           break;
         case "movie":
