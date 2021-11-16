@@ -38,7 +38,7 @@
                                 <input type="hidden" value="<%= book.id %>" name="id">
                                 <input type="hidden" value="book" name="itemType">
                                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="delete-btn btn" type="submit">Add to Favorites</button>
+                                <button class="delete-btn btn" type="submit"><% if(user.bookLib.favorites.includes(book.id)){ %> Unfavorite <% } else { %>Favorite<% } %></button>
                             </form>
                         </div>
                         
@@ -85,7 +85,7 @@
                                 <input class="btn" type="hidden" value="<%= movie.id %>" name="id">
                                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                                 <input type="hidden" value="movie" name="itemType">
-                                <button class="delete-btn btn" type="submit">Add to Favorites</button>
+                                <button class="delete-btn btn" type="submit"><% if(user.movieLib.favorites.includes(movie.id)){ %> Unfavorite <% } else { %>Favorite<% } %></button>
                             </form>
                         </div>
                     </article>
@@ -128,7 +128,7 @@
                                 <input class="btn" type="hidden" value="<%= game.id %>" name="id">
                                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                                 <input type="hidden" value="game" name="itemType">
-                                <button class="delete-btn btn" type="submit">Add to Favorites</button>
+                                <button class="delete-btn btn" type="submit"><% if(user.gameLib.favorites.includes(game.id)){ %> Unfavorite <% } else { %>Favorite<% } %></button>
                             </form>
 
                         </div>
