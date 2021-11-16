@@ -1015,24 +1015,32 @@ exports.postAddFavorite = function (req, res, next) {
   var user = req.user;
   var itemType = req.body.itemType.toString();
   var id = req.body.id.toString();
+  var msg;
   User.findById(user).then(function (user) {
     //is it already in Favorites?
     switch (itemType) {
       case "book":
         if (!user.bookLib.favorites.includes(id)) {
           user.bookLib.favorites.push(id);
-          user.save().then(function (results) {
-            console.log("Book added to bookLib.favorites");
-            console.log("".concat(user.username, ".bookLib: ").concat(user.bookLib));
-          })["catch"](function (err) {
-            var error = new Error(err);
-            error.httpStatusCode = 500;
-            console.log('postAddFavorites user.save (book) error: ${err}');
-            return next(error);
+          msg = "Book added to bookLib.favorites.";
+        } else {
+          var index = user.bookLib.favorites.findIndex(function (index) {
+            return index == parseInt(id);
           });
-        } // res.redirect('/my-library');
+          user.bookLib.favorites.splice(index, 1);
+          msg = "Book removed from bookLib.favorites.";
+        }
 
-
+        user.save().then(function (results) {
+          console.log(msg);
+          console.log("".concat(user.username, ".bookLib: ").concat(user.bookLib));
+        })["catch"](function (err) {
+          var error = new Error(err);
+          error.httpStatusCode = 500;
+          console.log('postAddFavorites user.save (book) error: ${err}');
+          return next(error);
+        });
+        res.redirect('/my-library');
         break;
 
       case "movie":
