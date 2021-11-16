@@ -6,7 +6,12 @@
       <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
     </li>
     <li class="main-nav-item">
-      <a class="<%= path === '/Movies' ? 'active' : '' %>" href="/Movies">Movies</a>
+      <div class="dropdown">
+      <a class="<%= path === '/Movies' ? 'active' : '' %> drpbtn" href="/Movies">Movies</a>
+      <div class="drop-content">
+        <a href="/randomizer">Movie Randomizer</a>
+      </div>
+    </div>
     </li>
     <li class="main-nav-item">
       <a class="<%= path === '/Books' ? 'active' : '' %>" href="/Books">Books</a>
@@ -17,10 +22,10 @@
     <div class="authSection">
       <ul class="nav-item-list"></ul>
       <% if (!isAuthenticated) { %>
-        <li class="main-nav-item">
+        <li class="login-nav-item">
           <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
         </li>
-        <li class="main-nav-item">
+        <li class="login-nav-item">
           <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
         </li>
         <% } else { %>
@@ -29,6 +34,9 @@
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <button type="submit">Logout</button>
             </form>
+          </li>
+          <li class="main-nav-item">
+            <a class="<%= path === '/lib' ? 'active' : '' %>" href="/Library">My Library</a>
           </li>
           <% } %>
   </ul>
