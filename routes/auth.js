@@ -163,9 +163,10 @@ router.post('/signup',
 
                 return true;
               })
-              .withMessage("That password is insecure. Please try another one.")
+              .withMessage("That password is insecure. Please try another one."),
+              body('cPassword')
               .custom( (value, {req}) => {
-                if(req.body.cPassword !== value)
+                if(req.body.password !== value)
                 {
                   return false;
                 }

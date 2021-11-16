@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
 <script src="/js/utils.js"></script>
+<script src="/js/validation.js"></script>
 <style>
   /*delete this style when intergrated in main.css */
   .invalid
@@ -304,33 +305,11 @@
     //Password
     function checkPassword()
     {
-      let tmpPwd = document.getElementById("newPassword").value;
-      let lenCheck = true;
-      let secureCheck = true;
-      let isNewCheck = true;
-      let errs = [];
 
-      //check password
-      if(tmpPwd.length < 9)
-      {
-        lenCheck = false;
-        errs.push("Password must be at least 9 characters long.");
-      }
+      let res = validatePassword(document.getElementById("newPassword").value,
+                                 document.getElementById("oldPassword").value);
 
-      if(tmpPwd.toLowerCase() == "password" || tmpPwd == "123456789")
-      {
-        secureCheck = false;
-        errs.push("That password is insecure. Please choose another");
-      }
-
-      if(tmpPwd == document.getElementById('oldPassword').value)
-      {
-        isNewCheck = false;
-        errs.push("New Password cannot be the same as the old Password.")
-      }
-
-
-      if(lenCheck && secureCheck && isNewCheck)
+      if(res.isValid)
       {
         document.getElementById("newPassword").classList.add("valid");
         document.getElementById("newPassword").classList.remove("invalid");
@@ -343,7 +322,7 @@
         document.getElementById("newPassword").classList.remove("valid");
         document.getElementById("passwordStatus").innerHTML = "";
         //show errors
-        for(err of errs)
+        for(err of res.errMsgs)
         {console.log(err);
           document.getElementById('passwordStatus').innerHTML += "<li>" + err + "</li>";
         }
