@@ -37,7 +37,7 @@ const multerStorage = multer.diskStorage({
     let err = null;
 
     //pass result back to cb_func, set file name to curr time number + original name
-    cb_func(err, (new Date().toISOString().replace(':','-').replace(' ','-') + '-' + file.originalname));
+    cb_func(err, (Date.now().toString() + '-' + file.originalname));
   }
 });//END MULTER STORAGE OBJ
 

@@ -1,4 +1,3 @@
-
 <%- include('../includes/head.ejs'); %>
 </head>
 <body>
@@ -13,11 +12,12 @@
             <div class="form-control">
                 <p>What would you like to <% if(!editing){ %> add<% } else { %> update<% } %>? </p>
                 <div id="radio-div" onclick=displayFields()>
-                    <input type="radio" name="itemType" id="type-book" value="book">
+                    <input type="radio" name="itemType" id="type-book" value="book" 
+                    <% if(editing && itemType == 'book'){ %> checked<% } %> > 
                     <label for="book">Book</label>
-                    <input type="radio" name="itemType" id="type-movie" value="movie">
+                    <input type="radio" name="itemType" id="type-movie" value="movie" <% if(editing && itemType == 'movie'){ %>checked<% } %> >
                     <label for="movie">Movie</label>
-                    <input type="radio" name="itemType" id="type-game" value="game">
+                    <input type="radio" name="itemType" id="type-game" value="game" <% if(editing && itemType == 'game'){ %>checked<% } %> >
                     <label for="game">Game</label>
                 </div>
             </div>
@@ -30,17 +30,32 @@
                 <label for="author">Author</label>
                 <input type="text" name="author" id="author" placeholder="Name of Author" value="<% if(editing || hasError){ %><%= item.author %><% } %>" class="<%= validationErrors.find(e => e.param === 'author') ? 'invalid' : ''  %>">
             </div>
-            <div class="form-control book movie hidden">
-                <label for="genre">Genre</label>
-                <select name="genre" id="genre" onclick="showNewGenre()">
-                    <option selected disabled>Select</option>
-                    <% for( let genre of genres ){ %>
-                        <option name="genre" 
-                        value="<% if(editing || hasError){ %><%= item.genre %><% }else{ %><%= genre %><% } %>"><%= genre %></option>
+            <div class="form-control book hidden">
+
+                <label for="bookGenre">Genre</label>
+                <select name="bookGenre" id="genre-book" onclick="showNewGenre()">
+                    <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
+                    <% for( let genre of bookGenres ){ %>
+                        <option name="bookGenre" 
+                        value="<%= genre %>" <% if(editing){
+                            if(item.genre == genre){%> selected <% }} %>> <%= genre %></option>
                     <% } %>
                     <option name="genre" value="newGenre">New</option>
                 </select>
-                <input type="text" id="new-genre" name="newGenre" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
+                <input type="text" id="new-genre-book" name="newBookGenre" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
+            </div>
+            <div class="form-control movie hidden">
+                <label for="movieGenre">Genre</label>
+                <select name="movieGenre" id="genre-movie" onclick="showNewGenre()">
+                    <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
+                    <% for( let genre of movieGenres ){ %>
+                        <option name="movieGenre" 
+                        value="<%= genre %>" <% if(editing){
+                            if(item.genre == genre){%> selected <% }} %>> <%= genre %></option>
+                    <% } %>
+                    <option name="genre" value="newGenre">New</option>
+                </select>
+                <input type="text" id="new-genre-movie" name="newMovieGenre" placeholder="New Genre Name" class="hidden" onblur="checkNewGenre()">
             </div>
             <div class="form-control movie hidden">
                 <label for="rating">Rating</label>
@@ -65,9 +80,11 @@
                     <option name="category" value="newCategory">New</option>
                 </select>
                 <input type="text" id="new-category" name="newCategory" onblur="checkNewCategory()" placeholder="New Category Name"  value="<% if(editing || hasError){ %><%= item.category %><% } %>" class="<%= validationErrors.find(e => e.param === 'category') ? 'invalid' : ''  %> hidden">
-                <%console.log(`edit-item.ejs   Categories: ${categories}; Genres: ${genres}`);%>
             </div>
             <div class="form-control book movie game hidden">
+                <% if(editing){ %>
+                    <img src="/images/<%= item.imageUrl %>" alt="image of <%= item.title %>" class="details-img">
+                    <% } %>
                 <label for="image">Image</label>
                 <input type="file" name="image" id="image">
             </div>
@@ -84,14 +101,13 @@
                     <% if(editing) { %> Update <% } else { %> Add Item <% } %>
                 </button>
                 <% if(!editing) { %>
-                <input class="btn" type="submit" formaction='/add-another' value="Add Another">
+                <button class="btn" type="submit" formaction='/add-another' value="">
+                Add Another</button>
                 <% } %>
             </div> 
         </fieldset>
     </form>
-    
+    <script>displayFields();</script>
 </main>
 
 <%- include('../includes/end.ejs'); %>
- 
-    

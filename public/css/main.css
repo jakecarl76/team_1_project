@@ -85,7 +85,7 @@ h1, h2, h3, h4, h5, h6{
 }
 /* * * * * * * * * * FOOTER* * * * * * * * * * */
 
-/* * * * * * * * * * MAIN - INDEX* * * * * * * * * * */
+/* * * * * * * * * * MAIN - INDEX/MY LIBRARY* * * * * * * * * * */
 section.grid{
     display: flex;
     flex-direction: column;
@@ -105,10 +105,54 @@ section.grid article{
     padding: 1rem;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
     margin: 1rem 0;
+    display: grid;
+    grid-template-areas:    "title star"
+                            "img img"
+                            "content content"
+                            "buttons buttons";
+    grid-template-columns: 3fr 1fr;
 }
 
 section.grid article:hover{
     box-shadow: 0 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.card img{
+    width: 200px;
+    align-self: center;
+}
+
+.card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.favorite{
+    background-color: #4e4e4e;
+    color: #fff;
+}
+
+.card .title {
+    grid-area: title;
+    margin: 0 0 1rem 0;
+}
+
+.card .favorite-star{
+    grid-area: star;
+    color: yellow;
+    justify-self: right;
+}
+
+.card .card_content{
+    grid-area: content;
+}
+
+.card img{
+    grid-area: img;
+}
+.card .button-container{
+    grid-area: buttons;
 }
 
 /* * * * * * * * * * FORMS* * * * * * * * * * */
@@ -140,11 +184,17 @@ input, textarea, select, button, a.btn{
     border-radius: 6px;
     border: 1px #808080 solid;
     font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    align-self: center;
+    color: #808080;
+    background-color: #fff;
 }
 a.btn{
     text-decoration: none;
     text-align: center;
     color: #808080;
+    display: grid;
+    align-items: center;
 }
 button, a.btn{
     transition: 0.3s;
@@ -160,7 +210,8 @@ button:hover, a.btn:hover{
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    grid-gap: 2rem;
+    grid-gap: 1rem;
+    justify-self: end;
 }
 
 .one-button{
@@ -168,8 +219,10 @@ button:hover, a.btn:hover{
     display: grid;
     grid-template-columns: 1fr;
     align-items: center;
-    grid-gap: 2rem;
+    grid-gap: 1rem;
 }
+
+
 .btn{
     width: 100%;
     height: 100%;
@@ -207,6 +260,15 @@ button:hover, a.btn:hover{
     border: solid green 3px;
   }
 
+.details-img{
+    max-width: 150px;
+}
+
+.delete-btn{
+    margin: 0;
+    padding: .75rem;
+    background-color: #fff;
+}
 /* * * * * * * * * * USER MESSAGE* * * * * * * * * * */
 .user-message{
     height: 100%;

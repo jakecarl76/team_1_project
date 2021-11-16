@@ -1,6 +1,14 @@
 "use strict";
 
 //This file is for common client side js functions/etc
+function toggleDiv(el) {
+  el.classList.toggle('hidden');
+}
+
+function toggleDivById(el_id) {
+  document.getElementById(el_id).classList.toggle('hidden');
+}
+
 function displayFields() {
   var book = document.getElementById("type-book").checked;
   var game = document.getElementById("type-game").checked;
@@ -67,8 +75,20 @@ function visibleClass(element) {
 }
 
 function checkNewGenre() {
-  var newGenre = document.getElementById("new-genre");
-  var genres = document.getElementsByName("genre");
+  var itemType = document.getElementById("radio-div").value;
+  var newGenre, genres;
+
+  switch (itemType) {
+    case "book":
+      newGenre = document.getElementById("new-genre-book");
+      genres = document.getElementsByName("genre-book");
+      break;
+
+    case "movie":
+      newGenre = document.getElementById("new-genre-movie");
+      genres = document.getElementsByName("genre-movie");
+  }
+
   var errorMsg = document.getElementsByClassName("user-message")[0];
   errorMsg.innerHTML = ""; //check to see if it's already in the list
 
@@ -126,5 +146,26 @@ function showNewCategory() {
   } else {
     hiddenClass(newCategoryInput);
   }
-} // let newGenreInput = document.getElementById("new-genre");
-// newGenreInput.addEventListener(");
+}
+
+function checkType(itemType) {
+  var bookRadio = document.getElementById("type-book");
+  var movieRadio = document.getElementById("type-movie");
+  var gameRadio = document.getElementById("type-game");
+
+  switch (itemType) {
+    case "book":
+      bookRadio.checked = true;
+      break;
+
+    case "movie":
+      movieRadio.checked = true;
+      break;
+
+    case "game":
+      gameRadio.checked = true;
+      break;
+  }
+
+  displayFields();
+}
