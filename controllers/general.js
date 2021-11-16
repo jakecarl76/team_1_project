@@ -234,7 +234,7 @@ function displayEditItem(item, itemType, editMode, res, req){
     movieGenres: movieGenres,
     categories: gameCategories,
     hasError: false,
-    //user: req.user.name,    Uncomment out once user login working
+    user: req.user,
     errorMessage: "",
     validationErrors: []
   })
@@ -807,7 +807,7 @@ exports.getMyLibrary = (req, res, next) => {
           games: gameList,
           pageTitle: 'My Library',
           path: '/my-library',
-          user: req.user.name
+          user: req.user
         });
       })
     })
