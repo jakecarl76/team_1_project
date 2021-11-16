@@ -25,6 +25,12 @@ router.get('/my-library', /*isAuth,*/ generalCtrl.getMyLibrary);
 // Get route: Movies
 router.get('/movies', /*isAuth,*/ generalCtrl.getMovies);
 
+// Get Movie Randomizer
+router.get('/randomizer', /*isAuth,*/ generalCtrl.getMovieRandomizer);
+
+// Post Movie Randomizer
+router.get('/randomized', /*isAuth,*/ generalCtrl.displayRandomMovie);
+
 // Get route: Games
 router.get('/games', /*isAuth,*/ generalCtrl.getGames);
 

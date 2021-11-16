@@ -1,0 +1,45 @@
+<%- include('../includes/head.ejs') %>
+<body class="content-body">
+   <script defer>
+  
+   </script>
+   <header>
+      <%- include('../includes/nav.ejs') %>
+   </header>
+   <main class="content-main">
+      <h1 class="content-main-header">Hermit Habitat's Movie Randomizer</h1>
+
+      <% if (!hasMovie) { %> 
+      <div class="center">
+      <form action="/randomized" method="get">
+      <label for="genre" class="genre-select">Choose a genre:</label>
+      <select name="genre" id="genre">
+         <% for (let genre of genres) { %>
+            <option value="<%= genre %>"><%= genre %></option>
+         <% } %>
+      </select>
+
+      <br>
+     
+      <h2 class="content-main-header">Your random movie will be displayed here!</h2>
+
+      <button id="generate" type="submit">Randomize!</button>
+      </div>
+      </form>
+      <% } else { %> 
+
+         <h2 class="random-details"><%= movie.title %></h2>
+         <h3 class="random-details"><%= movie.rating%></h3>
+         <img class="random-display-img" src="images/<%= movie.imageUrl %>" alt="<%= movie.title %>">
+         
+         <form action="/randomized" method="get">
+         <div class="center">
+         <button id="generate" class="center" type="submit">Randomize!</button>
+         </div>
+         <input type="hidden" name="genre" value="<%= genre %>">
+      <% } %> 
+      
+   </main>
+   <%- include('../includes/end.ejs') %>
+</body>
+</html>

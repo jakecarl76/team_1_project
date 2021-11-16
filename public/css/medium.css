@@ -17,5 +17,10 @@
         margin: 0 1rem;
     }
 
+    .random-display-img {
+        width: 400px;
+        height: 600px;
+    }
+
     /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
 }
