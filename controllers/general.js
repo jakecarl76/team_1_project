@@ -73,57 +73,62 @@ exports.getBooks = (req, res, next) => {
     });
 };
 
-
 // Get Movie Randomizer
 exports.getMovieRandomizer = (req, res, next) => {
+  
+  // Get genre from query
+  const movieGenre = req.query.genre;
+
+  // Find all movies
   Movie.find()
     .then(movies => {
       const genreIteration = [];
 
+      // Push all movie genre to array
       for (let movie of movies) {
         genreIteration.push(movie.genre);
       }
-      const genre = genreIteration.filter((value, index) => genreIteration.indexOf(value) === index)
 
-      res.render('general/randomizer', {
-        pageTitle: 'Movie Randomizer | Hermit Habitat',
-        path: '/randomizer',
-        content: movies,
-        genres: genre,
-        hasMovie: false
-      });
+      // Filter movie genre to have unique values
+      const genre = genreIteration.filter((value, index) => genreIteration.indexOf(value) === index);
+
+      // Display different results if genre is in URL query
+      if (movieGenre) {
+
+        // Get random movie from mongodb based on genre
+        Movie.aggregate([
+          {
+            $match: {
+              genre: movieGenre
+            }
+          },
+          {
+            $sample: {
+              size: 1
+            }
+          }
+        ])
+          .then(mov => {
+            res.render('general/randomizer', {
+              pageTitle: 'Movie Randomizer | Hermit Habitat',
+              path: '/randomizer',
+              genre: movieGenre,
+              genres: genre,
+              movie: mov[0],
+              hasMovie: true
+            });
+          });
+      } else {
+        res.render('general/randomizer', {
+          pageTitle: 'Movie Randomizer | Hermit Habitat',
+          path: '/randomizer',
+          content: movies,
+          genres: genre,
+          hasMovie: false
+        });
+      };
     });
 };
-
-// Post Movie Randomizer
-exports.displayRandomMovie = (req, res, next) => {
-  const genre = req.query.genre;
-    Movie.aggregate([
-      {
-        $match: {
-          genre: genre
-        }
-      },
-      {
-        $sample: {
-          size: 1
-        }
-      }
-    ])
-      .then(mov => {
-      res.render('general/randomizer', {
-        pageTitle: 'Movie Randomizer | Hermit Habitat',
-        path: '/randomizer',
-        genre: genre,
-        movie: mov[0],
-        hasMovie: true
-      });
-    })
-}
-
-
-
-
 
 /*cannot test until My Items page is created*/
 // link to add for edit item: "edit-item/6189b7e12defcea0f68bdc6b/game"

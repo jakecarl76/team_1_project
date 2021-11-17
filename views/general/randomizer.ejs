@@ -11,7 +11,7 @@
 
       <% if (!hasMovie) { %> 
       <div class="center">
-      <form action="/randomized" method="get">
+      <form action="/randomizer" method="get">
       <label for="genre" class="genre-select">Choose a genre:</label>
       <select name="genre" id="genre">
          <% for (let genre of genres) { %>
@@ -27,16 +27,16 @@
       </div>
       </form>
       <% } else { %> 
-
          <h2 class="random-details"><%= movie.title %></h2>
          <h3 class="random-details"><%= movie.rating%></h3>
          <img class="random-display-img" src="images/<%= movie.imageUrl %>" alt="<%= movie.title %>">
          
-         <form action="/randomized" method="get">
+         <form action="/randomizer" method="get">
          <div class="center">
          <button id="generate" class="center" type="submit">Randomize!</button>
          </div>
          <input type="hidden" name="genre" value="<%= genre %>">
+         </form>
       <% } %> 
       
    </main>
