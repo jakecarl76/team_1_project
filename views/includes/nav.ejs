@@ -1,11 +1,54 @@
-<nav>
-  <span></span>
-  <ul>
-    <li>
-      <a href='/'> Home </a>
-      <a href='/add-item'> Add Item </a>
-      <a href='/login'>Login</a>
-      <a href='/signup'>Sign Up</a>
-    </li>
-  </ul>
-</nav>
+<!-- <link rel="stylesheet" href='../../public/css/nav.css'> -->
+<header>
+<a href="/"><h1>Hermit Habitat</h1></a>
+
+  <nav class="main-header-nav">
+    <input type="checkbox" id="mobile-nav-toggle">
+    <div class="burger-container">
+      <div class="burger-menu"></div>
+      <div class="burger-menu"></div>
+      <div class="burger-menu"></div>
+    </div>
+    
+    <ul class="nav-item-list">
+      <li class="main-nav-item">
+        <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
+      </li>
+      <li class="main-nav-item">
+        <a class="<%= path === '/Movies' ? 'active' : '' %> drpbtn" href="/Movies">Movies</a>
+      </li>
+      <li class="main-nav-item">
+        <a class="<%= path === '/Books' ? 'active' : '' %>" href="/Books">Books</a>
+      </li>
+      <li class="main-nav-item">
+        <a class="<%= path === '/Games' ? 'active' : '' %>" href="/Games">Games</a>
+      </li>
+      <li class="main-nav-item">
+        <a href="/randomizer">Randomizer</a>
+      </li>
+      <!-- <div class="authSection">
+        <ul class="nav-item-list"></ul> -->
+        <% if (!isAuthenticated) { %>
+          <li class="login-nav-item">
+            <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
+          </li>
+          <li class="login-nav-item">
+            <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+          </li>
+        <% } else { %>
+          <li class="main-nav-item">
+            <form action="/logout" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="nav-button">Logout</button>
+            </form>
+          </li>
+          <li class="main-nav-item">
+            <a class="<%= path === '/lib' ? 'active' : '' %>" href="/my-library">My Library</a>
+          </li>
+          <% } %>
+    </ul>
+    </div>
+    </ul>
+  </nav>
+</header>
+<hr>
