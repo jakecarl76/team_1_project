@@ -1,19 +1,18 @@
 <%- include('../includes/head.ejs') %>
-<body class="content-body">
+<body>
    <script defer>
   
    </script>
-   <header>
       <%- include('../includes/nav.ejs') %>
-   </header>
-   <main class="content-main">
-      <h1 class="content-main-header">Hermit Habitat's Movie Randomizer</h1>
+   <main>
+      <h1>Movie Randomizer</h1>
 
       <% if (!hasMovie) { %> 
       <div class="center">
       <form action="/randomizer" method="get">
       <label for="genre" class="genre-select">Choose a genre:</label>
       <select name="genre" id="genre">
+         <option value="Select" disabled selected>Select</option>
          <% for (let genre of genres) { %>
             <option value="<%= genre %>"><%= genre %></option>
          <% } %>
@@ -23,7 +22,7 @@
      
       <h2 class="content-main-header">Your random movie will be displayed here!</h2>
 
-      <button id="generate" type="submit">Randomize!</button>
+      <button id="generate" class="btn" type="submit">Randomize!</button>
       </div>
       </form>
       <% } else { %> 
@@ -33,7 +32,7 @@
          
          <form action="/randomizer" method="get">
          <div class="center">
-         <button id="generate" class="center" type="submit">Randomize!</button>
+         <button id="generate" class="center btn" type="submit">Randomize!</button>
          </div>
          <input type="hidden" name="genre" value="<%= genre %>">
          </form>

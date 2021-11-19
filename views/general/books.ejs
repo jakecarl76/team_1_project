@@ -1,10 +1,8 @@
 <%- include('../includes/head.ejs') %>
-<body class="content-body">
-   <header>
+<body>
       <%- include('../includes/nav.ejs') %>
-   </header>
-   <main class="content-main">
-      <h1 class="content-main-header">Hermit Habitat's Books</h1>
+   <main>
+      <h1>Hermit Habitat's Books</h1>
 
       <% if (content) { %>
       <div class="content-cards">
@@ -15,9 +13,9 @@
                </div>
                <div class="right">
                <h2><%= item.title %></h2>
-               <h3>Author: <%= item.author %></h3>
-               <h4>Genre: <%= item.genre %></h4> 
-               <h5 class="description">Description: <%= item.description %></h5>
+               <h3><%= item.author %></h3>
+               <h3><%= item.genre %></h3> 
+               <h3 class="description"><%= item.description %></h3>
                </div>
             </div>
          <% } %> 

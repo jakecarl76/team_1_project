@@ -1,6 +1,11 @@
 @media screen and (min-width: 700px) {
+    body{
+        grid-template-rows: auto 1rem 1fr 3rem;
+        }
+
     main{
         width: calc(100vw - 4rem);
+        margin: auto;
     }
 
     section.grid{
@@ -11,6 +16,71 @@
         width: 100%;
     }
 
+
+    
+    /* * * * * * * * * * * * * NAV * * * * * * * * * * * * */
+    #mobile-nav-toggle, #mobile-nav-toggle ~ .burger-container{
+        display: none;
+    }
+
+    #mobile-nav-toggle:checked ~ .nav-item-list, #mobile-nav-toggle:unchecked ~ .nav-item-list{
+        transform: scale(1) translate(0,0);
+        height: auto;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100vw;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .nav-item-list{
+        transform: scale(1) translate(0,0);
+        transition: 0.3s;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 0;
+        margin-right: 1rem;
+    }
+
+
+    .main-header-nav {
+        width: 100vw;
+        height: 3rem;
+        background-color: black;
+        /* display: flex;
+        align-items: center;
+        justify-content: center; */
+    }
+    
+    .login-nav-item {
+        float: right;
+    }
+    
+    .main-nav-item,
+    .login-nav-item {
+        text-decoration: none;
+        margin: 0 1rem;
+        padding: 3px;
+        color: white;
+        display: inline-block;
+        width: 100%;
+        max-width: calc(100vw / 8)
+    }
+    .main-nav-item:first-of-type{
+        margin-left: 0;
+    }
+    
+    .main-nav-item a,
+    .login-nav-item a {
+        width: 100%;
+    }
+
+    .nav-item-list{
+        align-items: center;
+        justify-items: center;
+    }
 
         /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
 }
@@ -49,6 +119,7 @@
         .content-card {
                 display: grid;
                 grid-template-columns: 1fr;
+                height: 100%;
         }
         
         .description {
@@ -57,6 +128,7 @@
 
         .left {
                 width: 100%;
+                align-self: end;
         }
 
         .right {
