@@ -1,5 +1,25 @@
 "use strict";
 
+function _templateObject6() {
+  var data = _taggedTemplateLiteral(["favorites 1: ", ""]);
+
+  _templateObject6 = function _templateObject6() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject5() {
+  var data = _taggedTemplateLiteral(["favorites (getMyLibrary): ", ""]);
+
+  _templateObject5 = function _templateObject5() {
+    return data;
+  };
+
+  return data;
+}
+
 function _templateObject4() {
   var data = _taggedTemplateLiteral(["Error getGenres-Movie ", ""]);
 
@@ -987,41 +1007,6 @@ function getCategories() {
   });
 }
 
-exports.getMyLibrary = function (req, res, next) {
-  var bookList = [];
-  var movieList = [];
-  var gameList = [];
-  Book.find({
-    userId: req.user._id
-  }).then(function (books) {
-    bookList = books;
-    Movie.find({
-      userId: req.user._id
-    }).then(function (movies) {
-      movieList = movies;
-      Game.find({
-        userId: req.user._id
-      }).then(function (games) {
-        gameList = games; //render the page using those items
-
-        res.render('admin/my-library', {
-          books: bookList,
-          movies: movieList,
-          games: gameList,
-          pageTitle: 'My Library',
-          path: '/my-library',
-          user: req.user
-        });
-      });
-    });
-  })["catch"](function (err) {
-    var error = new Error(err);
-    error.httpStatusCode = 500;
-    console.log('admin-controller 20');
-    return next(error);
-  });
-};
-
 exports.postAddFavorite = function (req, res, next) {
   var user = req.user;
   var itemType = req.body.itemType.toString();
@@ -1105,6 +1090,210 @@ exports.postAddFavorite = function (req, res, next) {
         break;
 
       default:
+    }
+  });
+}; //THIS ISN'T DONE- YOU NEED TO PULL WHAT'S IN THE LIBRARY, NOT WHAT THEY'VE CREATED!
+
+
+exports.getMyLibrary = function _callee4(req, res, next) {
+  var bookList, movieList, gameList, favorites, user;
+  return regeneratorRuntime.async(function _callee4$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          bookList = [];
+          movieList = [];
+          gameList = [];
+          favorites = [];
+          user = req.user;
+          console.log(_templateObject5(), favorites);
+          Book.find({
+            userId: req.user._id
+          }).then(function (books) {
+            bookList = books;
+            Movie.find({
+              userId: req.user._id
+            }).then(function (movies) {
+              movieList = movies;
+              Game.find({
+                userId: req.user._id
+              }).then(function (games) {
+                gameList = games;
+                User.findById(user).then(function (user) {
+                  console.log("in getFavorites!");
+                  var faveBooks = user.bookLib.favorites;
+                  var faveMovies = user.movieLib.favorites;
+                  var faveGames = user.gameLib.favorites;
+                  var title, genre, img, item, type, id;
+                  Book.find({
+                    _id: {
+                      $in: faveBooks
+                    }
+                  }).then(function (books) {
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
+
+                    try {
+                      for (var _iterator2 = books[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var book = _step2.value;
+                        title = book.title;
+                        genre = book.genre;
+                        img = book.imageUrl;
+                        type = "book";
+                        id = book._id;
+                        item = {
+                          type: type,
+                          title: title,
+                          genre: genre,
+                          imageUrl: img,
+                          id: id
+                        };
+                        favorites.push(item);
+                      }
+                    } catch (err) {
+                      _didIteratorError2 = true;
+                      _iteratorError2 = err;
+                    } finally {
+                      try {
+                        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                          _iterator2["return"]();
+                        }
+                      } finally {
+                        if (_didIteratorError2) {
+                          throw _iteratorError2;
+                        }
+                      }
+                    }
+
+                    console.log("getFavorites book.find loop complete");
+                    Movie.find({
+                      _id: {
+                        $in: faveMovies
+                      }
+                    }).then(function (movies) {
+                      var _iteratorNormalCompletion3 = true;
+                      var _didIteratorError3 = false;
+                      var _iteratorError3 = undefined;
+
+                      try {
+                        for (var _iterator3 = movies[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                          var _movie4 = _step3.value;
+                          title = _movie4.title;
+                          genre = _movie4.genre;
+                          img = _movie4.imageUrl;
+                          type = "movie";
+                          id = _movie4._id;
+                          item = {
+                            type: type,
+                            title: title,
+                            genre: genre,
+                            imageUrl: img,
+                            id: id
+                          };
+                          favorites.push(item);
+                        }
+                      } catch (err) {
+                        _didIteratorError3 = true;
+                        _iteratorError3 = err;
+                      } finally {
+                        try {
+                          if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                            _iterator3["return"]();
+                          }
+                        } finally {
+                          if (_didIteratorError3) {
+                            throw _iteratorError3;
+                          }
+                        }
+                      }
+
+                      console.log("getFavorites movie.find loop complete");
+                      Game.find({
+                        _id: {
+                          $in: faveGames
+                        }
+                      }).then(function (games) {
+                        var _iteratorNormalCompletion4 = true;
+                        var _didIteratorError4 = false;
+                        var _iteratorError4 = undefined;
+
+                        try {
+                          for (var _iterator4 = games[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                            var _game3 = _step4.value;
+                            title = _game3.title;
+                            genre = _game3.category;
+                            img = _game3.imageUrl;
+                            type = "game";
+                            id = _game3._id;
+                            item = {
+                              type: type,
+                              title: title,
+                              genre: genre,
+                              imageUrl: img,
+                              id: id
+                            };
+                            favorites.push(item);
+                          }
+                        } catch (err) {
+                          _didIteratorError4 = true;
+                          _iteratorError4 = err;
+                        } finally {
+                          try {
+                            if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+                              _iterator4["return"]();
+                            }
+                          } finally {
+                            if (_didIteratorError4) {
+                              throw _iteratorError4;
+                            }
+                          }
+                        }
+
+                        console.log("getFavorites game.find loop complete");
+                        console.log(_templateObject6(), favorites); //render the page using those items
+
+                        res.render('admin/my-library', {
+                          books: bookList,
+                          movies: movieList,
+                          games: gameList,
+                          favorites: favorites,
+                          pageTitle: 'My Library',
+                          path: '/my-library',
+                          user: req.user
+                        });
+                      });
+                    })["catch"](function (err) {
+                      var error = new Error(err);
+                      error.httpStatusCode = 500;
+                      console.log('getMyLibrary 1086');
+                      return next(error);
+                    });
+                  })["catch"](function (err) {
+                    var error = new Error(err);
+                    error.httpStatusCode = 500;
+                    console.log('getMyLibrary 1093');
+                    return next(error);
+                  });
+                })["catch"](function (err) {
+                  var error = new Error(err);
+                  error.httpStatusCode = 500;
+                  console.log('getMyLibrary 1100');
+                  return next(error);
+                });
+              });
+            });
+          })["catch"](function (err) {
+            var error = new Error(err);
+            error.httpStatusCode = 500;
+            console.log('getMyLibrary 1109');
+            return next(error);
+          });
+
+        case 7:
+        case "end":
+          return _context7.stop();
+      }
     }
   });
 };

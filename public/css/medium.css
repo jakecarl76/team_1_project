@@ -11,6 +11,7 @@
     }
     section.grid{
         align-items: flex-start;
+        width: 80vw;
     }
 
     section.grid .card-container{
