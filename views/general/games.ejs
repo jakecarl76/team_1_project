@@ -14,7 +14,7 @@
                <div class="right">
                <h2><%= item.title %></h2>
                <h3><%= item.category %></h3>
-               <h3 class="description"><%= item.description %></h3>
+               <!-- <h3 class="description"><%= item.description %></h3> -->
                <%if(user){%>
                <form action="/adjust-library" method="POST">
                   <input type="hidden" value="<%= item.id %>" name="itemId">
