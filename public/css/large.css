@@ -61,7 +61,7 @@
     .main-nav-item,
     .login-nav-item {
         text-decoration: none;
-        margin: 0 1rem;
+        margin: 0 .5rem;
         padding: 3px;
         color: white;
         display: inline-block;
@@ -80,6 +80,8 @@
     .nav-item-list{
         align-items: center;
         justify-items: center;
+        width: 90vw;
+        margin-right: 2rem;
     }
 
         /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
