@@ -92,7 +92,6 @@ exports.getAddItem = function _callee2(req, res, next) {
           return regeneratorRuntime.awrap(getCategories());
 
         case 6:
-          console.log("bookGenres: ".concat(bookGenres, "; movieGenres: ").concat(movieGenres, "; categories: ").concat(gameCategories));
           res.render('admin/edit-item', _defineProperty({
             pageTitle: 'Add Item',
             path: '/add-item',
@@ -108,7 +107,7 @@ exports.getAddItem = function _callee2(req, res, next) {
             validationErrors: []
           }, "categories", gameCategories));
 
-        case 8:
+        case 7:
         case "end":
           return _context2.stop();
       }

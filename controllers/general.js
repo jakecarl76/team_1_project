@@ -19,7 +19,7 @@ exports.getAddItem= async (req, res, next) => {
   await getBookGenres();
   await getMovieGenres();
   await getCategories();
-  console.log(`bookGenres: ${bookGenres}; movieGenres: ${movieGenres}; categories: ${gameCategories}`);
+  
     res.render('admin/edit-item', {
       pageTitle: 'Add Item',
       path: '/add-item',
