@@ -7,7 +7,7 @@
       <% if (content) { %>
       <div class="content-cards">
       <% for (let item of content) { %>
-            <div class="content-card">
+            <a href="/details/<%= item._id %>?type=book"><div class="content-card">
                <div class="left">
                <img class="content-card-image" src="images/<%= item.imageUrl %>" alt="<%= item.title %>">
                </div>
@@ -15,17 +15,9 @@
                <h2><%= item.title %></h2>
                <h3><%= item.author %></h3>
                <h3><%= item.genre %></h3> 
-               <h3 class="description"><%= item.description %></h3>
-               <%if(user){%>
-               <form action="/adjust-library" method="POST">
-                  <input type="hidden" value="<%= item.id %>" name="itemId">
-                  <input type="hidden" value="book" name="itemType">
-                  <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                  <button class="delete-btn btn" type="submit"><% if(user.bookLib.lib.includes(item.id)){ %>Remove from Library<% } else { %>Add to Library <% } %></button>
-              </form>
-              <% } %>
                </div>
             </div>
+            </a>
          <% } %> 
       </div>
       <% } else { %>
