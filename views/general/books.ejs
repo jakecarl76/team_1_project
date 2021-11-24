@@ -15,6 +15,14 @@
                <h2><%= item.title %></h2>
                <h3><%= item.author %></h3>
                <h3><%= item.genre %></h3> 
+               <%if(user){%>
+                  <form action="/adjust-library" method="POST">
+                     <input type="hidden" value="<%= item.id %>" name="itemId">
+                     <input type="hidden" value="movie" name="itemType">
+                     <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                     <button class="delete-btn btn" type="submit"><% if(user.movieLib.lib.includes(item.id)){ %>Remove from Library<% } else { %>Add to Library <% } %></button>
+                 </form>
+                 <% } %>
                </div>
             </div>
             </a>
