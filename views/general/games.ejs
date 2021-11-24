@@ -1,10 +1,8 @@
 <%- include('../includes/head.ejs') %>
-<body class="content-body">
-   <header>
+<body>
       <%- include('../includes/nav.ejs') %>
-   </header>
-   <main class="content-main">
-      <h1 class="content-main-header">Hermit Habitat's Board Games</h1>
+   <main>
+      <h1>Hermit Habitat's Board Games</h1>
 
       <% if (content) { %>
       <div class="content-cards">
@@ -15,8 +13,16 @@
                </div>
                <div class="right">
                <h2><%= item.title %></h2>
-               <h3>Category: <%= item.category %></h3>
-               <h4 class="description">Description: <%= item.description %></h4>
+               <h3><%= item.category %></h3>
+               <h3 class="description"><%= item.description %></h3>
+               <%if(user){%>
+               <form action="/adjust-library" method="POST">
+                  <input type="hidden" value="<%= item.id %>" name="itemId">
+                  <input type="hidden" value="game" name="itemType">
+                  <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                  <button class="delete-btn btn" type="submit"><% if(user.gameLib.lib.includes(item.id)){ %>Remove from Library<% } else { %>Add to Library <% } %></button>
+              </form>
+              <% } %>
                </div>
             </div>
          <% } %> 

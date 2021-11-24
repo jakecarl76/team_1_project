@@ -5,46 +5,75 @@
     <%- include('../includes/nav.ejs') %>
 <main>
     <h1>My Library</h1>
+    
+    <% if (favorites.length > 0) { %>
+    <section class="grid">
+        <h2>Favorites</h2>
+        <div class="card-container" id="favorites">
+            <% for (let fave of favorites) { %>
+                <article class="card favorite">
+                    <h3 class="title"><%= fave.title %></h3>
+                    <div class="favorite-star">
+                        <form action="/add-favorite" method="POST">
+                            <input type="hidden" value="<%= fave.id %>" name="id">
+                            <input type="hidden" value="<%= fave.type %>" name="itemType">
+                            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                            <button class="favorite-btn" type="submit"><i class="fas fa-star"></i></button>
+                        </form>
+                    </div>
+                    <img src="/images/<%= fave.imageUrl %>" alt="Image of <%= fave.title %>">
+                    <div class="card_content">
+                        <p><%= fave.genre %></p>
+                    </div>
+                    <div class="one-button button-container">
+                        <a href="/edit-item/<%= fave.id %>/<%= fave.type %>?edit=true" class="details-btn btn">Edit</a>
+                        <form action="/adjust-library" method="POST">
+                            <input type="hidden" value="<%= fave.id %>" name="itemId">
+                            <input type="hidden" value="<%= fave.type %>" name="itemType">
+                            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                            <button class="delete-btn btn" type="submit">Remove From Library</button>
+                        </form>
+                    </div>
+                </article>
+            <% } %>
+        </div>
+    </section>
+    <% } %>
+
+
+
     <section class="grid">
         <h2>Books</h2>
         
     <% if (books.length > 0) { %>
-        <div class="card-container">
-                <% for (let book of books) { %>
-                    <article class="card<% if(user.bookLib.favorites.includes(book.id)){ %> favorite <% } %>">
-                        <h3 class="title"><%= book.title %></h3>
-                        <div class="favorite-star">
-                            <% if(user.bookLib.favorites.includes(book.id)){ %> 
-                                <i class="fas fa-star"></i> 
-                            <% } else { %>
-                                <i class="far fa-star"></i>
-                            <% } %>
-                        </div>
-                        <img src="/images/<%= book.imageUrl %>" alt="Image of <%= book.title %>">
-                        <div class="card_content">
-                            <p><%= book.author %></p>
-                            <p><%= book.genre %></p>
-                            <p class="description"><%= book.description %></p>
-                        </div>
-                        <div class="one-button button-container">
-                            <a href="/edit-item/<%= book.id %>/book?edit=true" class="details-btn btn">Edit</a>
-                            <form action="/admin/delete-book" method="POST">
-                                <input type="hidden" value="<%= book.id %>" name="bookId">
-                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="delete-btn btn" type="submit">Delete</button>
-                            </form>
-                            <!-- <a href="/add-favorite/<%= book.id %>/book" class="details-btn btn">Add to Favorites</a> -->
-                            <form action="/add-favorite" method="POST">
-                                <input type="hidden" value="<%= book.id %>" name="id">
-                                <input type="hidden" value="book" name="itemType">
-                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="delete-btn btn" type="submit"><% if(user.bookLib.favorites.includes(book.id)){ %> Unfavorite <% } else { %>Favorite<% } %></button>
-                            </form>
-                        </div>
-                        
-                        
-                        
-                    </article>
+        <div class="card-container" id="books">
+            <% for (let book of books) { %>
+                <article class="card<% if(user.bookLib.favorites.includes(book.id)){ %> favorite<% } %>">
+                    <h3 class="title"><%= book.title %></h3>
+                    <div class="favorite-star">
+                        <form action="/add-favorite" method="POST">
+                            <input type="hidden" value="<%= book.id %>" name="id">
+                            <input type="hidden" value="book" name="itemType">
+                            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                            <button class="favorite-btn" type="submit"><% if(user.bookLib.favorites.includes(book.id)){ %> <i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
+                        </form>
+                    </div>
+                    <img src="/images/<%= book.imageUrl %>" alt="Image of <%= book.title %>">
+                    <div class="card_content">
+                        <p><%= book.author %></p>
+                        <p><%= book.genre %></p>
+                        <p class="description"><%= book.description %></p>
+                    </div>
+                    <div class="one-button button-container">
+                        <a href="/edit-item/<%= book.id %>/book?edit=true" class="details-btn btn">Edit</a>
+                        <form action="/adjust-library" method="POST">
+                            <input type="hidden" value="<%= book.id %>" name="itemId">
+                            <input type="hidden" value="book" name="itemType">
+                            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                            <button class="delete-btn btn" type="submit">Remove From Library</button>
+                        </form>
+                    </div>
+                </article>
             <% } %>
         </div>
     <% } else { %>
@@ -56,39 +85,34 @@
         <h2>Movies</h2>
         
     <% if (movies.length > 0) { %>
-        <div class="card-container">
-                <% for (let movie of movies) { %>
-                    <article class="card<% if(user.movieLib.favorites.includes(movie.id)){ %> favorite <% } %>">
-                        <h3 class="title"><%= movie.title %></h3>
-                        <div class="favorite-star">
-                            <% if(user.movieLib.favorites.includes(movie.id)){ %> 
-                                <i class="fas fa-star"></i> 
-                            <% } else { %>
-                                <i class="far fa-star"></i>
-                            <% } %>
-                        </div>
-                        <img src="/images/<%= movie.imageUrl %>" alt="Image of <%= movie.title %>">
-                        <div class="card_content">
-                            <p><%= movie.rating %></p>
-                            <p><%= movie.genre %></p>
-                            <p class="description"><%= movie.description %></p>
-                        </div>
-                        <div class="one-button button-container">
-                            <a href="/edit-item/<%= movie.id %>/movie?edit=true"" class="details-btn btn">Edit</a>
-                            <form action="/admin/delete-movie" method="POST">
-                                <input class="btn" type="hidden" value="<%= movie.id %>" name="movieId">
-                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="delete-btn btn" type="submit">Delete</button>
-                            </form>
-                            <!-- <a href="/add-favorite/<%= movie.id %>/movie" class="details-btn btn">Add to Favorites</a> -->
-                            <form action="/add-favorite" method="POST">
-                                <input class="btn" type="hidden" value="<%= movie.id %>" name="id">
-                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <input type="hidden" value="movie" name="itemType">
-                                <button class="delete-btn btn" type="submit"><% if(user.movieLib.favorites.includes(movie.id)){ %> Unfavorite <% } else { %>Favorite<% } %></button>
-                            </form>
-                        </div>
-                    </article>
+        <div class="card-container" id="movies">
+            <% for (let movie of movies) { %>
+                <article class="card<% if(user.movieLib.favorites.includes(movie.id)){ %> favorite <% } %>">
+                    <h3 class="title"><%= movie.title %></h3>
+                    <div class="favorite-star">
+                        <form action="/add-favorite" method="POST">
+                            <input class="btn" type="hidden" value="<%= movie.id %>" name="id">
+                            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                            <input type="hidden" value="movie" name="itemType">
+                            <button class="favorite-btn" type="submit"><% if(user.movieLib.favorites.includes(movie.id)){ %><i class="fas fa-star"></i><% } else { %><i class="far fa-star"></i><% } %></button>
+                        </form>
+                    </div>
+                    <img src="/images/<%= movie.imageUrl %>" alt="Image of <%= movie.title %>">
+                    <div class="card_content">
+                        <p><%= movie.rating %></p>
+                        <p><%= movie.genre %></p>
+                        <p class="description"><%= movie.description %></p>
+                    </div>
+                    <div class="one-button button-container">
+                        <a href="/edit-item/<%= movie.id %>/movie?edit=true"" class="details-btn btn">Edit</a>
+                        <form action="/adjust-library" method="POST">
+                            <input type="hidden" value="<%= movie.id %>" name="itemId">
+                            <input type="hidden" value="movie" name="itemType">
+                            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                            <button class="delete-btn btn" type="submit">Remove From Library</button>
+                        </form>
+                    </div>
+                </article>
             <% } %>
         </div>
     <% } else { %>
@@ -100,16 +124,17 @@
         <h2>Games</h2>
         
     <% if (games.length > 0) { %>
-        <div class="card-container">
+        <div class="card-container"  id="games">
                 <% for (let game of games) { %>
                     <article class="card<% if(user.gameLib.favorites.includes(game.id)){ %> favorite <% } %>">
                         <h3 class="title"><%= game.title %></h3>
                         <div class="favorite-star">
-                            <% if(user.gameLib.favorites.includes(game.id)){ %> 
-                                <i class="fas fa-star"></i> 
-                            <% } else { %>
-                                <i class="far fa-star"></i>
-                            <% } %>
+                            <form action="/add-favorite" method="POST">
+                                <input class="btn" type="hidden" value="<%= game.id %>" name="id">
+                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                                <input type="hidden" value="game" name="itemType">
+                                <button class="favorite-btn" type="submit"><% if(user.gameLib.favorites.includes(game.id)){ %><i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
+                            </form>
                         </div>
                         <img src="/images/<%= game.imageUrl %>" alt="Image of <%= game.title %>">
                         <div class="card_content">
@@ -118,18 +143,14 @@
                         </div>
                         <div class="one-button button-container">
                             <a href="/edit-item/<%= game.id %>/game?edit=true"" class="details-btn btn">Edit</a>
-                            <form action="/admin/delete-game" method="POST">
-                                <input class="btn" type="hidden" value="<%= game.id %>" name="gameId">
+                            <form action="/adjust-library" method="POST">
+                                <input type="hidden" value="<%= game.id %>" name="itemId">
+                                <input type="hidden" value="game" name="itemType">
                                 <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <button class="delete-btn btn" type="submit">Delete</button>
+                                <button class="delete-btn btn" type="submit">Remove From Library</button>
                             </form>
                             <!-- <a href="/add-favorite/<%= game.id %>/game" class="details-btn btn">Add to Favorites</a> -->
-                            <form action="/add-favorite" method="POST">
-                                <input class="btn" type="hidden" value="<%= game.id %>" name="id">
-                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                                <input type="hidden" value="game" name="itemType">
-                                <button class="delete-btn btn" type="submit"><% if(user.gameLib.favorites.includes(game.id)){ %> Unfavorite <% } else { %>Favorite<% } %></button>
-                            </form>
+                            
 
                         </div>
                     </article>

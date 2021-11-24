@@ -39,36 +39,51 @@ exports.getAddItem= async (req, res, next) => {
 
 // Get All Movies and render
 exports.getMovies = (req, res, next) => {
+  let user = null;
+  if(req.user){
+    user = req.user;
+  }
   Movie.find()
     .then(movies => {
       res.render('general/movies', {
         pageTitle: 'Movies | Hermit Habitat',
         path: '/movies',
-        content: movies
+        content: movies,
+        user: user
       });
     });
 };
 
 // Get All Games and render
 exports.getGames = (req, res, next) => {
+  let user = null;
+  if(req.user){
+    user = req.user;
+  }
   Game.find()
     .then(games => {
       res.render('general/games', {
         pageTitle: 'Games | Hermit Habitat',
         path: '/games',
-        content: games
+        content: games,
+        user: user
       });
     });
 };
 
 // Get All Books and render
 exports.getBooks = (req, res, next) => {
+  let user = null;
+  if(req.user){
+    user = req.user;
+  }
   Book.find()
     .then(books => {
       res.render('general/books', {
         pageTitle: 'Books | Hermit Habitat',
         path: '/books',
-        content: books
+        content: books,
+        user: user
       });
     });
 };
@@ -763,41 +778,6 @@ async function getCategories(){
     })
 }
 
-exports.getMyLibrary = (req, res, next) => {
-  let bookList = [];
-  let movieList = [];
-  let gameList = [];
-
-  Book.find({userId: req.user._id})
-  .then(books => {
-    bookList = books;
-    Movie.find({userId: req.user._id})
-    .then(movies => {
-      movieList = movies;
-      Game.find({userId: req.user._id})
-      .then(games => {
-        gameList = games;
-
-        //render the page using those items
-        res.render('admin/my-library', {
-          books: bookList,
-          movies: movieList,
-          games: gameList,
-          pageTitle: 'My Library',
-          path: '/my-library',
-          user: req.user
-        });
-      })
-    })
-  })
-  .catch(err => {
-    const error = new Error(err);
-    error.httpStatusCode = 500;
-    console.log('admin-controller 20');
-    return next(error);
-  });
-}
-
 exports.postAddFavorite = (req, res, next) => {
   
   const user = req.user;
@@ -813,7 +793,10 @@ exports.postAddFavorite = (req, res, next) => {
             user.bookLib.favorites.push(id);
             msg = "Book added to bookLib.favorites.";}
             else{
-              let index = user.bookLib.favorites.findIndex(index => index == parseInt(id));
+              let index = user.bookLib.favorites.findIndex(index => {
+                return index == id;
+              });
+              console.log(`index: ${index}`);
               user.bookLib.favorites.splice(index, 1);
               msg = "Book removed from bookLib.favorites.";
             }
@@ -828,16 +811,23 @@ exports.postAddFavorite = (req, res, next) => {
                 console.log('postAddFavorites user.save (book) error: ${err}');
                 return next(error);
               })
-            res.redirect('/my-library');
+            res.redirect('/my-library#books');
             
           break;
         case "movie":
           if(!user.movieLib.favorites.includes(id)){
             user.movieLib.favorites.push(id);
+            console.log("Movie added to movieLib.favorites");
+          } else {
+            let index = user.movieLib.favorites.findIndex(index => {
+              return index == id;
+            });
+              user.movieLib.favorites.splice(index, 1);
+              msg = "Movie removed from movieLib.favorites.";
+          }
             user.save()
               .then(results => {
-                console.log("Movie added to movieLib.favorites");
-            console.log(`${user.username}.movieLib: ${user.movieLib}`);
+                console.log(`${user.username}.movieLib: ${user.movieLib}`);
               })
               .catch(err => {
                 const error = new Error(err);
@@ -845,15 +835,23 @@ exports.postAddFavorite = (req, res, next) => {
                 console.log('postAddFavorites user.save (movie) error: ${err}');
                 return next(error);
               })
-          }
-          // res.redirect('/my-library');
+
+          res.redirect('/my-library#movies');
           break;
         case "game":
           if(!user.gameLib.favorites.includes(id)){
             user.gameLib.favorites.push(id);
+            msg = "Game added to gameLib.favorites.";
+          } else {
+            let index = user.gameLib.favorites.findIndex(index => {
+              return index == id;
+            });
+              user.gameLib.favorites.splice(index, 1);
+              msg = "Game removed from gameLib.favorites.";
+          }
             user.save()
               .then(results => {
-                console.log("Game added to gameLib.favorites");
+                console.log(msg);
             console.log(`${user.username}.gameLib: ${user.gameLib}`);
               })
               .catch(err => {
@@ -862,8 +860,8 @@ exports.postAddFavorite = (req, res, next) => {
                 console.log('postAddFavorites user.save (game) error: ${err}');
                 return next(error);
               })
-          }
-          // res.redirect('/my-library');
+          
+          res.redirect('/my-library#games');
           break;
         default:
           
