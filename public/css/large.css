@@ -61,7 +61,7 @@
     .main-nav-item,
     .login-nav-item {
         text-decoration: none;
-        margin: 0 1rem;
+        margin: 0 .5rem;
         padding: 3px;
         color: white;
         display: inline-block;
@@ -80,6 +80,21 @@
     .nav-item-list{
         align-items: center;
         justify-items: center;
+        width: 90vw;
+        margin-right: 2rem;
+    }
+
+    /* Details CSS */
+    .details-left {
+        width: 70%;
+    }
+
+    .details-right {
+        margin-top: 7%;
+    }
+
+    .details-right h1 {
+        padding-top: 1%;
     }
 
         /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
@@ -136,6 +151,21 @@
                 border: none;
         }
 
+        /* Details CSS */ 
+        .details-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            grid-auto-rows: 1fr;
+            align-items: center;
+        }
+
+        .details-right {
+            margin-top: 0;
+        }
+
+        .details-right h1 {
+            padding-top: 0;
+        }
         /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
 }
 
@@ -147,11 +177,18 @@
         .content-card {
                 display: flex;
                 flex-direction: row;
+                height: auto;
         }
 
         .right {
                 width: 85%;
                 border-left: 2px solid #3AAFB9;
+        }
+
+        .left {
+            width: 300px;
+            height: 300px;
+            object-fit: scale-down;
         }
 
 }

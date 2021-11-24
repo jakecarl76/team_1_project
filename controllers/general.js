@@ -39,49 +39,70 @@ exports.getAddItem= async (req, res, next) => {
 
 // Get All Movies and render
 exports.getMovies = (req, res, next) => {
+  let user = null;
+  if(req.user){
+    user = req.user;
+  }
   Movie.find()
     .then(movies => {
       res.render('general/movies', {
         pageTitle: 'Movies | Hermit Habitat',
         path: '/movies',
-        content: movies
+        content: movies,
+        user: user
       });
     });
 };
 
 // Get All Games and render
 exports.getGames = (req, res, next) => {
+  let user = null;
+  if(req.user){
+    user = req.user;
+  }
   Game.find()
     .then(games => {
       res.render('general/games', {
         pageTitle: 'Games | Hermit Habitat',
         path: '/games',
-        content: games
+        content: games,
+        user: user
       });
     });
 };
 
 // Get All Books and render
 exports.getBooks = (req, res, next) => {
+  let user = null;
+  if(req.user){
+    user = req.user;
+  }
   Book.find()
     .then(books => {
       res.render('general/books', {
         pageTitle: 'Books | Hermit Habitat',
         path: '/books',
-        content: books
+        content: books,
+        user: user
       });
     });
 };
 
-// Get Movie Randomizer
-exports.getMovieRandomizer = (req, res, next) => {
+// Get Randomizer
+exports.getRandomizer = (req, res, next) => {
   
-  // Get genre from query
-  const movieGenre = req.query.genre;
+  // Get randomizer type from query
+  const type = req.query.type;
 
-  // Find all movies
-  Movie.find()
-    .then(movies => {
+  // Get genre from query
+  let contentGenre = req.query.genre;
+
+  switch (type) {
+    case 'movie':
+      // Find all movies
+      Movie.find()
+        .then(movies => {
+
       const genreIteration = [];
 
       // Push all movie genre to array
@@ -93,13 +114,13 @@ exports.getMovieRandomizer = (req, res, next) => {
       const genre = genreIteration.filter((value, index) => genreIteration.indexOf(value) === index);
 
       // Display different results if genre is in URL query
-      if (movieGenre) {
+      if (contentGenre) {
 
         // Get random movie from mongodb based on genre
         Movie.aggregate([
           {
             $match: {
-              genre: movieGenre
+              genre: contentGenre
             }
           },
           {
@@ -112,22 +133,134 @@ exports.getMovieRandomizer = (req, res, next) => {
             res.render('general/randomizer', {
               pageTitle: 'Movie Randomizer | Hermit Habitat',
               path: '/randomizer',
-              genre: movieGenre,
+              genre: contentGenre,
               genres: genre,
-              movie: mov[0],
-              hasMovie: true
+              content: mov[0],
+              hasMovie: true,
+              random_home: false,
+              type: type
             });
           });
       } else {
         res.render('general/randomizer', {
           pageTitle: 'Movie Randomizer | Hermit Habitat',
           path: '/randomizer',
-          content: movies,
           genres: genre,
-          hasMovie: false
+          hasMovie: false,
+          random_home: false,
+          type: type,
+          type_name: 'Movie'
         });
       };
     });
+      break;
+    case 'game':
+      // Find all movies
+      Game.find()
+        .then(games => {
+
+      const genreIteration = [];
+
+      // Push all movie genre to array
+      for (let game of games) {
+         genreIteration.push(game.category);
+      }
+
+      // Filter movie genre to have unique values
+      const genre = genreIteration.filter((value, index) => genreIteration.indexOf(value) === index);
+
+      // Display different results if genre is in URL query
+      if (contentGenre) {
+
+        // Get random movie from mongodb based on genre
+        Game.aggregate([
+          {
+            $match: {
+              category: contentGenre
+            }
+          },
+          {
+            $sample: {
+              size: 1
+            }
+          }
+        ])
+          .then(gam => {
+            res.render('general/randomizer', {
+              pageTitle: 'Game Randomizer | Hermit Habitat',
+              path: '/randomizer',
+              genre: contentGenre,
+              genres: genre,
+              content: gam[0],
+              hasMovie: true,
+              random_home: false,
+              type: type
+            });
+          });
+      } else {
+        res.render('general/randomizer', {
+          pageTitle: 'Game Randomizer | Hermit Habitat',
+          path: '/randomizer',
+          genres: genre,
+          hasMovie: false,
+          random_home: false,
+          type: type,
+          type_name: 'Game'
+        });
+      };
+    });
+      break;
+    default:
+      res.render('general/randomizer', {
+        pageTitle: 'Movie Randomizer | Hermit Habitat',
+        path: '/randomizer',
+        hasMovie: false,
+        random_home: true,
+        type: type
+        });
+        break;
+  } 
+};
+
+// Get Item Details
+exports.getItemDetails = (req, res, next) => {
+  const itemId = req.params.itemId;
+  const type = req.query.type;
+
+  switch (type) {
+    case 'movie':
+      Movie.findById(itemId)
+        .then(movie => {
+          res.render('general/details', {
+          pageTitle: `${movie.title} | Hermit Habitat`,
+          path: '/details',
+          item: movie
+          })
+        })
+      break;
+    
+    case 'book':
+      Book.findById(itemId)
+        .then(book => {
+          res.render('general/details', {
+            pageTitle: `${book.title} | Hermit Habitat`,
+            path: '/details',
+            item: book
+          })
+        })
+      break;
+    
+    case 'game':
+      Game.findById(itemId)
+        .then(game => {
+          res.render('general/details', {
+            pageTitle: `${game.title} | Hermit Habitat`,
+            path: '/details',
+            item: game
+          })
+        })
+      break;
+}
 };
 
 /*cannot test until My Items page is created*/
@@ -761,41 +894,6 @@ async function getCategories(){
     .then(categories => {
       gameCategories = categories;
     })
-}
-
-exports.getMyLibrary = (req, res, next) => {
-  let bookList = [];
-  let movieList = [];
-  let gameList = [];
-
-  Book.find({userId: req.user._id})
-  .then(books => {
-    bookList = books;
-    Movie.find({userId: req.user._id})
-    .then(movies => {
-      movieList = movies;
-      Game.find({userId: req.user._id})
-      .then(games => {
-        gameList = games;
-
-        //render the page using those items
-        res.render('admin/my-library', {
-          books: bookList,
-          movies: movieList,
-          games: gameList,
-          pageTitle: 'My Library',
-          path: '/my-library',
-          user: req.user
-        });
-      })
-    })
-  })
-  .catch(err => {
-    const error = new Error(err);
-    error.httpStatusCode = 500;
-    console.log('admin-controller 20');
-    return next(error);
-  });
 }
 
 exports.postAddFavorite = (req, res, next) => {

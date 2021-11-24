@@ -118,33 +118,54 @@ exports.getAddItem = function _callee2(req, res, next) {
 
 
 exports.getMovies = function (req, res, next) {
+  var user = null;
+
+  if (req.user) {
+    user = req.user;
+  }
+
   Movie.find().then(function (movies) {
     res.render('general/movies', {
       pageTitle: 'Movies | Hermit Habitat',
       path: '/movies',
-      content: movies
+      content: movies,
+      user: user
     });
   });
 }; // Get All Games and render
 
 
 exports.getGames = function (req, res, next) {
+  var user = null;
+
+  if (req.user) {
+    user = req.user;
+  }
+
   Game.find().then(function (games) {
     res.render('general/games', {
       pageTitle: 'Games | Hermit Habitat',
       path: '/games',
-      content: games
+      content: games,
+      user: user
     });
   });
 }; // Get All Books and render
 
 
 exports.getBooks = function (req, res, next) {
+  var user = null;
+
+  if (req.user) {
+    user = req.user;
+  }
+
   Book.find().then(function (books) {
     res.render('general/books', {
       pageTitle: 'Books | Hermit Habitat',
       path: '/books',
-      content: books
+      content: books,
+      user: user
     });
   });
 }; // Get Movie Randomizer
@@ -986,41 +1007,6 @@ function getCategories() {
     }
   });
 }
-
-exports.getMyLibrary = function (req, res, next) {
-  var bookList = [];
-  var movieList = [];
-  var gameList = [];
-  Book.find({
-    userId: req.user._id
-  }).then(function (books) {
-    bookList = books;
-    Movie.find({
-      userId: req.user._id
-    }).then(function (movies) {
-      movieList = movies;
-      Game.find({
-        userId: req.user._id
-      }).then(function (games) {
-        gameList = games; //render the page using those items
-
-        res.render('admin/my-library', {
-          books: bookList,
-          movies: movieList,
-          games: gameList,
-          pageTitle: 'My Library',
-          path: '/my-library',
-          user: req.user
-        });
-      });
-    });
-  })["catch"](function (err) {
-    var error = new Error(err);
-    error.httpStatusCode = 500;
-    console.log('admin-controller 20');
-    return next(error);
-  });
-};
 
 exports.postAddFavorite = function (req, res, next) {
   var user = req.user;

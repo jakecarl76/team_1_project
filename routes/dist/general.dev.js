@@ -20,7 +20,6 @@ router.post('/add-item', isAuth, generalCtrl.postAddItem);
 router.post('/add-another', isAuth, generalCtrl.postAddAnother);
 router.get('/edit-item/:itemId/:itemType', isAuth, generalCtrl.getEditItem);
 router.post('/edit-item', isAuth, generalCtrl.postEditItem);
-router.get('/my-library', isAuth, generalCtrl.getMyLibrary);
 router.post('/add-favorite', isAuth, generalCtrl.postAddFavorite); // Get route: Movies
 
 router.get('/movies', generalCtrl.getMovies); // Get Movie Randomizer

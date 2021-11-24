@@ -49,8 +49,12 @@ Shades of Purple
 /* * * * * * * * * * * * * * * * * * * * GENERAL* * * * * * * * * * * * * * * */
 
  
-{
+* {
     box-sizing: border-box;
+    max-width: 100vw;
+
+    /* This helps to troubleshoot horizontal scrolling issues */
+    /* outline: 2px red solid; */
 }
 
 html {
@@ -133,13 +137,13 @@ header{
     display: grid;
     grid-template-columns: 1fr;
     padding: 0;
+    margin: 0;
 }
 
 header h1{
     color: #fff;
     padding-left: 3rem;
 }
-
 
 /* * * * * * * * * * NAV* * * * * * * * * * */
 
@@ -179,7 +183,6 @@ header h1{
 .dropdown:hover .drop-content {
     display: block;
 } */
-
 .burger-container{
     position: absolute;
     top: 2rem;
@@ -310,8 +313,8 @@ section.grid{
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    max-width: calc(100vw - 4rem);
+    width: 80vw;
+    max-width: calc(100vw - 8rem);
     padding: 1rem;
     margin: 2rem 2rem 0 0;
     /* box-shadow:  
@@ -405,6 +408,7 @@ button.favorite{
 .card .button-container{
     grid-area: buttons;
 }
+
 
 /* * * * * * * * * * FORMS* * * * * * * * * * */
 form{
@@ -570,7 +574,7 @@ button:hover, a.btn:hover{
 } */
  
  .content-cards {
-    margin: 0;
+    margin: 0 2rem 0 0;
  }
  
  .content-card {
@@ -590,7 +594,10 @@ button:hover, a.btn:hover{
 
  .right{
      grid-area: right;
-     
+ }
+
+ .right .one-button{
+     justify-self: flex-end;
  }
 
  .left{
@@ -642,6 +649,23 @@ button:hover, a.btn:hover{
  /*
     Randomizer CSS
  */
+.randomizer-type-buttons {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    font-family: "Nixie One", sans-serif;
+    font-weight: 700;
+    width: 75%;
+    text-align: center;
+}
+
+.randomizer-type-buttons a {
+    font-size: 1.2em;
+    border: 2px solid #556BC5;
+    color: #556BC5; 
+    padding: 5%;
+    box-shadow: 0px 0px 10px rgba( 255, 255, 255, 0.5);
+}
 
 .random-details {
     font-family: "Nixie One", sans-serif !important;
@@ -674,5 +698,79 @@ button:hover, a.btn:hover{
 .center button {
     margin-top: 1rem;
 }
+
+/*
+   Details View CSS
+*/
+.details-main {
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.details-left {
+    margin: 0 auto;
+    width: 90%;
+}
+
+.details-left img {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0%;
+    box-shadow: 
+    0 0 0 2px rgba( 26, 52, 160, 0.35),
+    0 0 0 4px rgba( 26, 52, 160, 0.35),
+    0 0 0 6px rgba( 26, 52, 160, 0.35), 
+    inset 0 0 0 10px rgba( 0, 0, 0, 0.1);
+}
+
+.details-right {
+    font-size: 1.1em;
+    position: relative;
+    width: 100%;
+    padding: 2%;
+    margin-top: 10%;
+    box-shadow: 
+    0 0 0 2px rgba( 26, 52, 160, 0.35),
+    0 0 0 4px rgba( 26, 52, 160, 0.35),
+    0 0 0 6px rgba( 26, 52, 160, 0.35), 
+    inset 0 0 0 10px rgba( 0, 0, 0, 0.1);
+}
+
+.details-genre {
+    position: absolute;
+    top: -2%;
+    right: 2%;
+    font-family: "Nixie One", sans-serif;
+    font-size: 1.1em;
+    font-weight: 700;
+    background-color:  #A31643;
+    color: white;
+    padding: 2%;
+}
+
+.details-right h1 {
+    padding-top: 15%;
+    font-size: 1.1em;
+}
+
+.details-right h2 {
+    font-size: 1.1em;
+}
+
+.details-title {
+    font-weight: bold;
+    color:#DC527E;
+}
+
+.details-desc {
+    font-family: "Nixie One", sans-serif;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1em;
+    color:#DC527E;
+}
+
+
 
 
