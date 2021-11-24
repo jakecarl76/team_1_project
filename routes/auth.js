@@ -15,6 +15,7 @@ const router = express.Router();
 //routes
 //...
 
+router.delete('/delete-account',authCtrl.delAccount);
 
 router.get('/reset-password/:token', authCtrl.getResetPassword);
 

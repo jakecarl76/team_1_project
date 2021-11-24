@@ -108,6 +108,22 @@
     </div>
 
 
+    <div id="delOptionsDiv">
+      <input type="button" value="Delete Account"
+       onclick="toggleDivById('delDiv'); toggleDiv(this.parentElement);">
+    </div>
+    <div id="delDiv" class="hidden">
+
+      <p>Once deleted, your account is gone forever.</p>
+      <ul id="delStatus"></ul> 
+      <p>Please enter your password in order to delete your account:</p>
+      <label for="delPassword">Password</label>
+      <input type="password" id="delPassword" name="delPassword">
+      <input type="button" id="delBtn" value="Delete">
+      <input type="button" value="Cancel" 
+       onclick="toggleDivById('delOptionsDiv'); toggleDiv(this.parentElement);">
+    </div>
+
   </main>
 
   <script>
@@ -485,6 +501,100 @@
         });
       }
     );//END ADD CHANGE PASSWORD EVENT LISTENER
+
+
+    //add event listener to del password style when fixing it
+    document.getElementById('delPassword')
+    .addEventListener('input', function() {
+      this.classList.remove('invalid');
+    });
+
+    //DEL ACCOUNT LISTENER
+    //add 'submit' to change password
+    document.getElementById("delBtn")
+    .addEventListener("click", function() {
+        //Check inputs on clientside first
+        let newErrs = [];
+        let pwdCheck = true;
+        
+        //check password is entered
+        if(document.getElementById('delPassword').value == '')
+        {
+          newErrs.push("You must enter your password to change delete your account.");
+          pwdCheck = false;
+        }
+
+        document.getElementById('delStatus').innerHTML = "";
+        //display new errs
+        for(err of newErrs)
+        {
+          document.getElementById('delStatus').innerHTML += "<li>" + err + "</li>";
+        }
+
+        //exit if any errors
+        if(!pwdCheck)
+        {
+          document.getElementById('delPassword').classList.add('invalid');
+          return false;
+        }
+        if(!confirm("Are you sure you want to delete your account forever?"))
+        {
+          return false;
+        }
+
+        //no errors found, send request to del account
+
+
+        let tmpData = {
+          pwd: document.getElementById("delPassword").value,
+          userId: document.getElementById("userId").value
+        };
+        fetch('/delete-account', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            document.getElementById("passwordStatus").innerHTML = data.msg;
+            //clear password fields
+            document.getElementById('delPassword').value = "";
+            window.location.href = "/login";
+          }
+          else
+          {
+            //clear messages
+            document.getElementById("delStatus").innerHTML = "";
+            //display err msgs
+            for(err of data.errMsg)
+            {
+              document.getElementById("delStatus").innerHTML += "<li>" + err + "</li>";
+            }
+
+            //hilgiht fields
+            for(errId of data.errIds)
+            {
+              if(errId == "pwd")
+              {
+                document.getElementById("delPassword").classList.add("invalid");
+              }
+            }
+
+            
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD DEL ACCOUNT EVENT LISTENER
 
   </script>
 

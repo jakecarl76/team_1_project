@@ -209,6 +209,99 @@ exports.postCreatePasswordReset = (req, res, next) => {
 
 
 
+exports.delAccount = (req, res, next) => {
+  //get email and user id
+  console.log("DEL ACCOUNT");
+  let pwd = req.body.pwd;
+  let userId = req.body.userId;
+  let tmpUser = null;
+  let errMsg = [];
+  let errIds = [];
+
+  //check for validation errors
+  let vErrs = false;
+
+  if(pwd == "")
+  {
+    errMsg.push("You must enter your password in order to delete your profile.");
+    errIds.push("pwd");
+  }
+  
+  if(vErrs)
+  {
+    console.log(errMsg);
+    return res.json({errMsg: errMsg,
+                     errIds: errIds})
+  }//END IF VERRS
+
+  User.findById(userId)
+  .then( user => {
+
+    if(!user)
+    {
+      throw new Error("Could not find user!");
+    }
+    else
+    {
+      //save ref for later use
+      tmpUser = user;
+      //username available, change username
+      //verify user id
+      if(user && user._id.toString() === req.session.user._id.toString())
+      {
+
+        //check old password
+        bcrypt.compare(pwd, user.password)
+        .then(hashRes => {
+          if(hashRes)
+          {console.log("correct pwd");
+            //correct password
+            console.log("deleting account");
+
+            //delete account
+            User.deleteOne({_id: userId})
+            .then(result => {
+              //delete session
+              req.session.destroy(err => {
+                if(err)
+                {
+                  console.log("Error loging out: " + err);
+                }
+              });
+              //return that deleted successfully
+              res.status(201).json({msg: "Account Successfully Deleted." });
+            })
+            .catch(err => {
+              throw new Error("Error Deleteing account: " + err);
+            });//END USER SAVE
+
+          }
+          else
+          { console.log("bad Pwd" + pwd);
+            //incorrect password
+            return res.json({errMsg: ["Password incorrect."],
+              errIds: ["oldPwd"]});
+          }
+        })
+        .catch(err => {
+          throw new Error("Error Hashing Password.")
+        });
+      }
+      else
+      {
+        //send fail message
+        res.json({errMsg: "Sorry, something went wrong. Please try again."})
+      }
+    }//END ELSE USER FOUND
+
+  })
+  .catch(err => {
+    console.log(err);
+    res.json({errMsg: "Server Error"});
+  });
+};//END DEL ACCOUNT
+
+
 
 
 
@@ -644,7 +737,7 @@ exports.postLogin = (req, res, next) => {
         errMsgs: ["Invalid Email or Password. Please try again."],
         errIds: ["email, password"],
         errValues: {
-          email: tmpEmail
+          email: email
         }
       });
     }//END IF NO USER
