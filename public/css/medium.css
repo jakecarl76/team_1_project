@@ -72,6 +72,12 @@
         padding: 2%;
      }
 
+     /* Details CSS */
+     .details-right {
+         font-size: 1.3em;
+     }
+
+    
 
     /* * * * * * * * DON'T DELETE THIS ONE!!!! MEDIA QUERY * * * * * * */
 }

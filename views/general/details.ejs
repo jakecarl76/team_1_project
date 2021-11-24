@@ -1,9 +1,23 @@
 <%- include('../includes/head.ejs') %>
    <body>
       <%- include('../includes/nav.ejs') %>
-         <main>
+         <main class="details-main">
+            
+            <div class="details-item">
+            <div class="details-left">
+               <img src="../images/<%= item.imageUrl %>" alt="<%= item.title %>">
+            </div>
 
-            <h1><%= pageTitle %></h1>
+            <div class="details-right">
+            <h1>Title: <span class="details-title"><%= item.title %></span></h1>
+            <% if (item.rating) { %>
+            <h2>Age Rating: <span class="details-title"><%= item.rating %></span></h2>
+            <% } %> 
+            <h2 class="details-genre"><%= item.genre || item.category %></h2>
+            <h2>Description:</h2>
+            <p class="details-desc"><%= item.description %></p>
+            </div>
+            </div>
 
          </main>
       <%- include('../includes/end.ejs') %>

@@ -88,8 +88,8 @@ exports.getBooks = (req, res, next) => {
     });
 };
 
-// Get Movie Randomizer
-exports.getMovieRandomizer = (req, res, next) => {
+// Get Randomizer
+exports.getRandomizer = (req, res, next) => {
   
   // Get randomizer type from query
   const type = req.query.type;
