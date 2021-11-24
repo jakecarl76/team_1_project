@@ -5,9 +5,17 @@
    </script>
       <%- include('../includes/nav.ejs') %>
    <main>
-      <h1>Movie Randomizer</h1>
+      <% if (random_home) { %> 
+      <h1>Select Randomizer:</h1>
 
+      <div class="randomizer-type-buttons">
+      <a href="/randomizer?type=movie">Movie Randomizer</a>
+      <a href="/randomizer?type=game">Game Randomizer</a>
+      </div>
+
+      <% } else { %>
       <% if (!hasMovie) { %> 
+      <h1><%=type_name%> Randomizer</h1>
       <div class="center">
       <form action="/randomizer" method="get">
       <label for="genre" class="genre-select">Choose a genre:</label>
@@ -21,23 +29,24 @@
       <br>
      
       <h2 class="content-main-header">Your random movie will be displayed here!</h2>
-
+      <input type="hidden" value="<%= type %>" name="type">
       <button id="generate" class="btn" type="submit">Randomize!</button>
       </div>
       </form>
       <% } else { %> 
-         <h2 class="random-details"><%= movie.title %></h2>
-         <h3 class="random-details"><%= movie.rating%></h3>
-         <img class="random-display-img" src="images/<%= movie.imageUrl %>" alt="<%= movie.title %>">
+         <h2 class="random-details"><%= content.title %></h2>
+         <h3 class="random-details"><%= content.rating%></h3>
+         <img class="random-display-img" src="images/<%= content.imageUrl %>" alt="<%= content.title %>">
          
          <form action="/randomizer" method="get">
          <div class="center">
          <button id="generate" class="center btn" type="submit">Randomize!</button>
          </div>
+         <input type="hidden" value="<%= type %>" name="type">
          <input type="hidden" name="genre" value="<%= genre %>">
          </form>
       <% } %> 
-      
+      <% } %>
    </main>
    <%- include('../includes/end.ejs') %>
 </body>

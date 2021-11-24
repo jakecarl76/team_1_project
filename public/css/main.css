@@ -49,8 +49,10 @@ Shades of Purple
 /* * * * * * * * * * * * * * * * * * * * GENERAL* * * * * * * * * * * * * * * */
 
  
-{
+* {
     box-sizing: border-box;
+    /* This helps to troubleshoot horizontal scrolling issues */
+    /* outline: 2px red solid; */
 }
 
 html {
@@ -591,7 +593,6 @@ button:hover, a.btn:hover{
 
  .right{
      grid-area: right;
-     
  }
 
  .left{
@@ -643,6 +644,23 @@ button:hover, a.btn:hover{
  /*
     Randomizer CSS
  */
+.randomizer-type-buttons {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    font-family: "Nixie One", sans-serif;
+    font-weight: 700;
+    width: 75%;
+    text-align: center;
+}
+
+.randomizer-type-buttons a {
+    font-size: 1.2em;
+    border: 2px solid #556BC5;
+    color: #556BC5; 
+    padding: 5%;
+    box-shadow: 0px 0px 10px rgba( 255, 255, 255, 0.5);
+}
 
 .random-details {
     font-family: "Nixie One", sans-serif !important;

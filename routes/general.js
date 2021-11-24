@@ -36,6 +36,9 @@ router.get('/games', generalCtrl.getGames);
 // Get route: Books
 router.get('/books', generalCtrl.getBooks);
 
+// Get item details
+router.get('/details/:itemId', /*isAuth,*/ generalCtrl.getItemDetails);
+
 //main index
 router.get( '/', generalCtrl.getIndex);
 

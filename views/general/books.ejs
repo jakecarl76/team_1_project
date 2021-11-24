@@ -7,7 +7,7 @@
       <% if (content) { %>
       <div class="content-cards">
       <% for (let item of content) { %>
-            <div class="content-card">
+            <a href="/details/<%= item._id %>?type=book"><div class="content-card">
                <div class="left">
                <img class="content-card-image" src="images/<%= item.imageUrl %>" alt="<%= item.title %>">
                </div>
@@ -15,9 +15,10 @@
                <h2><%= item.title %></h2>
                <h3><%= item.author %></h3>
                <h3><%= item.genre %></h3> 
-               <h3 class="description"><%= item.description %></h3>
+               <!-- <h3 class="description"><%= item.description %></h3> -->
                </div>
             </div>
+            </a>
          <% } %> 
       </div>
       <% } else { %>

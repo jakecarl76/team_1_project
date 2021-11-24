@@ -27,6 +27,14 @@
         width: 20rem;
         margin: 0 1rem;
     }
+
+    .randomizer-type-buttons {
+        width: 50%;
+    }
+
+    .randomizer-type-buttons a {
+        font-size: 1.15em;
+    }
     
     .random-display-img {
         width: 400px;
@@ -38,6 +46,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        padding-top: 3%;
     }
 
 
