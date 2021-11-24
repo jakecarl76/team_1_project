@@ -22,19 +22,20 @@ router.post('/edit-item', isAuth, generalCtrl.postEditItem);
 
 router.post('/add-favorite', isAuth, generalCtrl.postAddFavorite);
 
-
-
 // Get route: Movies
 router.get('/movies', generalCtrl.getMovies);
 
 // Get Movie Randomizer
-router.get('/randomizer', /*isAuth,*/ generalCtrl.getMovieRandomizer);
+router.get('/randomizer', /*isAuth,*/ generalCtrl.getRandomizer);
 
 // Get route: Games
 router.get('/games', generalCtrl.getGames);
 
 // Get route: Books
 router.get('/books', generalCtrl.getBooks);
+
+// Get item details
+router.get('/details/:itemId', /*isAuth,*/ generalCtrl.getItemDetails);
 
 //main index
 router.get( '/', generalCtrl.getIndex);

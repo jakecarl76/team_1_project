@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
 <script src="/js/utils.js"></script>
+<script src="/js/validation.js"></script>
 <style>
   /*delete this style when intergrated in main.css */
   .invalid
@@ -107,6 +108,22 @@
     </div>
 
 
+    <div id="delOptionsDiv">
+      <input type="button" value="Delete Account"
+       onclick="toggleDivById('delDiv'); toggleDiv(this.parentElement);">
+    </div>
+    <div id="delDiv" class="hidden">
+
+      <p>Once deleted, your account is gone forever.</p>
+      <ul id="delStatus"></ul> 
+      <p>Please enter your password in order to delete your account:</p>
+      <label for="delPassword">Password</label>
+      <input type="password" id="delPassword" name="delPassword">
+      <input type="button" id="delBtn" value="Delete">
+      <input type="button" value="Cancel" 
+       onclick="toggleDivById('delOptionsDiv'); toggleDiv(this.parentElement);">
+    </div>
+
   </main>
 
   <script>
@@ -155,7 +172,7 @@
           username: this.value
         };
         fetch('/check-user-name', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -193,7 +210,7 @@
           userId: document.getElementById("userId").value
         };
         fetch('/change-user-name', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -233,7 +250,7 @@
           email: this.value
         };
         fetch('/check-email', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -271,7 +288,7 @@
           userId: document.getElementById("userId").value
         };
         fetch('/change-email', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -304,33 +321,11 @@
     //Password
     function checkPassword()
     {
-      let tmpPwd = document.getElementById("newPassword").value;
-      let lenCheck = true;
-      let secureCheck = true;
-      let isNewCheck = true;
-      let errs = [];
 
-      //check password
-      if(tmpPwd.length < 9)
-      {
-        lenCheck = false;
-        errs.push("Password must be at least 9 characters long.");
-      }
+      let res = validatePassword(document.getElementById("newPassword").value,
+                                 document.getElementById("oldPassword").value);
 
-      if(tmpPwd.toLowerCase() == "password" || tmpPwd == "123456789")
-      {
-        secureCheck = false;
-        errs.push("That password is insecure. Please choose another");
-      }
-
-      if(tmpPwd == document.getElementById('oldPassword').value)
-      {
-        isNewCheck = false;
-        errs.push("New Password cannot be the same as the old Password.")
-      }
-
-
-      if(lenCheck && secureCheck && isNewCheck)
+      if(res.isValid)
       {
         document.getElementById("newPassword").classList.add("valid");
         document.getElementById("newPassword").classList.remove("invalid");
@@ -343,7 +338,7 @@
         document.getElementById("newPassword").classList.remove("valid");
         document.getElementById("passwordStatus").innerHTML = "";
         //show errors
-        for(err of errs)
+        for(err of res.errMsgs)
         {console.log(err);
           document.getElementById('passwordStatus').innerHTML += "<li>" + err + "</li>";
         }
@@ -449,7 +444,7 @@
           userId: document.getElementById("userId").value
         };
         fetch('/change-password', {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'csrf-token': '<%= csrfToken %>'
@@ -506,6 +501,100 @@
         });
       }
     );//END ADD CHANGE PASSWORD EVENT LISTENER
+
+
+    //add event listener to del password style when fixing it
+    document.getElementById('delPassword')
+    .addEventListener('input', function() {
+      this.classList.remove('invalid');
+    });
+
+    //DEL ACCOUNT LISTENER
+    //add 'submit' to change password
+    document.getElementById("delBtn")
+    .addEventListener("click", function() {
+        //Check inputs on clientside first
+        let newErrs = [];
+        let pwdCheck = true;
+        
+        //check password is entered
+        if(document.getElementById('delPassword').value == '')
+        {
+          newErrs.push("You must enter your password to change delete your account.");
+          pwdCheck = false;
+        }
+
+        document.getElementById('delStatus').innerHTML = "";
+        //display new errs
+        for(err of newErrs)
+        {
+          document.getElementById('delStatus').innerHTML += "<li>" + err + "</li>";
+        }
+
+        //exit if any errors
+        if(!pwdCheck)
+        {
+          document.getElementById('delPassword').classList.add('invalid');
+          return false;
+        }
+        if(!confirm("Are you sure you want to delete your account forever?"))
+        {
+          return false;
+        }
+
+        //no errors found, send request to del account
+
+
+        let tmpData = {
+          pwd: document.getElementById("delPassword").value,
+          userId: document.getElementById("userId").value
+        };
+        fetch('/delete-account', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            document.getElementById("passwordStatus").innerHTML = data.msg;
+            //clear password fields
+            document.getElementById('delPassword').value = "";
+            window.location.href = "/login";
+          }
+          else
+          {
+            //clear messages
+            document.getElementById("delStatus").innerHTML = "";
+            //display err msgs
+            for(err of data.errMsg)
+            {
+              document.getElementById("delStatus").innerHTML += "<li>" + err + "</li>";
+            }
+
+            //hilgiht fields
+            for(errId of data.errIds)
+            {
+              if(errId == "pwd")
+              {
+                document.getElementById("delPassword").classList.add("invalid");
+              }
+            }
+
+            
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD DEL ACCOUNT EVENT LISTENER
 
   </script>
 

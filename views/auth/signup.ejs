@@ -1,9 +1,11 @@
 <%- include('../includes/head.ejs') %>
+<script src="/js/validation.js"></script>
 
 </head>
 <body>
   <%- include('../includes/nav.ejs') %>
   <main>
+    <ul id="msgs"></ul>
     <h1>
       Signup for your Entertainment Library!
     </h1>
@@ -16,22 +18,28 @@
     <div class="form-control">
       <label for="username">Username</label>
       <input type="text" id="username" name="username"
+      class="<% if(locals.errIds && locals.errIds.find(id => id === 'username')) { %>invalid<% } %>"
        value="<% if(locals.errValues && locals.errValues.username){ %><%= locals.errValues.username %><% } %>">
     </div>
     <div class="form-control">
       <label for="email">Email</label>
       <input type="email" id="email" name="email"
+      class="<%= (locals.errIds && locals.errIds.find(id => id === 'email')) ? 'invalid' : '' %>"
       value="<% if(locals.errValues && locals.errValues.email){ %><%= locals.errValues.email %><% } %>">
     </div>
     <div class="form-control">
       <label for="password">Password</label>
-      <input type="password" id="password" name="password">
+      <input
+       class="<%= (locals.errIds && locals.errIds.find(id => id === 'password')) ? 'invalid' : '' %>"
+       type="password" id="password" name="password">
 
       <p>Password must be 9 characters or longer.</p>
     </div>
     <div class="form-control">
       <label for="cPassword">Confirm Password</label>
-      <input type="password" id="cPassword" name="cPassword">
+      <input 
+      class="<%= (locals.errIds && locals.errIds.find(id => id === 'cPassword')) ? 'invalid' : '' %>"
+       type="password" id="cPassword" name="cPassword">
     </div>
     
     <div class="one-button">
@@ -39,5 +47,163 @@
     </div>
     </form>
   </main>
+
+  <script>
+    let emailFld = document.getElementById("email");
+    let userFld = document.getElementById("username");
+    let pwdFld = document.getElementById("password");
+    let cPwdFld = document.getElementById("cPassword");
+    let msgs = document.getElementById("msgs");
+
+
+    function checkPwd()
+    {
+      let pwd = pwdFld.value;
+
+      //reset messages display
+      msgs.innerHTML = "";
+
+      let res = validatePassword(pwd);
+      
+      if(!res.isValid)
+      {
+        //display error messages:
+        for(err of res.errMsgs)
+        {
+          msgs.innerHTML += "<li>" + err + "</li>"
+        }
+        //show invalid fields
+        if(!res.lencheck || !res.isSecureCheck)
+        {
+          pwdFld.classList.add("invalid");
+        }
+      }
+
+      return res;
+    }//END FUNC CHECK PWD
+
+    
+    function checkCPwd()
+    {
+      let pwd = pwdFld.value;
+      let cPwd = cPwdFld.value;
+
+      //reset messages display
+      msgs.innerHTML = "";
+
+      let res = checkPwd();
+
+      //check confirm password
+      if(pwd !== cPwd)
+      {
+        res.errMsgs = ["The Confirm Password does not match the Password."];
+        res.cPwd = false;
+        res.isValid = false;
+      }
+      else
+      {
+        res.errMsgs = [];
+      }
+      
+      if(!res.isValid)
+      {
+        //display error messages:
+        for(err of res.errMsgs)
+        {
+          msgs.innerHTML += "<li>" + err + "</li>"
+        }
+        if(!res.cPwd)
+        {
+          cPwdFld.classList.add("invalid");
+        }
+      }
+      return res;
+    }
+    //add local checkers to password and confirm password fields
+    pwdFld.addEventListener("input", () => {
+      pwdFld.classList.remove("invalid");
+      checkPwd();
+    });
+    cPwdFld.addEventListener("input", () => {
+      cPwdFld.classList.remove("invalid");
+      checkCPwd();
+    });
+
+    //add auto checker to email
+    document.getElementById("email")
+    .addEventListener("input", function() {
+        let tmpData = {
+          email: this.value
+        };
+        fetch('/check-email', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data.errMsg === undefined)
+          {
+            emailFld.classList.add("valid");
+            emailFld.classList.remove("invalid");
+            msgs.innerHTML = data.msg;
+          }
+          else
+          {
+            emailFld.classList.add("invalid");
+            emailFld.classList.remove("valid");
+            msgs.innerHTML = data.errMsg;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHECK EVENT LISTENER
+
+    //add auto checker to username
+    document.getElementById("username")
+    .addEventListener("input", function() {
+        let tmpData = {
+          username: this.value
+        };
+        fetch('/check-user-name', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(tmpData)
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          if(data === 'free')
+          {
+            userFld.classList.add("valid");
+            userFld.classList.remove("invalid");
+            msgs.innerHTML = "That username is available.";
+          }
+          else
+          {
+            userFld.classList.add("invalid");
+            userFld.classList.remove("valid");
+            msgs.innerHTML = "That username is already taken.";
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    );//END ADD CHECK EVENT LISTENER
+
+
+  </script>
 
   <%- include('../includes/end.ejs') %>
