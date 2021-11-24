@@ -41,7 +41,6 @@ exports.postResetPassword = (req, res, next) => {
   {
 
     //set error messages to send
-
     for(err of vErrs.array())
     {
       errMsgs.push(err.msg);
@@ -49,17 +48,11 @@ exports.postResetPassword = (req, res, next) => {
     }
 
     //return with errors
-    return res.render('auth/reset-password', {
-      pageTitle: "Reset Your Password!",
-      path: '/reset',
-      token: tmpToken,
+    return res.status(422).json({
       errMsgs: errMsgs,
-      errIds: errIds,
-      errValues: {
-        email: email
-      }
+      errIds: errIds
     });
-  }
+  }//END CHECK FOR VERRS
 
 
   //get user by email
@@ -68,15 +61,9 @@ exports.postResetPassword = (req, res, next) => {
     
     if(!user)
     { 
-      return res.render('auth/reset-password', {
-        pageTitle: "Reset Your Password!",
-        path: '/reset',
-        token: tmpToken,
+      return res.status(422).json({
         errMsgs: ["Email is invalid. Please enter the email for your account."],
-        errIds: ["email"],
-        errValues: {
-          email: email
-        }
+        errIds: ["email"]
       });
     }
     else
@@ -85,26 +72,19 @@ exports.postResetPassword = (req, res, next) => {
       //check token is correct for user
       if(user.resetToken != tmpToken)
       {
+        console.log(user.resetToken);
+        console.log(tmpToken);
         //error invalid token
-        return res.render('auth/reset-password', {
-          pageTitle: "Reset Your Password!",
-          path: '/reset',
-          token: tmpToken,
+        return res.status(422).json({
           errMsgs: ["The token is invalid for this email. Please use the email for your account."],
-          errIds: ["email"],
-          errValues: {
-            email: email
-          }
+          errIds: ["email"]
         });
       }
       else if(Number(user.resetTokenExpiration) < Number(Date.now()))
       {
         //error token expired
-        return res.render('auth/login', {
-          pageTitle: "Reset Your Password!",
-          path: '/reset',
-          token: tmpToken,
-          errMsgs: ["The reset time for this email has expired."],
+        return res.status(401).json({
+          errMsgs: ["The reset time for this email has expired. You can create a new reset from the <a href='/login'>login</a> page."],
           errIds: []
         });
       }
@@ -122,11 +102,8 @@ exports.postResetPassword = (req, res, next) => {
           tmpUser.resetTokenExpiration = null;
           tmpUser.save()
           .then(result => {
-            return res.render('auth/login', {
-              pageTitle: "Reset Your Password!",
-              path: '/reset',
-              token: tmpToken,
-              msgs: ["Password has been reset! Please login with your new password."]
+            return res.status(200).json({
+              msgs: ["Password has been reset! Please <a href='/login'>login</a> with your new password."]
             });
           })
           .catch(err => {
@@ -165,7 +142,8 @@ exports.postCreatePasswordReset = (req, res, next) => {
     {
       if(!user)
       {
-        throw new Error("Invalid email entered for password reset! Possible abuse!");
+        console.log("Invalid email entered for password reset! Possible abuse!");
+        return res.status(422).json({errMsgs: ["Invalid email. Please enter the email for your account."]})
       }
       else
       {
@@ -210,6 +188,8 @@ exports.postCreatePasswordReset = (req, res, next) => {
 
 */
 
+            //send response to tell user reset created
+            res.status(201).json({msgs: ["A reset link has been sent. Please check your email."]});
             
           })
           .catch(err => {
@@ -222,13 +202,104 @@ exports.postCreatePasswordReset = (req, res, next) => {
   .catch(err => {
     console.log(err);
   })
-  
-  res.redirect('/');
 
 };//END GENERATE PASSWORD RESET TOKEN
 
 
 
+
+
+exports.delAccount = (req, res, next) => {
+  //get email and user id
+  console.log("DEL ACCOUNT");
+  let pwd = req.body.pwd;
+  let userId = req.body.userId;
+  let tmpUser = null;
+  let errMsg = [];
+  let errIds = [];
+
+  //check for validation errors
+  let vErrs = false;
+
+  if(pwd == "")
+  {
+    errMsg.push("You must enter your password in order to delete your profile.");
+    errIds.push("pwd");
+  }
+  
+  if(vErrs)
+  {
+    console.log(errMsg);
+    return res.json({errMsg: errMsg,
+                     errIds: errIds})
+  }//END IF VERRS
+
+  User.findById(userId)
+  .then( user => {
+
+    if(!user)
+    {
+      throw new Error("Could not find user!");
+    }
+    else
+    {
+      //save ref for later use
+      tmpUser = user;
+      //username available, change username
+      //verify user id
+      if(user && user._id.toString() === req.session.user._id.toString())
+      {
+
+        //check old password
+        bcrypt.compare(pwd, user.password)
+        .then(hashRes => {
+          if(hashRes)
+          {console.log("correct pwd");
+            //correct password
+            console.log("deleting account");
+
+            //delete account
+            User.deleteOne({_id: userId})
+            .then(result => {
+              //delete session
+              req.session.destroy(err => {
+                if(err)
+                {
+                  console.log("Error loging out: " + err);
+                }
+              });
+              //return that deleted successfully
+              res.status(201).json({msg: "Account Successfully Deleted." });
+            })
+            .catch(err => {
+              throw new Error("Error Deleteing account: " + err);
+            });//END USER SAVE
+
+          }
+          else
+          { console.log("bad Pwd" + pwd);
+            //incorrect password
+            return res.json({errMsg: ["Password incorrect."],
+              errIds: ["oldPwd"]});
+          }
+        })
+        .catch(err => {
+          throw new Error("Error Hashing Password.")
+        });
+      }
+      else
+      {
+        //send fail message
+        res.json({errMsg: "Sorry, something went wrong. Please try again."})
+      }
+    }//END ELSE USER FOUND
+
+  })
+  .catch(err => {
+    console.log(err);
+    res.json({errMsg: "Server Error"});
+  });
+};//END DEL ACCOUNT
 
 
 
@@ -666,7 +737,7 @@ exports.postLogin = (req, res, next) => {
         errMsgs: ["Invalid Email or Password. Please try again."],
         errIds: ["email, password"],
         errValues: {
-          email: tmpEmail
+          email: email
         }
       });
     }//END IF NO USER
