@@ -573,7 +573,7 @@ button:hover, a.btn:hover{
 } */
  
  .content-cards {
-    margin: 0;
+    margin: 0 2rem 0 0;
  }
  
  .content-card {
@@ -593,6 +593,10 @@ button:hover, a.btn:hover{
 
  .right{
      grid-area: right;
+ }
+
+ .right .one-button{
+     justify-self: flex-end;
  }
 
  .left{
