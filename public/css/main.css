@@ -591,6 +591,9 @@ button:hover, a.btn:hover{
         'left';
     padding: 1rem;
  }
+.content-card-image{
+    object-fit: cover;
+}
 
  .right{
      grid-area: right;
