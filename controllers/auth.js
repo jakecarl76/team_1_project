@@ -11,6 +11,7 @@ const sendgrid = require('nodemailer-sendgrid-transport');
 
 //setup sendgrid or set to error
 sendgrid_api_key = process.env.SENDGRID_API_KEY || "ERROR";
+const SITE_HOST = process.env.SITE_HOST || "localhost:3005";
 
 let transporter = null;
 
@@ -156,6 +157,7 @@ exports.getCreatePasswordReset = (req, res, next) => {
 exports.postCreatePasswordReset = (req, res, next) => {
   let email = req.body.email;
   let tmpToken = "";
+  let tmpUser = null;
 
   //make sure user exists
   User.findOne({email: email})
@@ -179,6 +181,7 @@ exports.postCreatePasswordReset = (req, res, next) => {
           //set reset token:
           user.resetToken = resetToken;
           user.resetTokenExpiration = Date.now() + 3600000;//exp in one hour from now
+          tmpUser = user;
 
           //save to use later in other arrow funcs
           tmpToken = resetToken;
@@ -189,25 +192,23 @@ exports.postCreatePasswordReset = (req, res, next) => {
             console.log("Reset token set: /reset-password/" + tmpToken);
 
 
-/*NEED TO FIX -- finish this after setup sendmail/etc
-            let host = "localhost:3000";
-            transporter.sendMail({
-              to: req.body.email, 
-              from: 'car08056@byui.edu',
-              subject: 'Product Store Password Reset',
-              html: `<h1> Your Account Has Requested A Password Reset </h1>
-                <p>
-                  Click link to reset your password.
-                </p>
-                <a href="http://${host}/password-reset/${reset_token}">Reset Password</a>`
-            })
-            .then(result => {
-              req.flash('msg', 'Email has been sent. Please check your email associated with this account to reset your password.')
-              resp.redirect('/');
-            })
-            .catch(err => console.log(err));//end send email
-
-*/
+            if (sendgrid_api_key !== "ERROR")
+            {
+              transporter.sendMail({
+                to: tmpUser.email, 
+                from: 'car08056@byui.edu',
+                subject: 'Hermit Habitat: Password Reset',
+                html: `<p> Your Account Has Requested A Password Reset </p>
+                  <p>
+                    Click link to reset your password.
+                  </p>
+                  <a href="${SITE_HOST}/reset-password/${tmpToken}">Reset Password</a>`
+              })
+              .then(result => {
+                console.log("Email Sent: " + result);
+              })
+              .catch(err => console.log(err));//end send email;
+            }
 
             //send response to tell user reset created
             res.status(201).json({msgs: ["A reset link has been sent. Please check your email."]});
@@ -295,18 +296,22 @@ exports.delAccount = (req, res, next) => {
               });
 
               //send email confirming deletion of account
-              transporter.sendMail({
-                to: email,
-                from: 'cse341Team1@gmail.com',
-                subject: 'Hermit Habitat: Account Deleted',
-                html: '<p>Your account at Hermit Hbitat has been deleted. We\'re sorry to see you go!</p> <p> Account Deletions are perminate and cannot be executed without the user\'s password. <br> If you did not delete your account, it means that your password and/or email has been compromised. <br> Please consider changing the password used with your email address immediately! </p>'
-              })
-              .then(result => {
-                console.log("Mail sent: " + result);
-              })
-              .catch(err => {
-                console.log("Error sending signup confirmation email: " + err);
-              });
+              if(sendgrid_api_key !== "ERROR")
+              {
+                transporter.sendMail({
+                  to: email,
+                  from: 'cse341Team1@gmail.com',
+                  subject: 'Hermit Habitat: Account Deleted',
+                  html: '<p>Your account at Hermit Hbitat has been deleted. We\'re sorry to see you go!</p> <p> Account Deletions are perminate and cannot be executed without the user\'s password. <br> If you did not delete your account, it means that your password and/or email has been compromised. <br> Please consider changing the password used with your email address immediately! </p>'
+                })
+                .then(result => {
+                  console.log("Mail sent: " + result);
+                })
+                .catch(err => {
+                  console.log("Error sending signup confirmation email: " + err);
+                });
+              }
+              
 
               //return that deleted successfully
               res.status(201).json({msg: "Account Successfully Deleted." });
@@ -496,19 +501,23 @@ exports.postChangePassword = (req, res, next) => {
               //save changes
               user.save()
               .then(result => {
+
                 //send confirmation email
-                transporter.sendMail({
-                  to: tmpUser.email,
-                  from: 'cse341Team1@gmail.com',
-                  subject: 'Hermit Habitat: Account Password Changed',
-                  html: '<p>The password for your account at Hermit Habitat has been changed.</p> <p>If this is incorrect, please immediately go to Hermit Habitat and reset your password. </p> <p>You may consider also resetting the password for the email used for your account incase it has been compromised.</p>'
-                })
-                .then(result => {
-                  console.log("Mail sent: " + result);
-                })
-                .catch(err => {
-                  console.log("Error sending signup confirmation email: " + err);
-                });
+                if(sendgrid_api_key !== "ERROR")
+                {
+                  transporter.sendMail({
+                    to: tmpUser.email,
+                    from: 'cse341Team1@gmail.com',
+                    subject: 'Hermit Habitat: Account Password Changed',
+                    html: '<p>The password for your account at Hermit Habitat has been changed.</p> <p>If this is incorrect, please immediately go to Hermit Habitat and reset your password. </p> <p>You may consider also resetting the password for the email used for your account incase it has been compromised.</p>'
+                  })
+                  .then(result => {
+                    console.log("Mail sent: " + result);
+                  })
+                  .catch(err => {
+                    console.log("Error sending signup confirmation email: " + err);
+                  });
+                }
 
                 res.status(201).json({msg: "Password successfully changed." });
               })
@@ -620,18 +629,22 @@ exports.postChangeEmail = (req, res, next) => {
           user.save()
           .then(result => {
             //Send verification email
-            transporter.sendMail({
-              to: oldEmail,
-              from: 'cse341Team1@gmail.com',
-              subject: 'Hermit Habitat:Account Email Changed',
-              html: '<p>We are notifying you that your account a Hermit Habitat has changed its email from this one to ' + email + '</p> <p>If this is incorrect, please login immediately (with the new email address), change your password, and then change your email back.</p>'
-            })
-            .then(result => {
-              console.log("Mail sent: " + result);
-            })
-            .catch(err => {
-              console.log("Error sending signup confirmation email: " + err);
-            });
+            if(sendgrid_api_key !== "ERROR")
+            {
+              transporter.sendMail({
+                to: oldEmail,
+                from: 'cse341Team1@gmail.com',
+                subject: 'Hermit Habitat:Account Email Changed',
+                html: '<p>We are notifying you that your account a Hermit Habitat has changed its email from this one to ' + email + '</p> <p>If this is incorrect, please login immediately (with the new email address), change your password, and then change your email back.</p>'
+              })
+              .then(result => {
+                console.log("Mail sent: " + result);
+              })
+              .catch(err => {
+                console.log("Error sending signup confirmation email: " + err);
+              });
+            }
+            
 
             res.status(201).json({msg: "Email successfully Changed to " + email,
                                   newEmail: email});
@@ -943,19 +956,23 @@ exports.postSignup = (req, res, next) => {
 
     newUser.save()
     .then(result => {
-      //send email? NEED FIX
-      transporter.sendMail({
-        to: email,
-        from: 'cse341Team1@gmail.com',
-        subject: 'Welcome to Your Entertainment Library at Hermit Habitat!',
-        html: '<p>Welcome' + username + ' to Your Entertainment Library at the Hermit Habitat! The one place where you can track all your games, books, and movies!</p>'
-      })
-      .then(result => {
-        console.log("Mail sent: " + result);
-      })
-      .catch(err => {
-        console.log("Error sending signup confirmation email: " + err);
-      });
+      //send email
+      if(sendgrid_api_key !== "ERROR")
+      {
+        transporter.sendMail({
+          to: email,
+          from: 'cse341Team1@gmail.com',
+          subject: 'Welcome to Your Entertainment Library at Hermit Habitat!',
+          html: '<p>Welcome' + username + ' to Your Entertainment Library at the Hermit Habitat! The one place where you can track all your games, books, and movies!</p>'
+        })
+        .then(result => {
+          console.log("Mail sent: " + result);
+        })
+        .catch(err => {
+          console.log("Error sending signup confirmation email: " + err);
+        });
+      }
+      
 
       //send to login
       res.render('auth/login', {
