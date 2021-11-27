@@ -118,13 +118,20 @@ function checkNewCategory(){
 }
 
 function showNewGenre(){
-    let genreSelect = document.getElementById("genre").value;
-    let newGenreInput = document.getElementById("new-genre");
-
-    if(genreSelect == "newGenre"){
-        visibleClass(newGenreInput)
+    let bookGenreSelect = document.getElementById("genre-book").value;
+    let newBookGenreInput = document.getElementById("new-genre-book");
+    let movieGenreSelect = document.getElementById("genre-movie").value;
+    let newMovieGenreInput = document.getElementById("new-genre-movie");
+    if(bookGenreSelect == "newGenre"){
+        visibleClass(newBookGenreInput)
     } else {
-        hiddenClass(newGenreInput)
+        hiddenClass(newBookGenreInput)
+    }
+
+    if(movieGenreSelect == "newGenre"){
+        visibleClass(newMovieGenreInput)
+    } else {
+        hiddenClass(newMovieGenreInput)
     }
 }
 
