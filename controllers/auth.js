@@ -196,7 +196,7 @@ exports.postCreatePasswordReset = (req, res, next) => {
             {
               transporter.sendMail({
                 to: tmpUser.email, 
-                from: 'car08056@byui.edu',
+                from: 'cse341Team1@gmail.com',
                 subject: 'Hermit Habitat: Password Reset',
                 html: `<p> Your Account Has Requested A Password Reset </p>
                   <p>
