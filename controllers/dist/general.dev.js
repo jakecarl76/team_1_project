@@ -168,77 +168,208 @@ exports.getBooks = function (req, res, next) {
       user: user
     });
   });
-}; // Get Movie Randomizer
+}; // Get Randomizer
 
 
-exports.getMovieRandomizer = function (req, res, next) {
-  // Get genre from query
-  var movieGenre = req.query.genre; // Find all movies
+exports.getRandomizer = function (req, res, next) {
+  // Get randomizer type from query
+  var type = req.query.type; // Get genre from query
 
-  Movie.find().then(function (movies) {
-    var genreIteration = []; // Push all movie genre to array
+  var contentGenre = req.query.genre;
 
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+  switch (type) {
+    case 'movie':
+      // Find all movies
+      Movie.find().then(function (movies) {
+        var genreIteration = []; // Push all movie genre to array
 
-    try {
-      for (var _iterator = movies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var _movie = _step.value;
-        genreIteration.push(_movie.genre);
-      } // Filter movie genre to have unique values
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
+        try {
+          for (var _iterator = movies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var _movie = _step.value;
+            genreIteration.push(_movie.genre);
+          } // Filter movie genre to have unique values
+
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
         }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
 
-    var genre = genreIteration.filter(function (value, index) {
-      return genreIteration.indexOf(value) === index;
-    }); // Display different results if genre is in URL query
+        var genre = genreIteration.filter(function (value, index) {
+          return genreIteration.indexOf(value) === index;
+        }); // Display different results if genre is in URL query
 
-    if (movieGenre) {
-      // Get random movie from mongodb based on genre
-      Movie.aggregate([{
-        $match: {
-          genre: movieGenre
+        if (contentGenre) {
+          // Get random movie from mongodb based on genre
+          Movie.aggregate([{
+            $match: {
+              genre: contentGenre
+            }
+          }, {
+            $sample: {
+              size: 1
+            }
+          }]).then(function (mov) {
+            res.render('general/randomizer', {
+              pageTitle: 'Movie Randomizer | Hermit Habitat',
+              path: '/randomizer',
+              genre: contentGenre,
+              genres: genre,
+              content: mov[0],
+              hasMovie: true,
+              random_home: false,
+              type: type
+            });
+          });
+        } else {
+          res.render('general/randomizer', {
+            pageTitle: 'Movie Randomizer | Hermit Habitat',
+            path: '/randomizer',
+            genres: genre,
+            hasMovie: false,
+            random_home: false,
+            type: type,
+            type_name: 'Movie'
+          });
         }
-      }, {
-        $sample: {
-          size: 1
-        }
-      }]).then(function (mov) {
-        res.render('general/randomizer', {
-          pageTitle: 'Movie Randomizer | Hermit Habitat',
-          path: '/randomizer',
-          genre: movieGenre,
-          genres: genre,
-          movie: mov[0],
-          hasMovie: true
-        });
+
+        ;
       });
-    } else {
+      break;
+
+    case 'game':
+      // Find all movies
+      Game.find().then(function (games) {
+        var genreIteration = []; // Push all movie genre to array
+
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+          for (var _iterator2 = games[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var _game = _step2.value;
+            genreIteration.push(_game.category);
+          } // Filter movie genre to have unique values
+
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+              _iterator2["return"]();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+
+        var genre = genreIteration.filter(function (value, index) {
+          return genreIteration.indexOf(value) === index;
+        }); // Display different results if genre is in URL query
+
+        if (contentGenre) {
+          // Get random movie from mongodb based on genre
+          Game.aggregate([{
+            $match: {
+              category: contentGenre
+            }
+          }, {
+            $sample: {
+              size: 1
+            }
+          }]).then(function (gam) {
+            res.render('general/randomizer', {
+              pageTitle: 'Game Randomizer | Hermit Habitat',
+              path: '/randomizer',
+              genre: contentGenre,
+              genres: genre,
+              content: gam[0],
+              hasMovie: true,
+              random_home: false,
+              type: type
+            });
+          });
+        } else {
+          res.render('general/randomizer', {
+            pageTitle: 'Game Randomizer | Hermit Habitat',
+            path: '/randomizer',
+            genres: genre,
+            hasMovie: false,
+            random_home: false,
+            type: type,
+            type_name: 'Game'
+          });
+        }
+
+        ;
+      });
+      break;
+
+    default:
       res.render('general/randomizer', {
         pageTitle: 'Movie Randomizer | Hermit Habitat',
         path: '/randomizer',
-        content: movies,
-        genres: genre,
-        hasMovie: false
+        hasMovie: false,
+        random_home: true,
+        type: type
       });
-    }
+      break;
+  }
+}; // Get Item Details
 
-    ;
-  });
+
+exports.getItemDetails = function (req, res, next) {
+  var itemId = req.params.itemId;
+  var type = req.query.type;
+
+  switch (type) {
+    case 'movie':
+      Movie.findById(itemId).then(function (movie) {
+        res.render('general/details', {
+          pageTitle: "".concat(movie.title, " | Hermit Habitat"),
+          path: '/details',
+          item: movie
+        });
+      });
+      break;
+
+    case 'book':
+      Book.findById(itemId).then(function (book) {
+        res.render('general/details', {
+          pageTitle: "".concat(book.title, " | Hermit Habitat"),
+          path: '/details',
+          item: book
+        });
+      });
+      break;
+
+    case 'game':
+      Game.findById(itemId).then(function (game) {
+        res.render('general/details', {
+          pageTitle: "".concat(game.title, " | Hermit Habitat"),
+          path: '/details',
+          item: game
+        });
+      });
+      break;
+  }
 };
 /*cannot test until My Items page is created*/
 // link to add for edit item: "edit-item/6189b7e12defcea0f68bdc6b/game"
@@ -385,6 +516,18 @@ exports.postAddItem = function (req, res, next) {
 
 
   if (!image) {
+    var _genre;
+
+    switch (itemType) {
+      case "book":
+        _genre = bookGenre;
+        break;
+
+      case "movie":
+        _genre = movieGenre;
+        break;
+    }
+
     return res.status(422).render('admin/edit-item', {
       pageTitle: 'Add Item',
       path: '/add-item',
@@ -397,7 +540,7 @@ exports.postAddItem = function (req, res, next) {
       item: {
         title: title,
         author: author,
-        genre: genre,
+        genre: _genre,
         rating: rating,
         category: category,
         description: description
@@ -431,7 +574,7 @@ exports.postAddItem = function (req, res, next) {
       var book = new Book({
         title: title,
         author: author,
-        genre: genre,
+        genre: bookGenre,
         description: description,
         imageUrl: imageUrl,
         userId: req.user
@@ -453,7 +596,7 @@ exports.postAddItem = function (req, res, next) {
           product: {
             title: title,
             author: author,
-            genre: genre,
+            genre: bookGenre,
             rating: rating,
             category: category,
             description: description
@@ -466,7 +609,7 @@ exports.postAddItem = function (req, res, next) {
     case "movie":
       var _movie2 = new Movie({
         title: title,
-        genre: genre,
+        genre: movieGenre,
         rating: rating,
         description: description,
         imageUrl: imageUrl,
@@ -490,7 +633,7 @@ exports.postAddItem = function (req, res, next) {
           product: {
             title: title,
             author: author,
-            genre: genre,
+            genre: movieGenre,
             rating: rating,
             category: category,
             description: description
@@ -502,7 +645,7 @@ exports.postAddItem = function (req, res, next) {
       break;
 
     case "game":
-      var _game = new Game({
+      var _game2 = new Game({
         title: title,
         category: category,
         description: description,
@@ -510,7 +653,7 @@ exports.postAddItem = function (req, res, next) {
         userId: req.user
       });
 
-      _game.save().then(function (result) {
+      _game2.save().then(function (result) {
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
@@ -567,16 +710,23 @@ exports.postAddAnother = function (req, res, next) {
   var itemType = req.body.itemType;
   var title = req.body.title;
   var author = req.body.author;
-  var genre = req.body.genre;
+  var bookGenre = req.body.bookGenre;
+  var movieGenre = req.body.movieGenre;
   var rating = req.body.rating;
   var category = req.body.category;
   var image = req.file;
   var description = req.body.description;
-  var newGenre = req.body.newGenre;
-  var newCategory = req.body.newCategory; //if it's a new genre, make it genre
+  var newBookGenre = req.body.newBookGenre;
+  var newMovieGenre = req.body.newMovieGenre;
+  var newCategory = req.body.newCategory; //if it's a new book genre, make it genre
 
-  if (genre == "newGenre") {
-    genre = newGenre;
+  if (bookGenre == "newGenre") {
+    bookGenre = newBookGenre;
+  } //if it's a new movie genre, make it genre
+
+
+  if (movieGenre == "newGenre") {
+    movieGenre = newMovieGenre;
   } //if it's a new category, make it category
 
 
@@ -586,6 +736,18 @@ exports.postAddAnother = function (req, res, next) {
 
 
   if (!image) {
+    var _genre2;
+
+    switch (itemType) {
+      case "book":
+        _genre2 = bookGenre;
+        break;
+
+      case "movie":
+        _genre2 = movieGenre;
+        break;
+    }
+
     return res.status(422).render('admin/edit-item', {
       pageTitle: 'Add Item',
       path: '/add-item',
@@ -598,7 +760,7 @@ exports.postAddAnother = function (req, res, next) {
       item: {
         title: title,
         author: author,
-        genre: genre,
+        genre: _genre2,
         rating: rating,
         category: category,
         description: description
@@ -632,7 +794,7 @@ exports.postAddAnother = function (req, res, next) {
       var book = new Book({
         title: title,
         author: author,
-        genre: genre,
+        genre: bookGenre,
         description: description,
         imageUrl: imageUrl,
         userId: req.user
@@ -667,7 +829,7 @@ exports.postAddAnother = function (req, res, next) {
     case "movie":
       var _movie3 = new Movie({
         title: title,
-        genre: genre,
+        genre: movieGenre,
         rating: rating,
         description: description,
         imageUrl: imageUrl,
@@ -703,7 +865,7 @@ exports.postAddAnother = function (req, res, next) {
       break;
 
     case "game":
-      var _game2 = new Game({
+      var _game3 = new Game({
         title: title,
         category: category,
         description: description,
@@ -711,7 +873,7 @@ exports.postAddAnother = function (req, res, next) {
         userId: req.user
       });
 
-      _game2.save().then(function (result) {
+      _game3.save().then(function (result) {
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
@@ -949,6 +1111,8 @@ function getBookGenres() {
                 bookGenres.push(genres[i]);
               }
             }
+
+            bookGenres.sort();
           })["catch"](function (err) {
             console.log(_templateObject3(), err);
           }));
@@ -978,6 +1142,8 @@ function getMovieGenres() {
                 movieGenres.push(genres[i]);
               }
             }
+
+            movieGenres.sort();
           })["catch"](function (err) {
             console.log(_templateObject4(), err);
           }));
@@ -998,6 +1164,7 @@ function getCategories() {
           _context6.next = 2;
           return regeneratorRuntime.awrap(Game.find().distinct("category").then(function (categories) {
             gameCategories = categories;
+            gameCategories.sort();
           }));
 
         case 2:
