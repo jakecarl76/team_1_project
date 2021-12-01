@@ -771,6 +771,23 @@ button:hover, a.btn:hover{
     color:#DC527E;
 }
 
+.reviews {
+    margin-top: 2%;
+    border:#DC527E solid 2px;
+    padding: 2%;
+}
+
+.review-top {
+    display: inline;
+}
+
+.review-top:nth-child(1) {
+    float: left;
+}
+
+.review-top:nth-child(2) {
+    float: right;
+}
 
 
 

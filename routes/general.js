@@ -37,6 +37,8 @@ router.get('/books', generalCtrl.getBooks);
 // Get item details
 router.get('/details/:itemId', /*isAuth,*/ generalCtrl.getItemDetails);
 
+router.post('/add-review', generalCtrl.submitReview);
+
 //main index
 router.get( '/', generalCtrl.getIndex);
 

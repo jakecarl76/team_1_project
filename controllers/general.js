@@ -3,6 +3,8 @@ const Book = require('../models/book');
 const Movie = require('../models/movie');
 const Game = require('../models/game');
 const User = require('../models/user');
+const Review = require('../models/review');
+
 let bookGenres = [];
 let movieGenres = [];
 let gameCategories = [];
@@ -231,10 +233,37 @@ exports.getItemDetails = (req, res, next) => {
     case 'movie':
       Movie.findById(itemId)
         .then(movie => {
-          res.render('general/details', {
-          pageTitle: `${movie.title} | Hermit Habitat`,
-          path: '/details',
-          item: movie
+          Review.find({
+            contentId: itemId
+          })
+            .then(reviews => {
+              if (req.user) {
+                Review.find({
+                  userId: null || req.user._id,
+                  contentId: itemId
+                })
+                  .then(userReviews => {
+                res.render('general/details', {
+                  pageTitle: `${movie.title} | Hermit Habitat`,
+                  path: '/details',
+                  item: movie,
+                  user: req.user,
+                  type: type,
+                  reviews: reviews,
+                  your_reviews: userReviews
+                  })
+                })
+              } else {
+                res.render('general/details', {
+                  pageTitle: `${movie.title} | Hermit Habitat`,
+                  path: '/details',
+                  item: movie,
+                  user: req.user,
+                  type: type,
+                  reviews: reviews,
+                  your_reviews: null
+                  })
+              }
           })
         })
       break;
@@ -242,22 +271,38 @@ exports.getItemDetails = (req, res, next) => {
     case 'book':
       Book.findById(itemId)
         .then(book => {
-          res.render('general/details', {
-            pageTitle: `${book.title} | Hermit Habitat`,
-            path: '/details',
-            item: book
+          Review.find({
+            contentId: itemId
           })
+            .then(reviews => {
+              res.render('general/details', {
+                pageTitle: `${book.title} | Hermit Habitat`,
+                path: '/details',
+                item: book,
+                user: req.user,
+                type: type,
+                reviews: reviews
+              })
+            })
         })
       break;
     
     case 'game':
       Game.findById(itemId)
         .then(game => {
-          res.render('general/details', {
-            pageTitle: `${game.title} | Hermit Habitat`,
-            path: '/details',
-            item: game
+          Review.find({
+            contentId: itemId
           })
+            .then(reviews => {
+              res.render('general/details', {
+                pageTitle: `${game.title} | Hermit Habitat`,
+                path: '/details',
+                item: game,
+                user: req.user,
+                type: type,
+                reviews: reviews
+              })
+            })
         })
       break;
 }
@@ -1008,6 +1053,30 @@ exports.postAddFavorite = (req, res, next) => {
         default:
           
       }
+    })
+
+}
+
+exports.submitReview = (req, res, next) => {
+  const reviewText = req.body.fullReview;
+  const itemId = req.body.itemId;
+  const type = req.body.type;
+
+  const newReview = new Review({
+    reviewText: reviewText,
+    contentId: itemId,
+    date: Date.now(),
+    userId: req.user._id,
+    username: req.user.username
+  });
+
+  console.log(itemId.toString())
+
+  newReview
+    .save()
+    .then(result => {
+      console.log('Submitted Review!');
+      res.redirect(`/details/${itemId.toString()}?type=${type}`)
     })
 
 }
