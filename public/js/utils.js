@@ -163,3 +163,12 @@ function checkType(itemType){
     displayFields();
 }
 
+const toggleEditReview = () => {
+    const buttons = document.querySelectorAll('.editReviewItem');
+
+    
+    this.style.display = "none";
+
+    const revDiv = document.getElementById('editReviewItem');
+    revDiv.style.display = "block";
+}

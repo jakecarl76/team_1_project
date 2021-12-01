@@ -45,7 +45,8 @@ Shades of Purple
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Nixie+One&family=Poiret+One&family=Yeseva+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Playfair+Display&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Vibur&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Yellowtail&display=swap');
 /* * * * * * * * * * * * * * * * * * * * GENERAL* * * * * * * * * * * * * * * */
 
  
@@ -72,7 +73,7 @@ body{
     min-width: 340px;
     font-family: 'DM Sans', sans-serif;
     overflow-x: hidden;
-    background-color: #000;
+    background: linear-gradient(to bottom right,#000000, #691599);
 }
 
 header, footer{
@@ -107,9 +108,9 @@ h1, h2, h3, h4, h5, h6{
 
 hr{
     box-shadow: 
-    0 0 0 2px rgba( 229, 142, 67, 0.35),
-    0 0 0 4px rgba( 229, 142, 67, 0.35),
-    0 0 0 6px rgba( 229, 142, 67, 0.35);
+    0 0 2px #1A34A0,
+    0 0 4px #1A34A0,
+    0 0 6px #1A34A0;
     width: 100vw;
     height: 1px;
     margin: 0;
@@ -142,7 +143,56 @@ header{
 
 header h1{
     color: #fff;
-    padding-left: 3rem;
+    text-align: right;
+    font-family: cursive;
+    padding-top: 5px;
+    font-size: 3rem;
+    word-spacing: 3rem;
+}
+ .siteName {
+     margin-right: 75%;
+     margin-top: 5px;
+     padding: 15px;
+     margin-bottom: 0px;
+ }
+
+.neonone {
+    font-family: yellowtail; 
+    font-size: 4rem;
+    color: #e7376f;
+    text-shadow: 
+      0 0 7px #fff,
+      0 0 10px #fff,
+      0 0 21px #fff,
+      0 0 42px #e01857,
+      0 0 82px #e01857,
+      0 0 92px #e01857,
+      0 0 102px #DC527E,
+      0 0 151px #DC527E;
+    transform: rotate(-19deg);
+    transform-origin: 0 0;
+    text-align: left;
+    position: absolute;
+    padding-bottom: 5px;
+}
+
+.neontwo {
+    font-family: yellowtail;
+    font-size: 4rem;
+    color: #6f0188;
+    text-shadow: 
+      0 0 7px #fff,
+      0 0 10px #fff,
+      0 0 21px #fff,
+      0 0 42px #9404b4,
+      0 0 82px #9404b4,
+      0 0 92px #9404b4,
+      0 0 102px #9404b4,
+      0 0 151px #9404b4;
+    transform: rotate(-19deg);
+    transform-origin: 0 0;
+    text-align: center;
+    padding-bottom: 5px;
 }
 
 /* * * * * * * * * * NAV* * * * * * * * * * */
@@ -223,6 +273,8 @@ header h1{
 .nav-item-list{
     transform: scale(0) translate(5rem, 5rem);
     transition: 0.3s;
+    background-color: #000000;
+    
 }
 
 #mobile-nav-toggle:checked ~ .nav-item-list{
@@ -771,6 +823,24 @@ button:hover, a.btn:hover{
     color:#DC527E;
 }
 
+/* Reviews */
+.reviews {
+    width: 50%;
+    margin-top: 2%;
+    border:#DC527E solid 2px;
+    padding: 1%;
+}
 
+.review-item {
+    border: #DC527E solid 2px;
+    padding: 1%;
+}
 
+.review-top {
+    display: inline;
+}
+
+.editReviewItem {
+    display: none;
+}
 

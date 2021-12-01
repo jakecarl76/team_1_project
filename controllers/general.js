@@ -3,6 +3,8 @@ const Book = require('../models/book');
 const Movie = require('../models/movie');
 const Game = require('../models/game');
 const User = require('../models/user');
+const Review = require('../models/review');
+
 let bookGenres = [];
 let movieGenres = [];
 let gameCategories = [];
@@ -231,10 +233,37 @@ exports.getItemDetails = (req, res, next) => {
     case 'movie':
       Movie.findById(itemId)
         .then(movie => {
-          res.render('general/details', {
-          pageTitle: `${movie.title} | Hermit Habitat`,
-          path: '/details',
-          item: movie
+          Review.find({
+            contentId: itemId
+          })
+            .then(reviews => {
+              if (req.user) {
+                Review.find({
+                  userId: null || req.user._id,
+                  contentId: itemId
+                })
+                .then(userReviews => {
+                  res.render('general/details', {
+                    pageTitle: `${movie.title} | Hermit Habitat`,
+                    path: '/details',
+                    item: movie,
+                    user: req.user,
+                    type: type,
+                    reviews: reviews,
+                    your_reviews: userReviews
+                    })
+                })
+              } else {
+                res.render('general/details', {
+                  pageTitle: `${movie.title} | Hermit Habitat`,
+                  path: '/details',
+                  item: movie,
+                  user: req.user,
+                  type: type,
+                  reviews: reviews,
+                  your_reviews: null
+                  })
+              }
           })
         })
       break;
@@ -242,25 +271,79 @@ exports.getItemDetails = (req, res, next) => {
     case 'book':
       Book.findById(itemId)
         .then(book => {
-          res.render('general/details', {
-            pageTitle: `${book.title} | Hermit Habitat`,
-            path: '/details',
-            item: book
+          Review.find({
+            contentId: itemId
           })
+            .then(reviews => {
+              if (req.user) {
+                Review.find({
+                  userId: null || req.user._id,
+                  contentId: itemId
+                })
+                  .then(userReviews => {
+                    res.render('general/details', {
+                      pageTitle: `${book.title} | Hermit Habitat`,
+                      path: '/details',
+                      item: book,
+                      user: req.user,
+                      type: type,
+                      reviews: reviews,
+                      your_reviews: userReviews
+                    })
+                  })
+              } else {
+                res.render('general/details', {
+                  pageTitle: `${book.title} | Hermit Habitat`,
+                  path: '/details',
+                  item: book,
+                  user: req.user,
+                  type: type,
+                  reviews: reviews,
+                  your_reviews: null
+                })
+              }
+            })
         })
       break;
     
     case 'game':
       Game.findById(itemId)
         .then(game => {
-          res.render('general/details', {
-            pageTitle: `${game.title} | Hermit Habitat`,
-            path: '/details',
-            item: game
+          Review.find({
+            contentId: itemId
           })
+            .then(reviews => {
+              if (req.user) {
+                Review.find({
+                  userId: null || req.user._id,
+                  contentId: itemId
+                })
+                  .then(userReviews => {
+                    res.render('general/details', {
+                      pageTitle: `${game.title} | Hermit Habitat`,
+                      path: '/details',
+                      item: game,
+                      user: req.user,
+                      type: type,
+                      reviews: reviews,
+                      your_reviews: userReviews
+                    })
+                  })
+              } else {
+                res.render('general/details', {
+                  pageTitle: `${game.title} | Hermit Habitat`,
+                  path: '/details',
+                  item: game,
+                  user: req.user,
+                  type: type,
+                  reviews: reviews,
+                  your_reviews: null
+                })
+              }
+            })
         })
       break;
-}
+  }
 };
 
 /*cannot test until My Items page is created*/
@@ -1010,4 +1093,93 @@ exports.postAddFavorite = (req, res, next) => {
       }
     })
 
+}
+
+// Add Review to DB
+exports.submitReview = (req, res, next) => {
+  const reviewText = req.body.fullReview;
+  const itemId = req.body.itemId;
+  const type = req.body.type;
+
+  const newReview = new Review({
+    reviewText: reviewText,
+    contentId: itemId,
+    date: Date.now(),
+    userId: req.user._id,
+    username: req.user.username
+  });
+
+  console.log(itemId.toString())
+
+  newReview
+    .save()
+    .then(result => {
+      console.log('Submitted Review!');
+      res.redirect(`/details/${itemId.toString()}?type=${type}`)
+    })
+
+}
+
+// Display Edit Review page
+exports.getEditReview = (req, res, next) => {
+  const itemId = req.body.itemId;
+  const type = req.body.type;
+  const reviewText = req.body.reviewText;
+  const title = req.body.itemTitle;
+  const reviewId = req.body.reviewId;
+
+  res.render('general/edit-review', {
+      pageTitle: `Edit Review | Hermit Habitat`,
+      path: '/edit-review',
+      itemId: itemId,
+      type: type,
+      reviewText: reviewText,
+      title: title,
+      reviewId: reviewId
+  })
+}
+
+// Update Review in DB
+exports.updateReview = (req, res, next) => {
+  const itemId = req.body.itemId;
+  const type = req.body.type;
+  const reviewText = req.body.reviewText;
+  const reviewId = req.body.reviewId;
+
+  Review.findById(reviewId)
+    .then(review => {
+      if (review.userId.toString() !== req.user._id.toString()) {
+        return res.redirect('/');
+      }
+
+      review.reviewText = reviewText;
+      review.date = Date.now();
+
+      return review.save()
+        .then(result => {
+        console.log('Updated Item')
+        res.redirect(`/details/${itemId}?type=${type}`)
+        })
+        .catch(err => {
+            console.log(err)
+      })
+    })
+}
+
+// Delete Review in DB
+exports.postDelReview = (req, res, next) => {
+  const reviewId = req.body.reviewId;
+  const itemId = req.body.itemId;
+  const type = req.body.type;
+
+  Review.deleteOne({
+    _id: reviewId,
+    userId: req.user._id
+  })
+  .then(result => {
+    console.log('Review Deleted.');
+    res.redirect(`/details/${itemId}?type=${type}`)
+  }).catch(err => {
+      console.log(err);
+    })
 }
