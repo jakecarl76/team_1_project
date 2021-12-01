@@ -87,6 +87,7 @@
 
          <div class="all-reviews">
             <h3>All Reviews for <span class="details-title"><%= item.title %></span></h3>
+            <% if (reviews.length > 0) { %>
             <% for (let review of reviews) { %>
             <div class="review-item">
                <span class="review-top">
@@ -96,6 +97,9 @@
                <p><%= review.reviewText %></p>
             </div>
             <% } %>
+            <% } else { %>
+               <p>Looks like there are no reviews for <span class="details-title"><%= item.title %></span>. Be the first to add a review!</p>
+            <% } %> 
          </div>
 
       </div>
