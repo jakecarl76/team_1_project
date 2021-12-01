@@ -1,0 +1,25 @@
+<%- include('../includes/head.ejs') %>
+
+<body>
+   <script defer>
+
+   </script>
+   <%- include('../includes/nav.ejs') %>
+   <main>
+      <h1>Edit Your Review for <%= title %></h1>
+      <% console.log(reviewId) %> 
+      <form action="/update-review" method="post">
+         <textarea name="reviewText"><%= reviewText %></textarea>
+         <input type="hidden" name="title" value="<%=title%>">
+         <input type="hidden" name="itemId" value="<%=itemId%>">
+         <input type="hidden" name="type" value="<%= type %>">
+         <input type="hidden" name="reviewId" value="<%=reviewId%>">
+         <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+         <br>
+         <button type="submit">Update Review</button>
+      </form>
+   </main>
+   <%- include('../includes/end.ejs') %>
+</body>
+
+</html>

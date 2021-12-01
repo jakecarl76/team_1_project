@@ -1,25 +1,111 @@
 <%- include('../includes/head.ejs') %>
-   <body>
-      <%- include('../includes/nav.ejs') %>
-         <main class="details-main">
-            
-            <div class="details-item">
-            <div class="details-left">
-               <img src="../images/<%= item.imageUrl %>" alt="<%= item.title %>">
-            </div>
 
-            <div class="details-right">
+<body>
+   <%- include('../includes/nav.ejs') %>
+   <main class="details-main">
+
+      <div class="details-item">
+         <div class="details-left">
+            <img src="../images/<%= item.imageUrl %>" alt="<%= item.title %>">
+         </div>
+
+         <div class="details-right">
             <h1>Title: <span class="details-title"><%= item.title %></span></h1>
             <% if (item.rating) { %>
             <h2>Age Rating: <span class="details-title"><%= item.rating %></span></h2>
-            <% } %> 
+            <% } %>
             <h2 class="details-genre"><%= item.genre || item.category %></h2>
             <h2>Description:</h2>
             <p class="details-desc"><%= item.description %></p>
-            </div>
-            </div>
+         </div>
+      </div>
 
-         </main>
-      <%- include('../includes/end.ejs') %>
-   </body>
+      <div class="reviews">
+         <% if (!user)  { %>
+
+         <h3><a href="/login">Login</a> or <a href="/signup">Sign Up</a> to submit a review!</h3>
+         <% } else { %>
+         <% if (your_reviews)  { %>
+         <h3>Your Reviews:</h3>
+         <% if (!(your_reviews.length > 0)) { %>
+         <!-- If there are no reviews -->
+         <p>You have no reviews yet for <span class="details-title"><%= item.title %></span>. Add one now!</p>
+         <% } else { %>
+         <div class="your-reviews">
+            <% for (let review of your_reviews) { %>
+            <div class="review-item">
+
+               <!-- Review -->
+               <span class="review-top">
+                  <p><%= review.username %></p>
+                  <p><%= review.date.toLocaleDateString() %></p>
+               </span>
+               <p><%= review.reviewText %></p>
+
+               <!-- Edit Review Button -->
+               <form action="/edit-review" method="post">
+                  <input type="hidden" name="reviewText" value="<%= review.reviewText%>">
+                  <input type="hidden" name="itemTitle" value="<%=item.title%>">
+                  <input type="hidden" name="itemId" value="<%=item._id%>">
+                  <input type="hidden" name="type" value=<%= type %>>
+                  <input type="hidden" name="reviewId" value="<%=review._id%>">
+                  <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                  <button type="submit">Edit Review</button>
+               </form>
+
+               <!-- Delete Button -->
+               <form action="/del-review" method="post">
+                  <input type="hidden" name="itemId" value="<%=item._id%>">
+                  <input type="hidden" name="type" value=<%= type %>>
+                  <input type="hidden" name="reviewId" value="<%=review._id%>">
+                  <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                  <button type="submit">Delete Review</button>
+               </form>
+            </div>
+            <% } %>
+         </div>
+         <% } %>
+         <% } %>
+
+         <br>
+
+         <!-- Add Review -->
+         <form action="/add-review" method="post">
+            <label for="fullReview">
+               <h3>Add Your Review:</h3>
+            </label>
+            <textarea name="fullReview" id="fullReview" required></textarea><br>
+            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+            <input type="hidden" name="itemId" value="<%=item._id%>">
+            <input type="hidden" name="type" value=<%= type%>>
+            <button type="submit">Submit Review</button>
+         </form>
+         <% } %>
+         <br>
+      </div>
+      <div class="reviews">
+
+         <div class="all-reviews">
+            <h3>All Reviews for <span class="details-title"><%= item.title %></span></h3>
+            <% if (reviews.length > 0) { %>
+            <% for (let review of reviews) { %>
+            <div class="review-item">
+               <span class="review-top">
+                  <p><%= review.username %></p>
+                  <p><%= review.date.toLocaleDateString() %></p>
+               </span>
+               <p><%= review.reviewText %></p>
+            </div>
+            <% } %>
+            <% } else { %>
+               <p>Looks like there are no reviews for <span class="details-title"><%= item.title %></span>. Be the first to add a review!</p>
+            <% } %> 
+         </div>
+
+      </div>
+
+   </main>
+   <%- include('../includes/end.ejs') %>
+</body>
+
 </html>

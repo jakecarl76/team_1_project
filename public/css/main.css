@@ -771,6 +771,24 @@ button:hover, a.btn:hover{
     color:#DC527E;
 }
 
+/* Reviews */
+.reviews {
+    width: 50%;
+    margin-top: 2%;
+    border:#DC527E solid 2px;
+    padding: 1%;
+}
 
+.review-item {
+    border: #DC527E solid 2px;
+    padding: 1%;
+}
 
+.review-top {
+    display: inline;
+}
+
+.editReviewItem {
+    display: none;
+}
 
