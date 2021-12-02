@@ -12,11 +12,11 @@
          <div class="details-right">
             <h1>Title: <span class="details-title"><%= item.title %></span></h1>
             <% if (item.rating) { %>
-            <h2>Age Rating: <span class="details-title"><%= item.rating %></span></h2>
+            <h2>Rating: <span class="details-title"><%= item.rating %></span></h2>
             <% } %>
-            <h2 class="details-genre"><%= item.genre || item.category %></h2>
-            <h2>Description:</h2>
-            <p class="details-desc"><%= item.description %></p>
+            <h2 class="details-genre">Genre: <span class="details-title"><%= item.genre || item.category %></span></h2>
+            <h2>Description: <span class="details-desc"><%= item.description %></span></h2>
+            
          </div>
       </div>
 
@@ -91,8 +91,8 @@
             <% for (let review of reviews) { %>
             <div class="review-item">
                <span class="review-top">
-                  <p><%= review.username %></p>
-                  <p><%= review.date.toLocaleDateString() %></p>
+                  <p><em><%= review.username %></em></p>
+                  <p><em><%= review.date.toLocaleDateString() %></em></p>
                </span>
                <p><%= review.reviewText %></p>
             </div>

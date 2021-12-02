@@ -108,12 +108,13 @@ h1, h2, h3, h4, h5, h6{
 }
 
 hr{
-    box-shadow: 
+    /* box-shadow: 
     0 0 2px #1A34A0,
     0 0 4px #1A34A0,
     0 0 6px #1A34A0;
-    width: 100vw;
-
+    width: 100vw; */
+    /* display: none; */
+    border: 0px black solid;
 }
 
 a{
@@ -569,6 +570,8 @@ button:hover, a.btn:hover{
     height: 4rem;
 }
 
+
+
 .item-form p{
     margin: 0;
 }
@@ -589,6 +592,7 @@ button:hover, a.btn:hover{
   {
     border: solid green 3px;
   }
+
 
 .details-img{
     max-width: 150px;
@@ -754,17 +758,25 @@ button:hover, a.btn:hover{
     margin-top: 1rem;
 }
 
-/*
-   Details View CSS
-*/
+/* * * * * * * * * * * Details View CSS * * * * * * * * * */
 .details-main {
     margin: 0 auto;
     max-width: 100%;
 }
 
+.details-item{
+    padding: 1rem;
+    width: 75vw;
+    box-shadow: 
+    0 0 0 2px rgba( 26, 52, 160, 0.35),
+    0 0 0 4px rgba( 26, 52, 160, 0.35),
+    0 0 0 6px rgba( 26, 52, 160, 0.35), 
+    inset 0 0 0 10px rgba( 0, 0, 0, 0.1);
+}
+
 .details-left {
     margin: 0 auto;
-    width: 90%;
+    width: 100%;
 }
 
 .details-left img {
@@ -772,40 +784,40 @@ button:hover, a.btn:hover{
     margin: 0 auto;
     width: 100%;
     padding: 0%;
-    box-shadow: 
+    /* box-shadow: 
     0 0 0 2px rgba( 26, 52, 160, 0.35),
     0 0 0 4px rgba( 26, 52, 160, 0.35),
     0 0 0 6px rgba( 26, 52, 160, 0.35), 
-    inset 0 0 0 10px rgba( 0, 0, 0, 0.1);
+    inset 0 0 0 10px rgba( 0, 0, 0, 0.1); */
 }
 
 .details-right {
     font-size: 1.1em;
-    position: relative;
+    /* position: relative; */
     width: 100%;
-    padding: 2%;
-    margin-top: 10%;
-    box-shadow: 
+    padding: 1rem;
+    /* margin-top: 10%; */
+    /* box-shadow: 
     0 0 0 2px rgba( 26, 52, 160, 0.35),
     0 0 0 4px rgba( 26, 52, 160, 0.35),
     0 0 0 6px rgba( 26, 52, 160, 0.35), 
-    inset 0 0 0 10px rgba( 0, 0, 0, 0.1);
+    inset 0 0 0 10px rgba( 0, 0, 0, 0.1); */
 }
 
-.details-genre {
-    position: absolute;
-    top: -2%;
-    right: 2%;
+/* .details-genre {
+     position: absolute;
+    top: 4rem;
+    right: 1rem; 
     font-family: "Nixie One", sans-serif;
     font-size: 1.1em;
     font-weight: 700;
     background-color:  #A31643;
     color: white;
     padding: 2%;
-}
+} */
 
 .details-right h1 {
-    padding-top: 15%;
+    /* padding-top: 15%; */
     font-size: 1.1em;
 }
 
@@ -823,27 +835,52 @@ button:hover, a.btn:hover{
     font-weight: bold;
     text-align: center;
     font-size: 1.1em;
+    width: 100%;
     color:#DC527E;
 }
 
-/* Reviews */
+/* * * * * * * * * * * * REVIEWS * * * * * * * * * * * * * */
 .reviews {
-    width: 50%;
-    margin-top: 2%;
+    padding: 1rem;
+    width: 75vw;
+    margin-top: 2rem;
     border:#DC527E solid 2px;
-    padding: 1%;
 }
 
 .review-item {
     border: #DC527E solid 2px;
-    padding: 1%;
+    padding: 1rem;
+    margin-top: 1rem;
 }
 
 .review-top {
-    display: inline;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "name date";
 }
 
+.review-top p, .review-item p{
+    margin: 0;
+}
+
+.review-top p:first-of-type{
+    grid-area: name;
+}
+
+.review-top p:nth-of-type(2){
+    grid-area: date;
+    justify-self: right;
+}
+
+.review-item>p{
+    grid-area: review;
+    margin-top: 1rem;
+}
 .editReviewItem {
     display: none;
+}
+
+#fullReview{
+    width: 100%;
 }
 
