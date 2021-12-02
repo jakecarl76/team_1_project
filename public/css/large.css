@@ -127,6 +127,7 @@
                 width: 100%;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
+                align-items: start;
                 column-gap: 50px;
                 row-gap: 25px;
         }
@@ -137,6 +138,11 @@
                 height: 100%;
         }
         
+        .content-card-image{
+            width: 350px;
+            height: 350px;
+        }
+
         .description {
                 display: block;
         }
