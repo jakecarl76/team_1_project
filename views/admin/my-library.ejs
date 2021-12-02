@@ -12,7 +12,21 @@
         <div class="card-container" id="favorites">
             <% for (let fave of favorites) { %>
                 <article class="card favorite">
-                    <h3 class="title"><%= fave.title %></h3>
+                    <h3 class="title"><%
+                        switch(fave.type){
+                            case "book": %>
+                                <i class="fas fa-book"></i>
+                            <%
+                                break;
+                            case "movie": %>
+                                <i class="fas fa-video"></i>
+                            <%
+                                break;
+                            case "game": %>
+                                <i class="fas fa-dice"></i>
+                            <%  
+                                break;
+                            } %> <%= fave.title %></h3>
                     <div class="favorite-star">
                         <form action="/add-favorite" method="POST">
                             <input type="hidden" value="<%= fave.id %>" name="id">
@@ -21,6 +35,7 @@
                             <button class="favorite-btn" type="submit"><i class="fas fa-star"></i></button>
                         </form>
                     </div>
+                    
                     <img src="/images/<%= fave.imageUrl %>" alt="Image of <%= fave.title %>">
                     <div class="card_content">
                         <p><%= fave.genre %></p>

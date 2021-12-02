@@ -469,8 +469,11 @@ exports.postAdjustLibrary = function (req, res, next) {
         if (!user.bookLib.lib.includes(id)) {
           user.bookLib.lib.push(id);
           msg = "Book added to bookLib.lib.";
+          console.log("postAdjustLibrary: book not in library 294");
         } else {
-          var index = user.bookLib.lib.findIndex(function (index) {
+          var index = use;
+          console.log("postAdjustLibrary: book in library 298");
+          r.bookLib.lib.findIndex(function (index) {
             return index == id;
           });
           console.log("index: ".concat(index));
@@ -529,7 +532,7 @@ exports.postAdjustLibrary = function (req, res, next) {
           console.log("postAddToLibrary user.save (movie) error: ".concat(err));
           return next(error);
         });
-        res.redirect('/my-library#movies');
+        res.redirect('/my-library#books');
         break;
 
       case "game":

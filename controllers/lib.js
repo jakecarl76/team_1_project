@@ -290,9 +290,12 @@ exports.postAdjustLibrary = (req, res, next) => {
         case "book":
           if(!user.bookLib.lib.includes(id)){
             user.bookLib.lib.push(id);
-            msg = "Book added to bookLib.lib.";}
+            msg = "Book added to bookLib.lib.";
+            console.log(`postAdjustLibrary: book not in library 294`);
+          }
             else{
-              let index = user.bookLib.lib.findIndex(index => {
+              let index = use
+              console.log(`postAdjustLibrary: book in library 298`);r.bookLib.lib.findIndex(index => {
                 return index == id;
               });
               console.log(`index: ${index}`);
@@ -349,7 +352,7 @@ exports.postAdjustLibrary = (req, res, next) => {
                 return next(error);
               })
 
-          res.redirect('/my-library#movies');
+          res.redirect('/my-library#books');
           break;
         case "game":
           if(!user.gameLib.lib.includes(id)){
