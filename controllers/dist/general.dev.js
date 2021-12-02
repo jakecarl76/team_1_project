@@ -53,6 +53,8 @@ var Game = require('../models/game');
 
 var User = require('../models/user');
 
+var Review = require('../models/review');
+
 var bookGenres = [];
 var movieGenres = [];
 var gameCategories = []; //get index
@@ -189,8 +191,8 @@ exports.getRandomizer = function (req, res, next) {
 
         try {
           for (var _iterator = movies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var _movie = _step.value;
-            genreIteration.push(_movie.genre);
+            var movie = _step.value;
+            genreIteration.push(movie.genre);
           } // Filter movie genre to have unique values
 
         } catch (err) {
@@ -261,8 +263,8 @@ exports.getRandomizer = function (req, res, next) {
 
         try {
           for (var _iterator2 = games[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var _game = _step2.value;
-            genreIteration.push(_game.category);
+            var game = _step2.value;
+            genreIteration.push(game.category);
           } // Filter movie genre to have unique values
 
         } catch (err) {
@@ -342,30 +344,105 @@ exports.getItemDetails = function (req, res, next) {
   switch (type) {
     case 'movie':
       Movie.findById(itemId).then(function (movie) {
-        res.render('general/details', {
-          pageTitle: "".concat(movie.title, " | Hermit Habitat"),
-          path: '/details',
-          item: movie
+        Review.find({
+          contentId: itemId
+        }).then(function (reviews) {
+          if (req.user) {
+            Review.find({
+              userId: null || req.user._id,
+              contentId: itemId
+            }).then(function (userReviews) {
+              res.render('general/details', {
+                pageTitle: "".concat(movie.title, " | Hermit Habitat"),
+                path: '/details',
+                item: movie,
+                user: req.user,
+                type: type,
+                reviews: reviews,
+                your_reviews: userReviews
+              });
+            });
+          } else {
+            res.render('general/details', {
+              pageTitle: "".concat(movie.title, " | Hermit Habitat"),
+              path: '/details',
+              item: movie,
+              user: req.user,
+              type: type,
+              reviews: reviews,
+              your_reviews: null
+            });
+          }
         });
       });
       break;
 
     case 'book':
       Book.findById(itemId).then(function (book) {
-        res.render('general/details', {
-          pageTitle: "".concat(book.title, " | Hermit Habitat"),
-          path: '/details',
-          item: book
+        Review.find({
+          contentId: itemId
+        }).then(function (reviews) {
+          if (req.user) {
+            Review.find({
+              userId: null || req.user._id,
+              contentId: itemId
+            }).then(function (userReviews) {
+              res.render('general/details', {
+                pageTitle: "".concat(book.title, " | Hermit Habitat"),
+                path: '/details',
+                item: book,
+                user: req.user,
+                type: type,
+                reviews: reviews,
+                your_reviews: userReviews
+              });
+            });
+          } else {
+            res.render('general/details', {
+              pageTitle: "".concat(book.title, " | Hermit Habitat"),
+              path: '/details',
+              item: book,
+              user: req.user,
+              type: type,
+              reviews: reviews,
+              your_reviews: null
+            });
+          }
         });
       });
       break;
 
     case 'game':
       Game.findById(itemId).then(function (game) {
-        res.render('general/details', {
-          pageTitle: "".concat(game.title, " | Hermit Habitat"),
-          path: '/details',
-          item: game
+        Review.find({
+          contentId: itemId
+        }).then(function (reviews) {
+          if (req.user) {
+            Review.find({
+              userId: null || req.user._id,
+              contentId: itemId
+            }).then(function (userReviews) {
+              res.render('general/details', {
+                pageTitle: "".concat(game.title, " | Hermit Habitat"),
+                path: '/details',
+                item: game,
+                user: req.user,
+                type: type,
+                reviews: reviews,
+                your_reviews: userReviews
+              });
+            });
+          } else {
+            res.render('general/details', {
+              pageTitle: "".concat(game.title, " | Hermit Habitat"),
+              path: '/details',
+              item: game,
+              user: req.user,
+              type: type,
+              reviews: reviews,
+              your_reviews: null
+            });
+          }
         });
       });
       break;
@@ -411,7 +488,7 @@ exports.getEditItem = function _callee3(req, res, next) {
           itemType = req.params.itemType.toString(); //locate product
 
           _context3.t0 = itemType;
-          _context3.next = _context3.t0 === "book" ? 14 : _context3.t0 === game ? 16 : _context3.t0 === movie ? 18 : 20;
+          _context3.next = _context3.t0 === "book" ? 14 : _context3.t0 === "game" ? 16 : _context3.t0 === "movie" ? 18 : 20;
           break;
 
         case 14:
@@ -607,7 +684,7 @@ exports.postAddItem = function (req, res, next) {
       break;
 
     case "movie":
-      var _movie2 = new Movie({
+      var movie = new Movie({
         title: title,
         genre: movieGenre,
         rating: rating,
@@ -615,8 +692,7 @@ exports.postAddItem = function (req, res, next) {
         imageUrl: imageUrl,
         userId: req.user
       });
-
-      _movie2.save().then(function (result) {
+      movie.save().then(function (result) {
         //log success and redirect to admin products
         console.log('Created Movie');
         res.redirect('/my-library');
@@ -641,19 +717,17 @@ exports.postAddItem = function (req, res, next) {
           validationErrors: errors.array()
         });
       });
-
       break;
 
     case "game":
-      var _game2 = new Game({
+      var game = new Game({
         title: title,
         category: category,
         description: description,
         imageUrl: imageUrl,
         userId: req.user
       });
-
-      _game2.save().then(function (result) {
+      game.save().then(function (result) {
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
@@ -679,7 +753,6 @@ exports.postAddItem = function (req, res, next) {
           validationErrors: errors.array()
         });
       });
-
       break;
 
     default:
@@ -827,7 +900,7 @@ exports.postAddAnother = function (req, res, next) {
       break;
 
     case "movie":
-      var _movie3 = new Movie({
+      var movie = new Movie({
         title: title,
         genre: movieGenre,
         rating: rating,
@@ -835,8 +908,7 @@ exports.postAddAnother = function (req, res, next) {
         imageUrl: imageUrl,
         userId: req.user
       });
-
-      _movie3.save().then(function (result) {
+      movie.save().then(function (result) {
         //log success and redirect to admin products
         console.log('Created Movie');
         res.redirect('/add-item');
@@ -861,19 +933,17 @@ exports.postAddAnother = function (req, res, next) {
           validationErrors: errors.array()
         });
       });
-
       break;
 
     case "game":
-      var _game3 = new Game({
+      var game = new Game({
         title: title,
         category: category,
         description: description,
         imageUrl: imageUrl,
         userId: req.user
       });
-
-      _game3.save().then(function (result) {
+      game.save().then(function (result) {
         //log success and redirect to admin products
         getCategories();
         console.log('Created Game');
@@ -899,7 +969,6 @@ exports.postAddAnother = function (req, res, next) {
           validationErrors: errors.array()
         });
       });
-
       break;
 
     default:
@@ -1259,5 +1328,80 @@ exports.postAddFavorite = function (req, res, next) {
 
       default:
     }
+  });
+}; // Add Review to DB
+
+
+exports.submitReview = function (req, res, next) {
+  var reviewText = req.body.fullReview;
+  var itemId = req.body.itemId;
+  var type = req.body.type;
+  var newReview = new Review({
+    reviewText: reviewText,
+    contentId: itemId,
+    date: Date.now(),
+    userId: req.user._id,
+    username: req.user.username
+  });
+  console.log(itemId.toString());
+  newReview.save().then(function (result) {
+    console.log('Submitted Review!');
+    res.redirect("/details/".concat(itemId.toString(), "?type=").concat(type));
+  });
+}; // Display Edit Review page
+
+
+exports.getEditReview = function (req, res, next) {
+  var itemId = req.body.itemId;
+  var type = req.body.type;
+  var reviewText = req.body.reviewText;
+  var title = req.body.itemTitle;
+  var reviewId = req.body.reviewId;
+  res.render('general/edit-review', {
+    pageTitle: "Edit Review | Hermit Habitat",
+    path: '/edit-review',
+    itemId: itemId,
+    type: type,
+    reviewText: reviewText,
+    title: title,
+    reviewId: reviewId
+  });
+}; // Update Review in DB
+
+
+exports.updateReview = function (req, res, next) {
+  var itemId = req.body.itemId;
+  var type = req.body.type;
+  var reviewText = req.body.reviewText;
+  var reviewId = req.body.reviewId;
+  Review.findById(reviewId).then(function (review) {
+    if (review.userId.toString() !== req.user._id.toString()) {
+      return res.redirect('/');
+    }
+
+    review.reviewText = reviewText;
+    review.date = Date.now();
+    return review.save().then(function (result) {
+      console.log('Updated Item');
+      res.redirect("/details/".concat(itemId, "?type=").concat(type));
+    })["catch"](function (err) {
+      console.log(err);
+    });
+  });
+}; // Delete Review in DB
+
+
+exports.postDelReview = function (req, res, next) {
+  var reviewId = req.body.reviewId;
+  var itemId = req.body.itemId;
+  var type = req.body.type;
+  Review.deleteOne({
+    _id: reviewId,
+    userId: req.user._id
+  }).then(function (result) {
+    console.log('Review Deleted.');
+    res.redirect("/details/".concat(itemId, "?type=").concat(type));
+  })["catch"](function (err) {
+    console.log(err);
   });
 };

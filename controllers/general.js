@@ -380,7 +380,7 @@ exports.getEditItem = async (req, res, next) => {
         return next(error);
       });
       break;
-    case game:
+    case "game":
       Game.findById(itemId)
       .then(item => {   
         displayEditItem(item, itemType, editMode, res, req);
@@ -392,7 +392,7 @@ exports.getEditItem = async (req, res, next) => {
         return next(error);
       });
       break;
-    case movie:
+    case "movie":
       Movie.findById(itemId)
       .then(item => {   
         displayEditItem(item, itemType, editMode, res, req);
