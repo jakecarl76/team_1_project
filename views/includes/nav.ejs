@@ -38,6 +38,7 @@
             <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
           </li>
         <% } else { %>
+          <div class="drop">
           <li class="main-nav-item">
             <a class="<%= path === '/user-profile' ? 'active' : '' %>" href="/user-profile">My Profile</a>
           </li>
@@ -53,6 +54,7 @@
               <button type="submit" class="nav-button">Logout</button>
             </form>
           </li>
+        </div>
           <% } %>
     </ul>
     </div>

@@ -1,7 +1,7 @@
 //NANCI NEWELL
 // Mikhail!
-// Tyson: the somewhat sufficient
-// Okay, am I doing this correctly?
+// Tyson Stark
+
 
 //Imported pgks & vars
 // const PORT = process.env.PORT || 3005; //Server env | 
