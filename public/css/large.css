@@ -16,7 +16,14 @@
         width: 100%;
     }
 
-
+    hr{
+        box-shadow: 
+        0 0 2px #1A34A0,
+        0 0 4px #1A34A0,
+        0 0 6px #1A34A0;
+        width: 100vw;
+        height: 1px;
+    }
     
     /* * * * * * * * * * * * * NAV * * * * * * * * * * * * */
     #mobile-nav-toggle, #mobile-nav-toggle ~ .burger-container{
