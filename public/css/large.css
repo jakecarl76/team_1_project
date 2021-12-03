@@ -87,7 +87,7 @@
     .nav-item-list{
         align-items: center;
         justify-items: center;
-        width: 90vw;
+        width: 99%;
         margin-right: 2rem;
     }
 
@@ -147,7 +147,7 @@
         
         .content-card-image{
             width: 350px;
-            height: 350px;
+            max-height: 300px;
         }
 
         .description {

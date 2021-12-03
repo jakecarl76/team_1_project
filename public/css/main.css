@@ -72,7 +72,7 @@ body{
     min-width: 340px;
     font-family: 'DM Sans', sans-serif;
     overflow-x: hidden;
-    background: linear-gradient(to bottom right,#000000, #691599);
+    background: linear-gradient(to bottom right,#000000, #691599, #2b0a3d, #e7376f);
     background-size: cover;
 }
 
@@ -84,6 +84,8 @@ header, footer{
 footer{
     padding: 1rem;
     width: 100%;
+    grid-row-start: auto;
+    grid-row-end: auto;
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -104,7 +106,7 @@ h1, h2, h3, h4, h5, h6{
     align-content: start;
     background-color: #000; 
     color: #fff;
-    
+    position: center;
 }
 
 hr{
@@ -157,6 +159,7 @@ header h1{
      padding: 15px;
      margin-bottom: 0px;
      height: 9rem;
+     background-color: #000000;
  }
 
 .neonone {
@@ -200,42 +203,33 @@ header h1{
 
 /* * * * * * * * * * NAV* * * * * * * * * * */
 
-
-/* .dropdown {
+.drop {
     position: relative;
     display: inline-block;
+    margin: 0 0.5rem;
 }
 
-.drop-content {
+.drop-items {
     display: none;
+    position: absolute;
+    box-shadow: 0px 8px 16px 0px #3850B1;
+    min-width: 17rem;
+    background-color: #000000;
+}
+
+.drop-items a {
+    color: #fcf4f4;
+}
+
+.drop-items a:hover {
+    border: 2px solid #3850B1;
     
-    right: 0;
-    background-color: #d80c0c;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
 }
 
-.drop-content a {
-    color: #fff;
-    padding: 12px 16px;
-    text-decoration: none;
+.drop:hover .drop-items {
     display: block;
-    text-align: left;
 }
 
-.drop-content a:hover {
-    background-color: #000;
-    box-shadow: 
-    0 0 0 2px rgba( 26, 52, 160, 0.35),
-    0 0 0 4px rgba( 26, 52, 160, 0.35),
-    0 0 0 6px rgba( 26, 52, 160, 0.35), 
-    inset 0 0 0 10px rgba( 0, 0, 0, 0.1);    
-    border-radius: 5px;
-}
-.dropdown:hover .drop-content {
-    display: block;
-} */
 .burger-container{
     position: absolute;
     top: 2rem;
@@ -277,7 +271,6 @@ header h1{
     transform: scale(0) translate(5rem, 5rem);
     transition: 0.3s;
     background-color: #000000;
-    width: 100%;
 }
 
 #mobile-nav-toggle:checked ~ .nav-item-list{
@@ -633,7 +626,8 @@ button:hover, a.btn:hover{
 } */
  
  .content-cards {
-    margin: 0 2rem 0 0;
+    /* margin: 0 1rem 0 0; */
+    margin: auto;
  }
  
  .content-card {

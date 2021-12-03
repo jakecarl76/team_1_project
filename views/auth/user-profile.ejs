@@ -33,11 +33,17 @@
     </div>
 
     <h2 id="largeUserName"><%= userObj.username %></h2>
-
+    
+    <% if (!userObj.userImage) { %>
+      <div>
+        <img id="userImg" alt="User's Profile Image" src="/public/images/hermitcrabdefault.jpg">
+      </div>
+      <%  } else { %>
     <div>
       <img id="userImg" alt="User's Profile Image" src="<%= userObj.userImage %>">
     </div>
-
+    <% } %>
+    
     <div id="userImgOptionsDiv">
       <input type="button" value="Change Profile Image" 
        onclick="toggleDivById('changeUserImgDiv'); toggleDiv(this.parentElement);">
