@@ -135,7 +135,7 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 align-items: start;
-                column-gap: 50px;
+                column-gap: 90px;
                 row-gap: 25px;
         }
 

@@ -40,7 +40,7 @@
         <% } else { %>
           <div class="drop">
             <li class="main-nav-item">
-              <a class="<%= path === '/user-profile' ? 'active' : '' %>" href="/user-profile">My Profile</a>
+              <a class="<%= path === '/user-profile' ? 'active' : '' %>" href="/user-profile">My Profile </a>
             </li>
             <div class="drop-items">
           <li class="main-nav-item">
@@ -52,14 +52,15 @@
           <li class="main-nav-item">
             <a class="<%= path === '/add-item' ? 'active' : '' %>" href="/add-item">Add Item</a>
           </li>
-          <li class="main-nav-item">
+          
+          </div>
+        </div>
+        <li class="main-nav-item">
             <form action="/logout" method="post">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <button type="submit" class="nav-button">Logout</button>
             </form>
           </li>
-          </div>
-        </div>
           <% } %>
     </ul>
     </div>
