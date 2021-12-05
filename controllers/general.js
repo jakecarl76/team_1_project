@@ -12,6 +12,10 @@ let bookGenres = [];
 let movieGenres = [];
 let gameCategories = [];
 
+const defaultBookImg = "default-book-image.png";
+const defaultMovieImg =  "default-movie-image.png";
+const defaultGameImg = "default-game-image.png";
+
 //get index
 exports.getIndex = async (req, res, next) => {
   res.render('general/index', {
@@ -498,13 +502,13 @@ exports.postAddItem = async (req, res, next) => {
     switch(itemType)
     {
       case "book":
-        image = {filename: "default-book-image.png"};
+        image = {filename: defaultBookImg};
         break;
       case "movie":
-        image = {filename: "default-movie-image.png"};
+        image = {filename: defaultMovieImg};
         break;
       case "game":
-        image = {filename: "default-game-image.png"};
+        image = {filename: defaultGameImg};
         break;
     }
   }
@@ -722,13 +726,13 @@ exports.postAddAnother = (req, res, next) => {
     switch(itemType)
     {
       case "book":
-        image = {filename: "default-book-image.png"};
+        image = {filename: defaultBookImg};
         break;
       case "movie":
-        image = {filename: "default-movie-image.png"};
+        image = {filename: defaultMovieImg};
         break;
       case "game":
-        image = {filename: "default-game-image.png"};
+        image = {filename: defaultGameImg};
         break;
     }
   }
