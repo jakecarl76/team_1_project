@@ -6,6 +6,7 @@
     <% if(errorMessage){ %>
         <div class="user-message"><%= errorMessage %></div>
     <% } %>
+    <%- include('../includes/msgs.ejs') %>
     <form class="item-form" action=<% if(editing){ %> '/edit-item' <% }else{ %>"/add-item"<% } %> method="POST" enctype="multipart/form-data">
         <fieldset id="item-fieldset">
             <legend><% if(editing){ %> Edit Item <% } else { %>Add an Item<% } %></legend>
@@ -13,12 +14,12 @@
                 <p>What would you like to <% if(!editing){ %> add<% } else { %> update<% } %>? </p>
                 <div id="radio-div" onclick=displayFields()>
                     <input type="radio" name="itemType" id="type-book" value="book" 
-                    <% if(editing && itemType == 'book'){ %> checked<% } %> > 
-                    <label for="book">Book</label>
-                    <input type="radio" name="itemType" id="type-movie" value="movie" <% if(editing && itemType == 'movie'){ %>checked<% } %> >
-                    <label for="movie">Movie</label>
-                    <input type="radio" name="itemType" id="type-game" value="game" <% if(editing && itemType == 'game'){ %>checked<% } %> >
-                    <label for="game">Game</label>
+                    <% if((editing || locals.errMsgs) && itemType == 'book'){ %> checked<% } %> > 
+                    <label for="type-book">Book</label>
+                    <input type="radio" name="itemType" id="type-movie" value="movie" <% if( (editing || locals.errMsgs) && itemType == 'movie'){ %>checked<% } %> >
+                    <label for="type-movie">Movie</label>
+                    <input type="radio" name="itemType" id="type-game" value="game" <% if((editing || locals.errMsgs) && itemType == 'game'){ %>checked<% } %> >
+                    <label for="type-game">Game</label>
                 </div>
             </div>
             <div class="form-control book movie game hidden" id="title">
@@ -34,10 +35,11 @@
 
                 <label for="bookGenre">Genre</label>
                 <select name="bookGenre" id="genre-book" onclick="showNewGenre()">
+                   
                     <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
                     <% for( let genre of bookGenres ){ %>
                         <option name="bookGenre" 
-                        value="<%= genre %>" <% if(editing){
+                        value="<%= genre %>" <% if((editing || locals.errMsgs)){
                             if(item.genre == genre){%> selected <% }} %>> <%= genre %></option>
                     <% } %>
                     <option name="genre" value="newGenre">New</option>
@@ -50,7 +52,7 @@
                     <option disabled selected="<% if(!editing) { %>true<% } else { %>false<% } %>" >Select</option>
                     <% for( let genre of movieGenres ){ %>
                         <option name="movieGenre" 
-                        value="<%= genre %>" <% if(editing){
+                        value="<%= genre %>" <% if((editing || locals.errMsgs)){
                             if(item.genre == genre){%> selected <% }} %>> <%= genre %></option>
                     <% } %>
                     <option name="genre" value="newGenre">New</option>
@@ -62,10 +64,14 @@
                 
                 <select name="rating" id="rating">
                     <option selected disabled>Select</option>
-                    <option name="rating" value="G">G</option>
-                    <option name="rating" value="PG">PG</option>
-                    <option name="rating" value="PG13">PG13</option>
-                    <option name="rating" value="R">R</option>
+                    <option name="rating" value="G"<% if((editing || locals.errMsgs)){
+                        if(item.rating == "G"){%> selected <% }} %>>G</option>
+                    <option name="rating" value="PG"<% if((editing || locals.errMsgs)){
+                        if(item.rating == "PG"){%> selected <% }} %>>PG</option>
+                    <option name="rating" value="PG13"<% if((editing || locals.errMsgs)){
+                        if(item.rating == "PG13"){%> selected <% }} %>>PG13</option>
+                    <option name="rating" value="R"<% if((editing || locals.errMsgs)){
+                        if(item.rating == "R"){%> selected <% }} %>>R</option>
                 </select>
             </div>
             <div class="form-control game hidden">
@@ -75,7 +81,8 @@
                     <option selected disabled>Select</option>
                     <% for( let category of categories ){ %>
                         <option name="category" 
-                        value="<%= category %>"><%= category %></option>
+                        value="<%= category %>" <% if((editing || locals.errMsgs)){
+                            if(item.category == category){%> selected <% }} %>><%= category %></option>
                     <% } %>
                     <option name="category" value="newCategory">New</option>
                 </select>
@@ -84,6 +91,7 @@
             <div class="form-control book movie game hidden">
                 <% if(editing){ %>
                     <img src="/images/<%= item.imageUrl %>" alt="image of <%= item.title %>" class="details-img">
+                    <input type="hidden" name="oldImgURL" value="<%= item.imageUrl %>">
                     <% } %>
                 <label for="image">Image</label>
                 <input type="file" name="image" id="image">
