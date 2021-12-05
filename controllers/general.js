@@ -1,4 +1,7 @@
 //import models
+const {validationResult} = require('express-validator/check');
+
+//import models
 const Book = require('../models/book');
 const Movie = require('../models/movie');
 const Game = require('../models/game');
@@ -434,7 +437,7 @@ function displayEditItem(item, itemType, editMode, res, req){
   })
 }
 
-exports.postAddItem = (req, res, next) => {
+exports.postAddItem = async (req, res, next) => {
   //gather the info from the form
   const itemType= req.body.itemType;
   const title = req.body.title;
@@ -443,11 +446,12 @@ exports.postAddItem = (req, res, next) => {
   let movieGenre = req.body.movieGenre;
   const rating = req.body.rating;
   let category = req.body.category;
-  const image = req.file;
+  let image = req.file;
   const description = req.body.description;
   const newBookGenre = req.body.newBookGenre;
   const newMovieGenre = req.body.newMovieGenre
   const newCategory = req.body.newCategory;
+  let genre = [];
 
   //if it's a new book genre, make it genre
   if(bookGenre == "newGenre"){
@@ -461,8 +465,8 @@ exports.postAddItem = (req, res, next) => {
   if(category == "newCategory"){
     category = newCategory;
   }
-
-  //image validation
+  /*
+  //Old image validation 
   if(!image){
     let genre;
     switch(itemType){
@@ -472,6 +476,9 @@ exports.postAddItem = (req, res, next) => {
         break;
     }
     return res.status(422).render('admin/edit-item', {
+      bookGenres: bookGenres,
+      movieGenres: movieGenres,
+      categories: gameCategories,
       pageTitle: 'Add Item',
       path: '/add-item',
       editing: false,
@@ -483,24 +490,68 @@ exports.postAddItem = (req, res, next) => {
       item: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
       validationErrors: []
     })
+  } */
+
+  //set default image if none given
+  if(!image)
+  {
+    switch(itemType)
+    {
+      case "book":
+        image = {filename: "default-book-image.png"};
+        break;
+      case "movie":
+        image = {filename: "default-movie-image.png"};
+        break;
+      case "game":
+        image = {filename: "default-game-image.png"};
+        break;
+    }
   }
-// *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
-  //form validation
-  // const errors = validationResult(req);
-  // if(!errors.isEmpty()){
-  //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
-  //   return res.status(422).render('admin/edit-item', {
-  //     pageTitle: 'Add Item',
-  //     path: '/add-item',
-  //     editing: false,
-  //     hasError: true,
-  //     // user: req.user.name,      Uncomment out once login implemented
-  //     isAuthenticated: false,
-  //     errorMessage: errors.array()[0].msg,
-  //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
-  //     validationErrors: errors.array()
-  //   })
-  // }
+
+  //validation:
+  const v_errs = validationResult(req);
+
+  
+  if(!v_errs.isEmpty())
+  {
+    let errMsgs = [];
+    let errIds = [];
+
+    for(err of v_errs.array())
+    {
+      errMsgs.push(err.msg);
+      errIds.push(err.params);
+    }
+
+    if(itemType == "book")
+    {
+      genre = bookGenre;
+    }
+    else if(itemType == "movie")
+    {
+      genre = movieGenre;
+    }
+
+
+    return res.status(422).render('admin/edit-item', {
+      bookGenres: bookGenres,
+      movieGenres: movieGenres,
+      categories: gameCategories,
+      itemType: itemType,
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      hasError: true,
+      user: req.user.name,
+      isAuthenticated: false,
+      errMsgs: errMsgs,
+      errIds: errIds,
+      errorMessage: '',
+      item: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+      validationErrors: []
+    })
+  }
 
   const imageUrl = image.filename;
 console.log`postAddItem- image: ${image}`;
@@ -622,7 +673,7 @@ exports.postAddAnother = (req, res, next) => {
  let movieGenre = req.body.movieGenre;
  const rating = req.body.rating;
  let category = req.body.category;
- const image = req.file;
+ let image = req.file;
  const description = req.body.description;
  const newBookGenre = req.body.newBookGenre;
  const newMovieGenre = req.body.newMovieGenre
@@ -640,8 +691,8 @@ exports.postAddAnother = (req, res, next) => {
  if(category == "newCategory"){
    category = newCategory;
  }
-
- //image validation
+/*
+ //Old image validation
  if(!image){
   let genre;
   switch(itemType){
@@ -663,23 +714,69 @@ exports.postAddAnother = (req, res, next) => {
      validationErrors: []
    })
  }
-// *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
- //form validation
- // const errors = validationResult(req);
- // if(!errors.isEmpty()){
- //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
- //   return res.status(422).render('admin/edit-item', {
- //     pageTitle: 'Add Item',
- //     path: '/add-item',
- //     editing: false,
- //     hasError: true,
- //     // user: req.user.name,      Uncomment out once login implemented
- //     isAuthenticated: false,
- //     errorMessage: errors.array()[0].msg,
- //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
- //     validationErrors: errors.array()
- //   })
- // }
+ */
+
+  //set default image if none given
+  if(!image)
+  {
+    switch(itemType)
+    {
+      case "book":
+        image = {filename: "default-book-image.png"};
+        break;
+      case "movie":
+        image = {filename: "default-movie-image.png"};
+        break;
+      case "game":
+        image = {filename: "default-game-image.png"};
+        break;
+    }
+  }
+ 
+  //validation:
+  const v_errs = validationResult(req);
+
+  
+  if(!v_errs.isEmpty())
+  {
+    let errMsgs = [];
+    let errIds = [];
+
+    for(err of v_errs.array())
+    {
+      errMsgs.push(err.msg);
+      errIds.push(err.params);
+    }
+
+    
+    if(itemType == "book")
+    {
+      genre = bookGenre;
+    }
+    else if(itemType == "movie")
+    {
+      genre = movieGenre;
+    }
+    console.log("BOOKGENRES" + bookGenres)
+
+    return res.status(422).render('admin/edit-item', {
+      bookGenres: bookGenres,
+      movieGenres: movieGenres,
+      categories: gameCategories,
+      itemType: itemType,
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: false,
+      hasError: true,
+      user: req.user.name,
+      isAuthenticated: false,
+      errMsgs: errMsgs,
+      errIds: errIds,
+      errorMessage: '',
+      item: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+      validationErrors: []
+    })
+  }
 
  const imageUrl = image.filename;
 console.log`postAddItem- image: ${image}`;
@@ -807,6 +904,7 @@ exports.postEditItem = (req, res, next) => {
   const newBookGenre = req.body.newBookGenre;
   const newMovieGenre = req.body.newMovieGenre;
   const newCategory = req.body.newCategory;
+  let genre = '';
   
 console.log(`postEditItem updatedBookGenre: ${updatedBookGenre}`)
 
@@ -822,26 +920,50 @@ console.log(`postEditItem updatedBookGenre: ${updatedBookGenre}`)
   if(updatedCategory == "newCategory"){
     category = newCategory;
   }
-  
-// *** Need to add validation
-  //check for validation errors
-  // const errors = validationResult(req);
-  // if(!errors.isEmpty()){
-  //   return res.status(422).render('admin/edit-product', {
-  //     pageTitle: 'Edit Product',
-  //     path: '/admin/edit-product',
-  //     editing: true,
-  //     product: {
-  //       title: updatedTitle,
-  //       price: updatedPrice,
-  //       description: updatedDesc
-  //     },
-  //     isAuthenticated: req.session.isLoggedIn,
-  //     hasError: true,
-  //     errorMessage: errors.array()[0].msg
-  //   });
-  // }
 
+  //validation:
+  const v_errs = validationResult(req);
+
+  
+  if(!v_errs.isEmpty())
+  {
+    let errMsgs = [];
+    let errIds = [];
+
+    for(err of v_errs.array())
+    {
+      errMsgs.push(err.msg);
+      errIds.push(err.params);
+    }
+
+    
+    if(itemType == "book")
+    {
+      genre = updatedBookGenre;
+    }
+    else if(itemType == "movie")
+    {
+      genre = updatedMovieGenre;
+    }
+
+    return res.status(422).render('admin/edit-item', {
+      bookGenres: bookGenres,
+      movieGenres: movieGenres,
+      categories: gameCategories,
+      itemType: itemType,
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: true,
+      hasError: true,
+      user: req.user.name,
+      isAuthenticated: false,
+      errMsgs: errMsgs,
+      errIds: errIds,
+      errorMessage: '',
+      item: {title: updatedTitle, author: updatedAuthor, genre: genre, rating: updatedRating, category: updatedCategory, description: updatedDescription, imageUrl: req.body.oldImgURL, _id: itemId},
+      validationErrors: []
+    })
+  }
   //locate existing product in db
   switch(itemType){
     case "book": 
