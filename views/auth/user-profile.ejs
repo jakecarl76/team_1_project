@@ -1,28 +1,10 @@
 <%- include('../includes/head.ejs') %>
 <script src="/js/utils.js"></script>
 <script src="/js/validation.js"></script>
-<style>
-  /*delete this style when intergrated in main.css */
-  .invalid
-  {
-    border: solid red 3px;
-  }
-  .valid
-  {
-    border: solid green 3px;
-  }
-</style>
 </head>
 <body>
   <%- include('../includes/nav.ejs') %>
   <main>
-    <!-- Delete this after intergratred into nav include-->
-    <form action="/logout" method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <input type="submit" value="logout">
-    </form>
-    <!-- Delete this after intergratred into nav include-->
-
 
 
     <h1>
@@ -130,6 +112,9 @@
        onclick="toggleDivById('delOptionsDiv'); toggleDiv(this.parentElement);">
     </div>
 
+    <% if(userObj.adminStatus === "isAdmin") { %>
+    <h3><a href="/admin" class="btn">Admin Panel</a></h3>
+    <% } %>
   </main>
 
   <script>

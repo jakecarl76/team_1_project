@@ -15,7 +15,11 @@ const router = express.Router();
 //routes
 //...
 
-router.delete('/delete-account',authCtrl.delAccount);
+router.patch('/change-admin-status', authCtrl.makeUserAdmin);
+
+router.get('/admin/', authCtrl.getAdminPanel);
+
+router.delete('/delete-account', authCtrl.delAccount);
 
 router.get('/reset-password/:token', authCtrl.getResetPassword);
 

@@ -37,6 +37,93 @@ const { Tokenizer } = require('marked');
 
 const numHashes = 12;
 
+exports.makeUserAdmin = (req, res, next) => {
+  let targUID = req.body.targetUserId;
+  let authUID = req.body.currUserId;
+  let newStatus = req.body.newStatus;
+console.log(authUID + " : " + targUID);
+  let tmpUser = null;
+  let tmpAdmin = null;
+
+  //verify admin status
+  User.findById(authUID)
+  .then(user => {
+    if(user)
+    { tmpAdmin = user;
+      console.log(user);
+
+      if(user.adminStatus === 'isAdmin' && req.user._id.toString() === user._id.toString())
+      {
+        User.findById(targUID)
+        .then(user => {
+          //check user found
+          if(user)
+          { tmpUser = user;
+            user.adminStatus = newStatus;
+            user.save()
+            .then(result => {
+              res.status(200).json({
+                uid: targUID, 
+                msg: tmpUser.username + "admin status updated", 
+                newStatus: newStatus})
+            })
+            .catch(err => {
+              throw new Error("Error saving user status: " + err);
+            })
+          }
+          else
+          {
+            return res.status(404).json({errMsgs: ["Could not find selected user."]})
+          }
+        })
+        .catch(err => {
+          throw new Error("error finding target user for admin status change: " + err);
+        });
+      }
+      else
+      {
+        return res.status(401).json({errMsgs: ["You are not authorized to do that."]});
+      }
+
+      user.adminStatus = "isAdmin";
+      return user.save();
+    }
+    else
+    {console.log("lost");
+      res.write("lost");
+      return res.send();
+    }
+  })
+  .catch(err => next(err));
+};
+
+exports.getAdminPanel = (req, res, next) => {
+  //check that is authed to get
+  console.log(req.user);
+  if(req.user.adminStatus === "isAdmin")
+  {
+    //get list of users
+    User.find()
+    .then(users => {
+      res.render('auth/admin', {
+        pageTitle: "Your Entertainment Library Account",
+        path: "/user-profile",
+        userObj: req.user,
+        userList: users
+      });
+    })
+    .catch(err => next(err));
+  }
+  else
+  {
+    res.status(401).render('auth/user-profile', {
+      pageTitle: "Your Entertainment Library Account",
+      path: "/user-profile",
+      userObj: req.user,
+      errMsgs: ["You are not authorized to access that."]
+    });
+  }
+};
 
 exports.getResetPassword = (req, res, next) => {
   let tmpToken = req.params.token;
@@ -270,11 +357,11 @@ exports.delAccount = (req, res, next) => {
       tmpUser = user;
       //username available, change username
       //verify user id
-      if(user && user._id.toString() === req.session.user._id.toString())
+      if(user && user._id.toString() === req.user._id.toString() || req.user.adminStatus === "isAdmin")
       {
 
         //check old password
-        bcrypt.compare(pwd, user.password)
+        bcrypt.compare(pwd, req.user.password)
         .then(hashRes => {
           if(hashRes)
           {console.log("correct pwd");
@@ -287,13 +374,16 @@ exports.delAccount = (req, res, next) => {
             //delete account
             User.deleteOne({_id: userId})
             .then(result => {
-              //delete session
-              req.session.destroy(err => {
-                if(err)
-                {
-                  console.log("Error loging out: " + err);
-                }
-              });
+              //delete session, only if self delete (ie, not if done by admin user)
+              if(req.session.user._id.toString() === userId)
+              {
+                req.session.destroy(err => {
+                  if(err)
+                  {
+                    console.log("Error loging out: " + err);
+                  }
+                });
+              }
 
               //send email confirming deletion of account
               if(sendgrid_api_key !== "ERROR")
@@ -314,7 +404,7 @@ exports.delAccount = (req, res, next) => {
               
 
               //return that deleted successfully
-              res.status(201).json({msg: "Account Successfully Deleted." });
+              res.status(201).json({msg: "Account Successfully Deleted.", uid: userId });
             })
             .catch(err => {
               throw new Error("Error Deleteing account: " + err);
@@ -756,7 +846,7 @@ exports.getProfile = (req, res, next) => {
   res.render('auth/user-profile', {
     pageTitle: "Your Entertainment Library Account",
     path: "/user-profile",
-    userObj: req.session.user //NEED FIX -- this should be attached in app.js to res.locals
+    userObj: req.user 
   });
 };
 

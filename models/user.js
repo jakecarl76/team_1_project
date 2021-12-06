@@ -21,6 +21,7 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  adminStatus: {type: String, default: "none"},
 
   bookLib: {favorites: [], lib: []},
   gameLib: {favorites: [], lib: []},
