@@ -10,7 +10,7 @@
   <% if (books.length > 0) { %>
       <div class="card-container" id="books">
           <% for (let book of books) { %>
-              <article class="card<% if(user.bookLib.favorites.includes(book.id)){ %> favorite<% } %>">
+              <article class="card<% if(user.bookLib.favorites.includes(book.id)){ %> favorite <% } %>">
                   <h3 class="title"><%= book.title %></h3>
                   <div class="favorite-star">
                       <form action="/add-favorite" method="POST">
