@@ -9,7 +9,7 @@
       <% for (let item of content) { %>
          <a href="/details/<%= item._id %>?type=movie"><div class="content-card">
                <div class="left">
-               <img class="content-card-image" src="images/<%= item.imageUrl %>" alt="<%= item.title %>">
+               <img class="content-card-image" src="/images/<%= item.imageUrl %>" alt="<%= item.title %>">
                </div>
                <div class="right">
                <h2><%= item.title %></h2>
