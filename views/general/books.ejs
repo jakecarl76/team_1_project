@@ -27,6 +27,21 @@
             </div>
             </a>
          <% } %> 
+         <section class="pagination">
+            <% if(currentPage !== 1) { %>
+               <a href="/books/?page=1" id="page1">1</a>
+            <% } %>
+            
+            <a href="/books/?page=<%= currentPage %>" class="active" id="currentpage"><%= currentPage %></a>
+            
+            <% if(hasNextPage) { %>
+            <a href="/books/?page=<%= nextPage %>" id="nextPage"><%= nextPage %></a>
+            <% } %>
+
+            <% if(lastPage !== currentPage && nextPage !== lastPage) { %>
+            <a href="/books/?page=<%= lastPage %>" id="lastpage"><%= lastPage %></a>
+            <% } %>
+         </section>
       </div>
       <% } else { %>
          <img class="hermit-nothing" src="images/hermit.png" alt="Hermit Crab">
