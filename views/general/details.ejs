@@ -54,6 +54,7 @@
                <p><%= review.reviewText %></p>
 
                <!-- Edit Review Button -->
+               <% if(user._id.toString() === review.userId.toString() ) { %>
                <form action="/edit-review" method="post">
                   <input type="hidden" name="reviewText" value="<%= review.reviewText%>">
                   <input type="hidden" name="itemTitle" value="<%=item.title%>">
@@ -63,6 +64,7 @@
                   <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                   <button type="submit">Edit Review</button>
                </form>
+               <% } %>
 
                <!-- Delete Button -->
                <form action="/del-review" method="post">

@@ -245,10 +245,21 @@ exports.getItemDetails = (req, res, next) => {
           })
             .then(reviews => {
               if (req.user) {
-                Review.find({
+                //set filter to get only user's reviews, or all reviews if
+                //user is admin/moderator
+                let tmpFilter = {
                   userId: null || req.user._id,
                   contentId: itemId
-                })
+                };
+
+                if(req.user.adminStatus == "isAdmin" 
+                   || req.user.adminStatus == "isModerator")
+                {
+                  tmpFilter = {
+                    contentId: itemId
+                  };
+                }
+                Review.find(tmpFilter)
                 .then(userReviews => {
                   res.render('general/details', {
                     pageTitle: `${movie.title} | Hermit Habitat`,
@@ -283,10 +294,21 @@ exports.getItemDetails = (req, res, next) => {
           })
             .then(reviews => {
               if (req.user) {
-                Review.find({
+                //set filter to get only user's reviews, or all reviews if
+                //user is admin/moderator
+                let tmpFilter = {
                   userId: null || req.user._id,
                   contentId: itemId
-                })
+                };
+
+                if(req.user.adminStatus == "isAdmin" 
+                   || req.user.adminStatus == "isModerator")
+                {
+                  tmpFilter = {
+                    contentId: itemId
+                  };
+                }
+                Review.find(tmpFilter)
                   .then(userReviews => {
                     res.render('general/details', {
                       pageTitle: `${book.title} | Hermit Habitat`,
@@ -321,10 +343,21 @@ exports.getItemDetails = (req, res, next) => {
           })
             .then(reviews => {
               if (req.user) {
-                Review.find({
+                //set filter to get only user's reviews, or all reviews if
+                //user is admin/moderator
+                let tmpFilter = {
                   userId: null || req.user._id,
                   contentId: itemId
-                })
+                };
+
+                if(req.user.adminStatus == "isAdmin" 
+                   || req.user.adminStatus == "isModerator")
+                {
+                  tmpFilter = {
+                    contentId: itemId
+                  };
+                }
+                Review.find(tmpFilter)
                   .then(userReviews => {
                     res.render('general/details', {
                       pageTitle: `${game.title} | Hermit Habitat`,
@@ -1298,10 +1331,20 @@ exports.postDelReview = (req, res, next) => {
   const itemId = req.body.itemId;
   const type = req.body.type;
 
-  Review.deleteOne({
+  let reviewFilter = {
     _id: reviewId,
     userId: req.user._id
-  })
+  };
+
+  if (req.user.adminStatus === "isAdmin"
+      || req.user.adminStatus == "isModerator")
+  {
+    reviewFilter = {
+      _id: reviewId
+    };
+  }
+
+  Review.deleteOne(reviewFilter)
   .then(result => {
     console.log('Review Deleted.');
     res.redirect(`/details/${itemId}?type=${type}`)
@@ -1371,7 +1414,3 @@ exports.postDelItem = (req, res, next) => {
   .catch(err => next(err));
   
 }//END POST DELETE ALL ITEM REVIEWS
-
-//Note: next edit movies, books, games pages to have delete button,
-//create test item and add reviews to it for multiple usrs then test del
-//to see if dels all reviews
