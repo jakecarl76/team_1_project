@@ -70,6 +70,7 @@ body{
     grid-template-rows: 5rem 1rem 1fr 3rem;
     justify-items: start;
     min-width: 340px;
+    min-height: 100vh;
     font-family: 'DM Sans', sans-serif;
     overflow-x: hidden;
     background: linear-gradient(to bottom right,#000000, #691599, #2b0a3d, #e7376f);
@@ -109,6 +110,10 @@ h1, h2, h3, h4, h5, h6{
     background-color: #000; 
     color: #fff;
     position: center;
+}
+
+button {
+    cursor: pointer;
 }
 
 hr{
@@ -342,7 +347,9 @@ header h1{
         border-radius: 5px;
     }
     .main-nav-item a:active,
-    .login-nav-item a:active {
+    .login-nav-item a:active,
+    .main-nav-item a.active,
+    .login-nav-item a.active { 
         border: 2px solid #3850B1;
         transition: 0.2s;
     }
@@ -432,7 +439,6 @@ section.grid article:hover{
 .card .buttons{
     grid-area: buttons;
 }
-
 
 button.favorite{
     box-shadow: 
