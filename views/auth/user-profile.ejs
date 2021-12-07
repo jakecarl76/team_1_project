@@ -28,104 +28,96 @@
         <h2 id="largeUserName">
           <%= userObj.username %>
         </h2>
-
-        <% if (!userObj.userImage) { %>
-          <div>
-            <img id="userImg" alt="User's Profile Image" src="/public/images/hermitcrabdefault.jpg">
-          </div>
-          <% } else { %>
-            <div>
-              <img id="userImg" alt="User's Profile Image" src="<%= userObj.userImage %>">
-            </div>
-            <% } %>
-
-              <div id="userImgOptionsDiv">
-                <input type="button" value="Change Profile Image"
-                  onclick="toggleDivById('changeUserImgDiv'); toggleDiv(this.parentElement);">
-              </div>
-              <div id="changeUserImgDiv" class="hidden">
-                <label for="image">Change Profile Image</label>
-                <input type="file" id="image" name="image">
-                <p id="userImgStatus"></p>
-                <input type="button" id="changeUserImg" value="Change">
-                <input type="button" value="Cancel"
-                  onclick="toggleDivById('userImgOptionsDiv'); toggleDiv(this.parentElement);">
-              </div>
-
-              <div>
-                <h3 id="smallUserName">
-                  <%= userObj.username %>
-                </h3>
-              </div>
-
-              <input type="hidden" id="userId" value="<%= userObj._id %>">
-
-              <div id="usernameOptionsDiv">
-                <input type="button" value="Change Account Username"
-                  onclick="toggleDivById('changeUsernameDiv'); toggleDiv(this.parentElement);">
-              </div>
-              <div id="changeUsernameDiv" class="hidden">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="<%= userObj.username %>">
-                <p id="usernameStatus"></p>
-                <input type="button" id="changeUsername" value="Change">
-                <input type="button" value="Cancel"
-                  onclick="toggleDivById('usernameOptionsDiv'); toggleDiv(this.parentElement);">
-              </div>
-
-              <h3 id="smallEmail">
-                <%= userObj.email %>
-              </h3>
-
-              <div id="emailOptionsDiv">
-                <input type="button" value="Change Account Email"
-                  onclick="toggleDivById('changeEmailDiv'); toggleDiv(this.parentElement);">
-              </div>
-              <div id="changeEmailDiv" class="hidden">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<%= userObj.email %>">
-                <p id="emailStatus"></p>
-                <input type="button" id="changeEmail" value="Change">
-                <input type="button" value="Cancel"
-                  onclick="toggleDivById('emailOptionsDiv'); toggleDiv(this.parentElement);">
-              </div>
-
-              <div id="passwordOptionsDiv">
-                <input type="button" value="Change Account Password"
-                  onclick="toggleDivById('changePasswordDiv'); toggleDiv(this.parentElement);">
-              </div>
-              <div id="changePasswordDiv" class="hidden">
-                <label for="oldPassword">Old Password</label>
-                <input type="password" id="oldPassword" name="oldPassword">
-
-                <p>New password must be at least 9 characters long.</p>
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPassword" name="newPassword">
-
-                <label for="cNewPassword">Confirm New Password</label>
-                <input type="password" id="cNewPassword" name="cNewPassword">
-                <ul id="passwordStatus"></ul>
-                <input type="button" id="changePassword" value="Change">
-                <input type="button" value="Cancel"
-                  onclick="toggleDivById('passwordOptionsDiv'); toggleDiv(this.parentElement);">
-              </div>
+        <div>
+          <img id="userImg" alt="User's Profile Image" src="<%= userObj.userImage %>">
+        </div>
 
 
-              <div id="delOptionsDiv">
-                <input type="button" value="Delete Account"
-                  onclick="toggleDivById('delDiv'); toggleDiv(this.parentElement);">
-              </div>
-              <div id="delDiv" class="hidden">
+        <div id="userImgOptionsDiv">
+          <input type="button" value="Change Profile Image"
+            onclick="toggleDivById('changeUserImgDiv'); toggleDiv(this.parentElement);">
+        </div>
+        <div id="changeUserImgDiv" class="hidden">
+          <label for="image">Change Profile Image</label>
+          <input type="file" id="image" name="image">
+          <p id="userImgStatus"></p>
+          <input type="button" id="changeUserImg" value="Change">
+          <input type="button" value="Cancel"
+            onclick="toggleDivById('userImgOptionsDiv'); toggleDiv(this.parentElement);">
+        </div>
 
-                <p>Once deleted, your account is gone forever.</p>
-                <ul id="delStatus"></ul>
-                <p>Please enter your password in order to delete your account:</p>
-                <label for="delPassword">Password</label>
-                <input type="password" id="delPassword" name="delPassword">
-                <input type="button" id="delBtn" value="Delete">
-                <input type="button" value="Cancel"
-                  onclick="toggleDivById('delOptionsDiv'); toggleDiv(this.parentElement);">
-              </div>
+        <div>
+          <h3 id="smallUserName">
+            <%= userObj.username %>
+          </h3>
+        </div>
+
+        <input type="hidden" id="userId" value="<%= userObj._id %>">
+
+        <div id="usernameOptionsDiv">
+          <input type="button" value="Change Account Username"
+            onclick="toggleDivById('changeUsernameDiv'); toggleDiv(this.parentElement);">
+        </div>
+        <div id="changeUsernameDiv" class="hidden">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" value="<%= userObj.username %>">
+          <p id="usernameStatus"></p>
+          <input type="button" id="changeUsername" value="Change">
+          <input type="button" value="Cancel"
+            onclick="toggleDivById('usernameOptionsDiv'); toggleDiv(this.parentElement);">
+        </div>
+
+        <h3 id="smallEmail">
+          <%= userObj.email %>
+        </h3>
+
+        <div id="emailOptionsDiv">
+          <input type="button" value="Change Account Email"
+            onclick="toggleDivById('changeEmailDiv'); toggleDiv(this.parentElement);">
+        </div>
+        <div id="changeEmailDiv" class="hidden">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="<%= userObj.email %>">
+          <p id="emailStatus"></p>
+          <input type="button" id="changeEmail" value="Change">
+          <input type="button" value="Cancel"
+            onclick="toggleDivById('emailOptionsDiv'); toggleDiv(this.parentElement);">
+        </div>
+
+        <div id="passwordOptionsDiv">
+          <input type="button" value="Change Account Password"
+            onclick="toggleDivById('changePasswordDiv'); toggleDiv(this.parentElement);">
+        </div>
+        <div id="changePasswordDiv" class="hidden">
+          <label for="oldPassword">Old Password</label>
+          <input type="password" id="oldPassword" name="oldPassword">
+
+          <p>New password must be at least 9 characters long.</p>
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" name="newPassword">
+
+          <label for="cNewPassword">Confirm New Password</label>
+          <input type="password" id="cNewPassword" name="cNewPassword">
+          <ul id="passwordStatus"></ul>
+          <input type="button" id="changePassword" value="Change">
+          <input type="button" value="Cancel"
+            onclick="toggleDivById('passwordOptionsDiv'); toggleDiv(this.parentElement);">
+        </div>
+
+
+        <div id="delOptionsDiv">
+          <input type="button" value="Delete Account" onclick="toggleDivById('delDiv'); toggleDiv(this.parentElement);">
+        </div>
+        <div id="delDiv" class="hidden">
+
+          <p>Once deleted, your account is gone forever.</p>
+          <ul id="delStatus"></ul>
+          <p>Please enter your password in order to delete your account:</p>
+          <label for="delPassword">Password</label>
+          <input type="password" id="delPassword" name="delPassword">
+          <input type="button" id="delBtn" value="Delete">
+          <input type="button" value="Cancel" onclick="toggleDivById('delOptionsDiv'); toggleDiv(this.parentElement);">
+        </div>
 
       </main>
 
