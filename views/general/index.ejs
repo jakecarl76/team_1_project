@@ -10,14 +10,14 @@
   <% if (books.length > 0) { %>
       <div class="card-container" id="books">
           <% for (let book of books) { %>
-              <article class="card<% if(user.bookLib.favorites.includes(book.id)){ %> favorite <% } %>">
+              <article class="card<% if(user && user.bookLib.favorites.includes(book.id)){ %> favorite <% } %>">
                   <h3 class="title"><%= book.title %></h3>
                   <div class="favorite-star">
                       <form action="/add-favorite" method="POST">
                           <input type="hidden" value="<%= book.id %>" name="id">
                           <input type="hidden" value="book" name="itemType">
                           <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                          <button class="favorite-btn" type="submit"><% if(user.bookLib.favorites.includes(book.id)){ %> <i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
+                          <button class="favorite-btn" type="submit"><% if(user && user.bookLib.favorites.includes(book.id)){ %> <i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
                       </form>
                   </div>
                   <img src="/images/<%= book.imageUrl %>" alt="Image of <%= book.title %>">
@@ -59,14 +59,14 @@
   <% if (movies.length > 0) { %>
       <div class="card-container" id="movies">
           <% for (let movie of movies) { %>
-              <article class="card<% if(user.movieLib.favorites.includes(movie.id)){ %> favorite <% } %>">
+              <article class="card<% if(user && user.movieLib.favorites.includes(movie.id)){ %> favorite <% } %>">
                   <h3 class="title"><%= movie.title %></h3>
                   <div class="favorite-star">
                       <form action="/add-favorite" method="POST">
                           <input class="btn" type="hidden" value="<%= movie.id %>" name="id">
                           <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                           <input type="hidden" value="movie" name="itemType">
-                          <button class="favorite-btn" type="submit"><% if(user.movieLib.favorites.includes(movie.id)){ %><i class="fas fa-star"></i><% } else { %><i class="far fa-star"></i><% } %></button>
+                          <button class="favorite-btn" type="submit"><% if(user && user.movieLib.favorites.includes(movie.id)){ %><i class="fas fa-star"></i><% } else { %><i class="far fa-star"></i><% } %></button>
                       </form>
                   </div>
                   <img src="/images/<%= movie.imageUrl %>" alt="Image of <%= movie.title %>">
@@ -108,14 +108,14 @@
   <% if (games.length > 0) { %>
       <div class="card-container"  id="games">
               <% for (let game of games) { %>
-                  <article class="card<% if(user.gameLib.favorites.includes(game.id)){ %> favorite <% } %>">
+                  <article class="card<% if(user && user.gameLib.favorites.includes(game.id)){ %> favorite <% } %>">
                       <h3 class="title"><%= game.title %></h3>
                       <div class="favorite-star">
                           <form action="/add-favorite" method="POST">
                               <input class="btn" type="hidden" value="<%= game.id %>" name="id">
                               <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                               <input type="hidden" value="game" name="itemType">
-                              <button class="favorite-btn" type="submit"><% if(user.gameLib.favorites.includes(game.id)){ %><i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
+                              <button class="favorite-btn" type="submit"><% if(user && user.gameLib.favorites.includes(game.id)){ %><i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
                           </form>
                       </div>
                       <img src="/images/<%= game.imageUrl %>" alt="Image of <%= game.title %>">
