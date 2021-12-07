@@ -10,6 +10,8 @@ const generalCtrl = require('../controllers/general');
 const router = express.Router();
 
 //routes
+router.post('/delete-item', generalCtrl.postDelItem);
+
 router.get('/add-item', isAuth, generalCtrl.getAddItem);
 
 router.post('/add-item',

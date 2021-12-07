@@ -1309,3 +1309,69 @@ exports.postDelReview = (req, res, next) => {
       console.log(err);
     })
 }
+
+exports.postDelItem = (req, res, next) => {
+  const itemId = req.body.itemId;
+  const type = req.body.type;
+  const uid = req.body.uid;
+  let itemType = null;
+
+  //set var to access model
+  if( type == "movie")
+  {
+    itemType = Movie;
+  }
+  else if(type == "book")
+  {
+    itemType = Book;
+  }
+  else if(type == "game")
+  {
+    itemType = Game;
+  }
+  else
+  {
+    return next(new Error("Unknown item time to be deleted: '${type}'"));
+  }
+
+  //check user is authed
+  User.findById(uid)
+  .then(user => {
+    
+    if(user 
+       && req.user._id.toString() === user._id.toString() 
+       && (req.user.adminStatus === 'isAdmin' 
+          || req.user.adminStatus === 'isModerator') )
+    {
+      console.log("del id: " , itemId)
+      Review.deleteMany({"contentId": itemId})
+      .then(result => {
+        //now that reviews deleted, delete item
+        itemType.deleteOne({_id: itemId})
+        .then(item => {
+          console.log(`Reviews deleted for item ${itemId}.`);
+          res.redirect(`/${type}s`);
+        })
+        .catch(err => {
+          throw new Error("Error while deleting item " + itemId + ": " + err);
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        next(err);
+      });
+    }
+    else
+    {
+      console.log(req.user._id.toString() === user._id.toString());
+      console.log(req.user.adminStatus);
+      res.redirect(`/${type}s`);
+    }
+  })
+  .catch(err => next(err));
+  
+}//END POST DELETE ALL ITEM REVIEWS
+
+//Note: next edit movies, books, games pages to have delete button,
+//create test item and add reviews to it for multiple usrs then test del
+//to see if dels all reviews
