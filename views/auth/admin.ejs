@@ -1,0 +1,136 @@
+<%- include('../includes/head.ejs') %>
+<script src="/js/utils.js"></script>
+<script src="/js/validation.js"></script>
+</head>
+<body>
+  <%- include('../includes/nav.ejs') %>
+  <main>
+
+
+    <h1>
+      Admin Panel
+    </h1>
+
+    <ul id="msgs"></ul>
+
+    <% for(user of userList) { %>
+      <div id="div_<%= user._id %>">
+        <h2><%= user.username %></h2>
+        <p>_id: <%= user._id %></p>
+        <p>Email: <%= user.email %></p>
+        <p>Status: <span id="user_<%= user._id %>_admin_status"><%= user.adminStatus %></span></p>
+        <h3>Change Role: </h3>
+        <div class="form-control">
+          <label for="<%= user._id %>_none">none</label>
+          <input type="radio" id="<%= user._id %>_none" name="<%= user._id %>_raido" value="none"
+           <% if(user.adminStatus === 'none') { %> checked <% } %>>
+          <label for="<%= user._id %>_moderator">moderator</label>
+          <input type="radio" id="<%= user._id %>_moderator" name="<%= user._id %>_raido" value="isModerator"
+          <% if(user.adminStatus === 'isModerator') { %> checked <% } %>>
+          <label for="<%= user._id %>_admin">admin</label>
+          <input type="radio" id="<%= user._id %>_admin" name="<%= user._id %>_raido" value="isAdmin"
+          <% if(user.adminStatus === 'isAdmin') { %> checked <% } %>>
+          <input type="button" value="Change" onclick="changeAdminStatus('<%= user._id %>');">
+        </div>
+
+        <input type="button" id="<%= user._id %>_del_btn" value="Delete Account" onclick="toggleDivById('<%= user._id %>_del_div');toggleDiv(this);">
+        <div id="<%= user._id %>_del_div" class="hidden form-control">
+          <p> To delete an Account you must enter your password.</p>
+          <label for="<%= user._id %>_del_password">Password:</label>
+          <input type="password" id="<%= user._id %>_del_password">
+          <input type="button" value="Delete User's Account" onclick="deleteAccount('<%= user.id %>');">
+          <input type="button" value="Cancel" onclick="toggleDivById('<%= user._id %>_del_btn');toggleDiv(this.parentElement);">
+        </div>
+
+
+      </div>
+    <% } %>
+
+
+    </main>
+    <script>
+      function changeAdminStatus(uid)
+      {
+        let newStatus = document.querySelector('[name="' + uid + '_raido"]:checked').value;
+        fetch('/change-admin-status', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify( {
+            currUserId: "<%= userObj._id %>",
+            targetUserId: uid,
+            newStatus: newStatus
+          })
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+
+          if(data.errMsgs)
+          {
+            //display error messages
+            tmpHTML = "";
+            for(msg of data.errMsgs)
+            {
+              tmpHTML += "<li>" + msg + "</li>";
+            }
+            document.getElementById("msgs").innerHTML = tmpHTML;
+          }
+          else
+          {
+            //successfully changed
+            document.getElementById("msgs").innerHTML = data.msg;
+            //change user's status
+            document.getElementById("user_" + data.uid + "_admin_status").innerHTML = data.newStatus;
+
+          }
+        })
+        .catch(err => console.log(err));
+      }
+
+      
+      function deleteAccount(uid)
+      {
+        let adminPwd = document.getElementById(uid + "_del_password").value;
+
+        fetch('/delete-account', {
+          method: 'delete',
+          headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify( {
+            userId: uid,
+            pwd: adminPwd
+          })
+        })
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          console.log('data');
+
+          if(data.errMsg)
+          {
+            //display error messages
+            tmpHTML = "";
+            for(msg of data.errMsg)
+            {
+              tmpHTML += "<li>" + msg + "</li>";
+            }
+            document.getElementById("msgs").innerHTML = tmpHTML;
+          }
+          else
+          {
+            //successfully changed: destory controls for del'ed user
+            document.getElementById("div_" + data.uid).innerHTML = data.msg;
+
+          }
+        })
+        .catch(err => console.log(err));
+      }
+    </script>
+  <%- include('../includes/end.ejs') %>

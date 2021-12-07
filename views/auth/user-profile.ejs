@@ -109,6 +109,9 @@
           <input type="button" value="Cancel" onclick="toggleDivById('delOptionsDiv'); toggleDiv(this.parentElement);">
         </div>
 
+        <% if(userObj.adminStatus === "isAdmin") { %>
+          <h3><a href="/admin" class="btn">Admin Panel</a></h3>
+        <% } %>
       </main>
 
       <script>
