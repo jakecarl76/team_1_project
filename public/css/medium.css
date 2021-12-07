@@ -71,6 +71,11 @@
         text-align: left;
         padding: 2%;
      }
+     
+     .content-card-image{
+        width: 250px;
+        min-height: fit-content;
+    }
 
      /* Details CSS */
      .details-right {

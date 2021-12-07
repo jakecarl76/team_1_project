@@ -87,7 +87,7 @@
     .nav-item-list{
         align-items: center;
         justify-items: center;
-        width: 90vw;
+        width: 99%;
         margin-right: 2rem;
     }
 
@@ -134,7 +134,8 @@
                 width: 100%;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                column-gap: 50px;
+                align-items: start;
+                column-gap: 90px;
                 row-gap: 25px;
         }
 
@@ -144,6 +145,11 @@
                 height: 100%;
         }
         
+        .content-card-image{
+            width: 350px;
+            max-height: 300px;
+        }
+
         .description {
                 display: block;
         }
