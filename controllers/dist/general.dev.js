@@ -45,6 +45,10 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //import models
+var _require = require('express-validator/check'),
+    validationResult = _require.validationResult; //import models
+
+
 var Book = require('../models/book');
 
 var Movie = require('../models/movie');
@@ -64,7 +68,7 @@ var defaultGameImg = "default-game-image.png";
 var ITEMS_PER_PAGE = 20; //get index
 
 exports.getIndex = function _callee(req, res, next) {
-  var bookList, movieList, gameList;
+  var bookList, movieList, gameList, user;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -76,6 +80,25 @@ exports.getIndex = function _callee(req, res, next) {
           bookList = [];
           movieList = [];
           gameList = [];
+          user = req.user;
+
+          if (!user) {
+            user = {
+              bookLib: {
+                favorites: [],
+                lib: []
+              },
+              gameLib: {
+                favorites: [],
+                lib: []
+              },
+              movieLib: {
+                favorites: [],
+                lib: []
+              }
+            };
+          }
+
           Book.find().limit(10).then(function (books) {
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
@@ -197,7 +220,7 @@ exports.getIndex = function _callee(req, res, next) {
                   games: gameList,
                   pageTitle: 'Hermit Habitat',
                   path: '/',
-                  user: req.user
+                  user: user
                 });
               })["catch"](function (err) {
                 var error = new Error(err);
@@ -218,7 +241,7 @@ exports.getIndex = function _callee(req, res, next) {
             return next(error);
           });
 
-        case 4:
+        case 6:
         case "end":
           return _context.stop();
       }
@@ -560,10 +583,20 @@ exports.getItemDetails = function (req, res, next) {
           contentId: itemId
         }).then(function (reviews) {
           if (req.user) {
-            Review.find({
+            //set filter to get only user's reviews, or all reviews if
+            //user is admin/moderator
+            var tmpFilter = {
               userId: null || req.user._id,
               contentId: itemId
-            }).then(function (userReviews) {
+            };
+
+            if (req.user.adminStatus == "isAdmin" || req.user.adminStatus == "isModerator") {
+              tmpFilter = {
+                contentId: itemId
+              };
+            }
+
+            Review.find(tmpFilter).then(function (userReviews) {
               res.render('general/details', {
                 pageTitle: "".concat(movie.title, " | Hermit Habitat"),
                 path: '/details',
@@ -595,10 +628,20 @@ exports.getItemDetails = function (req, res, next) {
           contentId: itemId
         }).then(function (reviews) {
           if (req.user) {
-            Review.find({
+            //set filter to get only user's reviews, or all reviews if
+            //user is admin/moderator
+            var tmpFilter = {
               userId: null || req.user._id,
               contentId: itemId
-            }).then(function (userReviews) {
+            };
+
+            if (req.user.adminStatus == "isAdmin" || req.user.adminStatus == "isModerator") {
+              tmpFilter = {
+                contentId: itemId
+              };
+            }
+
+            Review.find(tmpFilter).then(function (userReviews) {
               res.render('general/details', {
                 pageTitle: "".concat(book.title, " | Hermit Habitat"),
                 path: '/details',
@@ -630,10 +673,20 @@ exports.getItemDetails = function (req, res, next) {
           contentId: itemId
         }).then(function (reviews) {
           if (req.user) {
-            Review.find({
+            //set filter to get only user's reviews, or all reviews if
+            //user is admin/moderator
+            var tmpFilter = {
               userId: null || req.user._id,
               contentId: itemId
-            }).then(function (userReviews) {
+            };
+
+            if (req.user.adminStatus == "isAdmin" || req.user.adminStatus == "isModerator") {
+              tmpFilter = {
+                contentId: itemId
+              };
+            }
+
+            Review.find(tmpFilter).then(function (userReviews) {
               res.render('general/details', {
                 pageTitle: "".concat(game.title, " | Hermit Habitat"),
                 path: '/details',
@@ -774,220 +827,327 @@ function displayEditItem(item, itemType, editMode, res, req) {
   });
 }
 
-exports.postAddItem = function (req, res, next) {
-  //gather the info from the form
-  var itemType = req.body.itemType;
-  var title = req.body.title;
-  var author = req.body.author;
-  var bookGenre = req.body.bookGenre;
-  var movieGenre = req.body.movieGenre;
-  var rating = req.body.rating;
-  var category = req.body.category;
-  var image = req.file;
-  var description = req.body.description;
-  var newBookGenre = req.body.newBookGenre;
-  var newMovieGenre = req.body.newMovieGenre;
-  var newCategory = req.body.newCategory; //if it's a new book genre, make it genre
+exports.postAddItem = function _callee4(req, res, next) {
+  var itemType, title, author, bookGenre, movieGenre, rating, category, image, description, newBookGenre, newMovieGenre, newCategory, genre, v_errs, errMsgs, errIds, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, imageUrl, book, movie, game;
 
-  if (bookGenre == "newGenre") {
-    bookGenre = newBookGenre;
-  } //if it's a new movie genre, make it genre
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          //gather the info from the form
+          itemType = req.body.itemType;
+          title = req.body.title;
+          author = req.body.author;
+          bookGenre = req.body.bookGenre;
+          movieGenre = req.body.movieGenre;
+          rating = req.body.rating;
+          category = req.body.category;
+          image = req.file;
+          description = req.body.description;
+          newBookGenre = req.body.newBookGenre;
+          newMovieGenre = req.body.newMovieGenre;
+          newCategory = req.body.newCategory;
+          genre = []; //if it's a new book genre, make it genre
 
-
-  if (movieGenre == "newGenre") {
-    movieGenre = newMovieGenre;
-  } //if it's a new category, make it category
-
-
-  if (category == "newCategory") {
-    category = newCategory;
-  } //image validation
+          if (bookGenre == "newGenre") {
+            bookGenre = newBookGenre;
+          } //if it's a new movie genre, make it genre
 
 
-  if (!image) {
-    var _genre;
-
-    switch (itemType) {
-      case "book":
-        _genre = bookGenre;
-        break;
-
-      case "movie":
-        _genre = movieGenre;
-        break;
-    }
-
-    return res.status(422).render('admin/edit-item', {
-      pageTitle: 'Add Item',
-      path: '/add-item',
-      editing: false,
-      user: req.user.username,
-      isAuthenticated: false,
-      errorMessage: 'Attached file is not a supported image type.',
-      hasError: true,
-      itemType: itemType,
-      item: {
-        title: title,
-        author: author,
-        genre: _genre,
-        rating: rating,
-        category: category,
-        description: description
-      },
-      validationErrors: []
-    });
-  } // *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
-  //form validation
-  // const errors = validationResult(req);
-  // if(!errors.isEmpty()){
-  //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
-  //   return res.status(422).render('admin/edit-item', {
-  //     pageTitle: 'Add Item',
-  //     path: '/add-item',
-  //     editing: false,
-  //     hasError: true,
-  //     // user: req.user.name,      Uncomment out once login implemented
-  //     isAuthenticated: false,
-  //     errorMessage: errors.array()[0].msg,
-  //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
-  //     validationErrors: errors.array()
-  //   })
-  // }
+          if (movieGenre == "newGenre") {
+            movieGenre = newMovieGenre;
+          } //if it's a new category, make it category
 
 
-  var imageUrl = image.filename;
-  console.log(_templateObject(), image); //save item based on type
+          if (category == "newCategory") {
+            category = newCategory;
+          }
+          /*
+          //Old image validation 
+          if(!image){
+            let genre;
+            switch(itemType){
+              case "book": genre = bookGenre;
+                break;
+              case "movie": genre = movieGenre;
+                break;
+            }
+            return res.status(422).render('admin/edit-item', {
+              bookGenres: bookGenres,
+              movieGenres: movieGenres,
+              categories: gameCategories,
+              pageTitle: 'Add Item',
+              path: '/add-item',
+              editing: false,
+              user: req.user.username,
+              isAuthenticated: false,
+              errorMessage: 'Attached file is not a supported image type.',
+              hasError: true,
+              itemType: itemType,
+              item: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+              validationErrors: []
+            })
+          } */
+          //set default image if none given
 
-  switch (itemType) {
-    case "book":
-      var book = new Book({
-        title: title,
-        author: author,
-        genre: bookGenre,
-        description: description,
-        imageUrl: imageUrl,
-        userId: req.user
-      });
-      book.save().then(function (result) {
-        //log success and redirect to admin products
-        console.log('Created Book');
-        res.redirect('/my-library');
-      })["catch"](function (err) {
-        console.log("postAddItem - switch(book) catch: ".concat(err));
-        return res.status(422).render('admin/edit-product', {
-          pageTitle: 'Add Item',
-          path: '/add-item',
-          editing: false,
-          user: req.user.username,
-          isAuthenticated: false,
-          errorMessage: [],
-          hasError: false,
-          product: {
+
+          if (image) {
+            _context4.next = 26;
+            break;
+          }
+
+          _context4.t0 = itemType;
+          _context4.next = _context4.t0 === "book" ? 20 : _context4.t0 === "movie" ? 22 : _context4.t0 === "game" ? 24 : 26;
+          break;
+
+        case 20:
+          image = {
+            filename: defaultBookImg
+          };
+          return _context4.abrupt("break", 26);
+
+        case 22:
+          image = {
+            filename: defaultMovieImg
+          };
+          return _context4.abrupt("break", 26);
+
+        case 24:
+          image = {
+            filename: defaultGameImg
+          };
+          return _context4.abrupt("break", 26);
+
+        case 26:
+          //validation:
+          v_errs = validationResult(req);
+
+          if (v_errs.isEmpty()) {
+            _context4.next = 51;
+            break;
+          }
+
+          errMsgs = [];
+          errIds = [];
+          _iteratorNormalCompletion6 = true;
+          _didIteratorError6 = false;
+          _iteratorError6 = undefined;
+          _context4.prev = 33;
+
+          for (_iterator6 = v_errs.array()[Symbol.iterator](); !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            err = _step6.value;
+            errMsgs.push(err.msg);
+            errIds.push(err.params);
+          }
+
+          _context4.next = 41;
+          break;
+
+        case 37:
+          _context4.prev = 37;
+          _context4.t1 = _context4["catch"](33);
+          _didIteratorError6 = true;
+          _iteratorError6 = _context4.t1;
+
+        case 41:
+          _context4.prev = 41;
+          _context4.prev = 42;
+
+          if (!_iteratorNormalCompletion6 && _iterator6["return"] != null) {
+            _iterator6["return"]();
+          }
+
+        case 44:
+          _context4.prev = 44;
+
+          if (!_didIteratorError6) {
+            _context4.next = 47;
+            break;
+          }
+
+          throw _iteratorError6;
+
+        case 47:
+          return _context4.finish(44);
+
+        case 48:
+          return _context4.finish(41);
+
+        case 49:
+          if (itemType == "book") {
+            genre = bookGenre;
+          } else if (itemType == "movie") {
+            genre = movieGenre;
+          }
+
+          return _context4.abrupt("return", res.status(422).render('admin/edit-item', {
+            bookGenres: bookGenres,
+            movieGenres: movieGenres,
+            categories: gameCategories,
+            itemType: itemType,
+            pageTitle: 'Add Item',
+            path: '/add-item',
+            editing: false,
+            hasError: true,
+            user: req.user.name,
+            isAuthenticated: false,
+            errMsgs: errMsgs,
+            errIds: errIds,
+            errorMessage: '',
+            item: {
+              title: title,
+              author: author,
+              genre: genre,
+              rating: rating,
+              category: category,
+              description: description
+            },
+            validationErrors: []
+          }));
+
+        case 51:
+          imageUrl = image.filename;
+          console.log(_templateObject(), image); //save item based on type
+
+          _context4.t2 = itemType;
+          _context4.next = _context4.t2 === "book" ? 56 : _context4.t2 === "movie" ? 59 : _context4.t2 === "game" ? 62 : 65;
+          break;
+
+        case 56:
+          book = new Book({
             title: title,
             author: author,
             genre: bookGenre,
-            rating: rating,
-            category: category,
-            description: description
-          },
-          validationErrors: errors.array()
-        });
-      });
-      break;
+            description: description,
+            imageUrl: imageUrl,
+            userId: req.user
+          });
+          book.save().then(function (result) {
+            //log success and redirect to admin products
+            console.log('Created Book');
+            res.redirect('/my-library');
+          })["catch"](function (err) {
+            console.log("postAddItem - switch(book) catch: ".concat(err));
+            return res.status(422).render('admin/edit-product', {
+              pageTitle: 'Add Item',
+              path: '/add-item',
+              editing: false,
+              user: req.user.username,
+              isAuthenticated: false,
+              errorMessage: [],
+              hasError: false,
+              product: {
+                title: title,
+                author: author,
+                genre: bookGenre,
+                rating: rating,
+                category: category,
+                description: description
+              },
+              validationErrors: errors.array()
+            });
+          });
+          return _context4.abrupt("break", 67);
 
-    case "movie":
-      var movie = new Movie({
-        title: title,
-        genre: movieGenre,
-        rating: rating,
-        description: description,
-        imageUrl: imageUrl,
-        userId: req.user
-      });
-      movie.save().then(function (result) {
-        //log success and redirect to admin products
-        console.log('Created Movie');
-        res.redirect('/my-library');
-      })["catch"](function (err) {
-        console.log("postAddProduct - switch(movie) catch: ".concat(err));
-        return res.status(422).render('admin/edit-product', {
-          pageTitle: 'Add Item',
-          path: '/add-item',
-          editing: false,
-          user: req.user.username,
-          isAuthenticated: false,
-          errorMessage: [],
-          hasError: false,
-          product: {
+        case 59:
+          movie = new Movie({
             title: title,
-            author: author,
             genre: movieGenre,
             rating: rating,
-            category: category,
-            description: description
-          },
-          validationErrors: errors.array()
-        });
-      });
-      break;
+            description: description,
+            imageUrl: imageUrl,
+            userId: req.user
+          });
+          movie.save().then(function (result) {
+            //log success and redirect to admin products
+            console.log('Created Movie');
+            res.redirect('/my-library');
+          })["catch"](function (err) {
+            console.log("postAddProduct - switch(movie) catch: ".concat(err));
+            return res.status(422).render('admin/edit-product', {
+              pageTitle: 'Add Item',
+              path: '/add-item',
+              editing: false,
+              user: req.user.username,
+              isAuthenticated: false,
+              errorMessage: [],
+              hasError: false,
+              product: {
+                title: title,
+                author: author,
+                genre: movieGenre,
+                rating: rating,
+                category: category,
+                description: description
+              },
+              validationErrors: errors.array()
+            });
+          });
+          return _context4.abrupt("break", 67);
 
-    case "game":
-      var game = new Game({
-        title: title,
-        category: category,
-        description: description,
-        imageUrl: imageUrl,
-        userId: req.user
-      });
-      game.save().then(function (result) {
-        //log success and redirect to admin products
-        getCategories();
-        console.log('Created Game');
-        res.redirect('/my-library');
-      })["catch"](function (err) {
-        console.log("postAddProduct - switch(game) catch: ".concat(err));
-        return res.status(422).render('admin/edit-product', {
-          pageTitle: 'Add Item',
-          path: '/add-item',
-          editing: false,
-          user: req.user.username,
-          isAuthenticated: false,
-          errorMessage: [],
-          hasError: false,
-          product: {
+        case 62:
+          game = new Game({
             title: title,
-            author: author,
-            genre: genre,
-            rating: rating,
             category: category,
-            description: description
-          },
-          validationErrors: errors.array()
-        });
-      });
-      break;
+            description: description,
+            imageUrl: imageUrl,
+            userId: req.user
+          });
+          game.save().then(function (result) {
+            //log success and redirect to admin products
+            getCategories();
+            console.log('Created Game');
+            res.redirect('/my-library');
+          })["catch"](function (err) {
+            console.log("postAddProduct - switch(game) catch: ".concat(err));
+            return res.status(422).render('admin/edit-product', {
+              pageTitle: 'Add Item',
+              path: '/add-item',
+              editing: false,
+              user: req.user.username,
+              isAuthenticated: false,
+              errorMessage: [],
+              hasError: false,
+              product: {
+                title: title,
+                author: author,
+                genre: genre,
+                rating: rating,
+                category: category,
+                description: description
+              },
+              validationErrors: errors.array()
+            });
+          });
+          return _context4.abrupt("break", 67);
 
-    default:
-      console.log("postAddProduct - switch(default): ".concat(itemType));
-      return res.status(422).render('admin/edit-product', {
-        pageTitle: 'Add Item',
-        path: '/add-item',
-        editing: false,
-        user: req.user.username,
-        isAuthenticated: false,
-        errorMessage: [],
-        hasError: false,
-        product: {
-          title: title,
-          author: author,
-          genre: genre,
-          rating: rating,
-          category: category,
-          description: description
-        },
-        validationErrors: []
-      });
-  }
+        case 65:
+          console.log("postAddProduct - switch(default): ".concat(itemType));
+          return _context4.abrupt("return", res.status(422).render('admin/edit-product', {
+            pageTitle: 'Add Item',
+            path: '/add-item',
+            editing: false,
+            user: req.user.username,
+            isAuthenticated: false,
+            errorMessage: [],
+            hasError: false,
+            product: {
+              title: title,
+              author: author,
+              genre: genre,
+              rating: rating,
+              category: category,
+              description: description
+            },
+            validationErrors: []
+          }));
+
+        case 67:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, null, null, [[33, 37, 41, 49], [42,, 44, 48]]);
 };
 
 exports.postAddAnother = function (req, res, next) {
@@ -1017,59 +1177,119 @@ exports.postAddAnother = function (req, res, next) {
 
   if (category == "newCategory") {
     category = newCategory;
-  } //image validation
+  }
+  /*
+   //Old image validation
+   if(!image){
+    let genre;
+    switch(itemType){
+      case "book": genre = bookGenre;
+        break;
+      case "movie": genre = movieGenre;
+        break;
+    }
+     return res.status(422).render('admin/edit-item', {
+       pageTitle: 'Add Item',
+       path: '/add-item',
+       editing: false,
+       user: req.user.username,
+       isAuthenticated: false,
+       errorMessage: 'Attached file is not a supported image type.',
+       hasError: true,
+       itemType: itemType,
+       item: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
+       validationErrors: []
+     })
+   }
+   */
+  //set default image if none given
 
 
   if (!image) {
-    var _genre2;
-
     switch (itemType) {
       case "book":
-        _genre2 = bookGenre;
+        image = {
+          filename: defaultBookImg
+        };
         break;
 
       case "movie":
-        _genre2 = movieGenre;
+        image = {
+          filename: defaultMovieImg
+        };
+        break;
+
+      case "game":
+        image = {
+          filename: defaultGameImg
+        };
         break;
     }
+  } //validation:
 
+
+  var v_errs = validationResult(req);
+
+  if (!v_errs.isEmpty()) {
+    var errMsgs = [];
+    var errIds = [];
+    var _iteratorNormalCompletion7 = true;
+    var _didIteratorError7 = false;
+    var _iteratorError7 = undefined;
+
+    try {
+      for (var _iterator7 = v_errs.array()[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+        err = _step7.value;
+        errMsgs.push(err.msg);
+        errIds.push(err.params);
+      }
+    } catch (err) {
+      _didIteratorError7 = true;
+      _iteratorError7 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion7 && _iterator7["return"] != null) {
+          _iterator7["return"]();
+        }
+      } finally {
+        if (_didIteratorError7) {
+          throw _iteratorError7;
+        }
+      }
+    }
+
+    if (itemType == "book") {
+      genre = bookGenre;
+    } else if (itemType == "movie") {
+      genre = movieGenre;
+    }
+
+    console.log("BOOKGENRES" + bookGenres);
     return res.status(422).render('admin/edit-item', {
+      bookGenres: bookGenres,
+      movieGenres: movieGenres,
+      categories: gameCategories,
+      itemType: itemType,
       pageTitle: 'Add Item',
       path: '/add-item',
       editing: false,
-      user: req.user.username,
-      isAuthenticated: false,
-      errorMessage: 'Attached file is not a supported image type.',
       hasError: true,
-      itemType: itemType,
+      user: req.user.name,
+      isAuthenticated: false,
+      errMsgs: errMsgs,
+      errIds: errIds,
+      errorMessage: '',
       item: {
         title: title,
         author: author,
-        genre: _genre2,
+        genre: genre,
         rating: rating,
         category: category,
         description: description
       },
       validationErrors: []
     });
-  } // *** NEED TO ADD VALIDATION, THEN CAN UNCOMMENT THIS OUT
-  //form validation
-  // const errors = validationResult(req);
-  // if(!errors.isEmpty()){
-  //   console.log`Error: postAddItem errors[] - ${errors.array()}`;
-  //   return res.status(422).render('admin/edit-item', {
-  //     pageTitle: 'Add Item',
-  //     path: '/add-item',
-  //     editing: false,
-  //     hasError: true,
-  //     // user: req.user.name,      Uncomment out once login implemented
-  //     isAuthenticated: false,
-  //     errorMessage: errors.array()[0].msg,
-  //     product: {title: title, author: author, genre: genre, rating: rating, category: category, description: description},
-  //     validationErrors: errors.array()
-  //   })
-  // }
-
+  }
 
   var imageUrl = image.filename;
   console.log(_templateObject2(), image); //save item based on type
@@ -1221,6 +1441,7 @@ exports.postEditItem = function (req, res, next) {
   var newBookGenre = req.body.newBookGenre;
   var newMovieGenre = req.body.newMovieGenre;
   var newCategory = req.body.newCategory;
+  var genre = '';
   console.log("postEditItem updatedBookGenre: ".concat(updatedBookGenre)); //if it's a new book genre, make it genre
 
   if (updatedBookGenre == "newGenre") {
@@ -1235,25 +1456,72 @@ exports.postEditItem = function (req, res, next) {
 
   if (updatedCategory == "newCategory") {
     category = newCategory;
-  } // *** Need to add validation
-  //check for validation errors
-  // const errors = validationResult(req);
-  // if(!errors.isEmpty()){
-  //   return res.status(422).render('admin/edit-product', {
-  //     pageTitle: 'Edit Product',
-  //     path: '/admin/edit-product',
-  //     editing: true,
-  //     product: {
-  //       title: updatedTitle,
-  //       price: updatedPrice,
-  //       description: updatedDesc
-  //     },
-  //     isAuthenticated: req.session.isLoggedIn,
-  //     hasError: true,
-  //     errorMessage: errors.array()[0].msg
-  //   });
-  // }
-  //locate existing product in db
+  } //validation:
+
+
+  var v_errs = validationResult(req);
+
+  if (!v_errs.isEmpty()) {
+    var errMsgs = [];
+    var errIds = [];
+    var _iteratorNormalCompletion8 = true;
+    var _didIteratorError8 = false;
+    var _iteratorError8 = undefined;
+
+    try {
+      for (var _iterator8 = v_errs.array()[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+        err = _step8.value;
+        errMsgs.push(err.msg);
+        errIds.push(err.params);
+      }
+    } catch (err) {
+      _didIteratorError8 = true;
+      _iteratorError8 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion8 && _iterator8["return"] != null) {
+          _iterator8["return"]();
+        }
+      } finally {
+        if (_didIteratorError8) {
+          throw _iteratorError8;
+        }
+      }
+    }
+
+    if (itemType == "book") {
+      genre = updatedBookGenre;
+    } else if (itemType == "movie") {
+      genre = updatedMovieGenre;
+    }
+
+    return res.status(422).render('admin/edit-item', {
+      bookGenres: bookGenres,
+      movieGenres: movieGenres,
+      categories: gameCategories,
+      itemType: itemType,
+      pageTitle: 'Add Item',
+      path: '/add-item',
+      editing: true,
+      hasError: true,
+      user: req.user.name,
+      isAuthenticated: false,
+      errMsgs: errMsgs,
+      errIds: errIds,
+      errorMessage: '',
+      item: {
+        title: updatedTitle,
+        author: updatedAuthor,
+        genre: genre,
+        rating: updatedRating,
+        category: updatedCategory,
+        description: updatedDescription,
+        imageUrl: req.body.oldImgURL,
+        _id: itemId
+      },
+      validationErrors: []
+    });
+  } //locate existing product in db
 
 
   switch (itemType) {
@@ -1379,11 +1647,11 @@ exports.postEditItem = function (req, res, next) {
 };
 
 function getBookGenres() {
-  return regeneratorRuntime.async(function getBookGenres$(_context4) {
+  return regeneratorRuntime.async(function getBookGenres$(_context5) {
     while (1) {
-      switch (_context4.prev = _context4.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
-          _context4.next = 2;
+          _context5.next = 2;
           return regeneratorRuntime.awrap(Book.find().distinct("genre").then(function (genres) {
             var genresLength = genres.length;
 
@@ -1399,22 +1667,22 @@ function getBookGenres() {
           }));
 
         case 2:
-          return _context4.abrupt("return");
+          return _context5.abrupt("return");
 
         case 3:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
     }
   });
 }
 
 function getMovieGenres() {
-  return regeneratorRuntime.async(function getMovieGenres$(_context5) {
+  return regeneratorRuntime.async(function getMovieGenres$(_context6) {
     while (1) {
-      switch (_context5.prev = _context5.next) {
+      switch (_context6.prev = _context6.next) {
         case 0:
-          _context5.next = 2;
+          _context6.next = 2;
           return regeneratorRuntime.awrap(Movie.find().distinct("genre").then(function (genres) {
             var genresLength = genres.length;
 
@@ -1431,18 +1699,18 @@ function getMovieGenres() {
 
         case 2:
         case "end":
-          return _context5.stop();
+          return _context6.stop();
       }
     }
   });
 }
 
 function getCategories() {
-  return regeneratorRuntime.async(function getCategories$(_context6) {
+  return regeneratorRuntime.async(function getCategories$(_context7) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
-          _context6.next = 2;
+          _context7.next = 2;
           return regeneratorRuntime.awrap(Game.find().distinct("category").then(function (categories) {
             gameCategories = categories;
             gameCategories.sort();
@@ -1450,7 +1718,7 @@ function getCategories() {
 
         case 2:
         case "end":
-          return _context6.stop();
+          return _context7.stop();
       }
     }
   });
@@ -1607,13 +1875,67 @@ exports.postDelReview = function (req, res, next) {
   var reviewId = req.body.reviewId;
   var itemId = req.body.itemId;
   var type = req.body.type;
-  Review.deleteOne({
+  var reviewFilter = {
     _id: reviewId,
     userId: req.user._id
-  }).then(function (result) {
+  };
+
+  if (req.user.adminStatus === "isAdmin" || req.user.adminStatus == "isModerator") {
+    reviewFilter = {
+      _id: reviewId
+    };
+  }
+
+  Review.deleteOne(reviewFilter).then(function (result) {
     console.log('Review Deleted.');
     res.redirect("/details/".concat(itemId, "?type=").concat(type));
   })["catch"](function (err) {
     console.log(err);
   });
 };
+
+exports.postDelItem = function (req, res, next) {
+  var itemId = req.body.itemId;
+  var type = req.body.type;
+  var uid = req.body.uid;
+  var itemType = null; //set var to access model
+
+  if (type == "movie") {
+    itemType = Movie;
+  } else if (type == "book") {
+    itemType = Book;
+  } else if (type == "game") {
+    itemType = Game;
+  } else {
+    return next(new Error("Unknown item time to be deleted: '${type}'"));
+  } //check user is authed
+
+
+  User.findById(uid).then(function (user) {
+    if (user && req.user._id.toString() === user._id.toString() && (req.user.adminStatus === 'isAdmin' || req.user.adminStatus === 'isModerator')) {
+      console.log("del id: ", itemId);
+      Review.deleteMany({
+        "contentId": itemId
+      }).then(function (result) {
+        //now that reviews deleted, delete item
+        itemType.deleteOne({
+          _id: itemId
+        }).then(function (item) {
+          console.log("Reviews deleted for item ".concat(itemId, "."));
+          res.redirect("/".concat(type, "s"));
+        })["catch"](function (err) {
+          throw new Error("Error while deleting item " + itemId + ": " + err);
+        });
+      })["catch"](function (err) {
+        console.log(err);
+        next(err);
+      });
+    } else {
+      console.log(req.user._id.toString() === user._id.toString());
+      console.log(req.user.adminStatus);
+      res.redirect("/".concat(type, "s"));
+    }
+  })["catch"](function (err) {
+    return next(err);
+  });
+}; //END POST DELETE ALL ITEM REVIEWS

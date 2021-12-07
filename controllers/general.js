@@ -26,6 +26,15 @@ exports.getIndex = async (req, res, next) => {
   let bookList = [];
   let movieList = [];
   let gameList = [];
+  let user = req.user;
+
+  if(!user){
+    user = {
+      bookLib: {favorites: [], lib: []},
+      gameLib: {favorites: [], lib: []},
+      movieLib: {favorites: [], lib: []}
+    }
+  }
   
       Book.find()
       .limit(10)
@@ -74,7 +83,7 @@ exports.getIndex = async (req, res, next) => {
             games: gameList,
             pageTitle: 'Hermit Habitat',
             path: '/',
-            user: req.user
+            user: user
           });
         })
         .catch(err => {
