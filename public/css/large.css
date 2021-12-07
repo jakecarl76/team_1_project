@@ -158,6 +158,9 @@
                 border: none;
         }
 
+        .pagination {
+            grid-column: 1/ span 2;
+        }
         /* Details CSS */ 
         .details-item {
             display: grid;

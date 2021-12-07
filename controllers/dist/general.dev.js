@@ -57,19 +57,168 @@ var Review = require('../models/review');
 
 var bookGenres = [];
 var movieGenres = [];
-var gameCategories = []; //get index
+var gameCategories = [];
+var defaultBookImg = "default-book-image.png";
+var defaultMovieImg = "default-movie-image.png";
+var defaultGameImg = "default-game-image.png";
+var ITEMS_PER_PAGE = 20; //get index
 
 exports.getIndex = function _callee(req, res, next) {
+  var bookList, movieList, gameList;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          res.render('general/index', {
-            pageTitle: "Welcome to the Entertainment Library!",
-            path: '/'
+          // res.render('general/index', {
+          //   pageTitle: "Welcome to the Entertainment Library!",
+          //   path: '/'
+          // });
+          bookList = [];
+          movieList = [];
+          gameList = [];
+          Book.find().limit(10).then(function (books) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+              for (var _iterator = books[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var book = _step.value;
+                title = book.title;
+                genre = book.genre;
+                img = book.imageUrl;
+                type = "book";
+                id = book._id;
+                item = {
+                  type: type,
+                  title: title,
+                  genre: genre,
+                  imageUrl: img,
+                  id: id
+                };
+                bookList.push(item);
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                  _iterator["return"]();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
+            }
+
+            console.log("getIndex- books loop complete");
+            Movie.find().limit(10).then(function (movies) {
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                for (var _iterator2 = movies[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                  var movie = _step2.value;
+                  title = movie.title;
+                  genre = movie.genre;
+                  img = movie.imageUrl;
+                  type = "movie";
+                  id = movie._id;
+                  item = {
+                    type: type,
+                    title: title,
+                    genre: genre,
+                    imageUrl: img,
+                    id: id
+                  };
+                  movieList.push(item);
+                }
+              } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                    _iterator2["return"]();
+                  }
+                } finally {
+                  if (_didIteratorError2) {
+                    throw _iteratorError2;
+                  }
+                }
+              }
+
+              console.log("getIndex- movie loop complete");
+              Game.find().limit(10).then(function (games) {
+                var _iteratorNormalCompletion3 = true;
+                var _didIteratorError3 = false;
+                var _iteratorError3 = undefined;
+
+                try {
+                  for (var _iterator3 = games[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var game = _step3.value;
+                    title = game.title;
+                    genre = game.category;
+                    img = game.imageUrl;
+                    type = "game";
+                    id = game._id;
+                    item = {
+                      type: type,
+                      title: title,
+                      genre: genre,
+                      imageUrl: img,
+                      id: id
+                    };
+                    gameList.push(item);
+                  }
+                } catch (err) {
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                      _iterator3["return"]();
+                    }
+                  } finally {
+                    if (_didIteratorError3) {
+                      throw _iteratorError3;
+                    }
+                  }
+                }
+
+                console.log("getIndex- game loop complete"); //render the page using those items
+
+                res.render('general/index', {
+                  books: bookList,
+                  movies: movieList,
+                  games: gameList,
+                  pageTitle: 'Hermit Habitat',
+                  path: '/',
+                  user: req.user
+                });
+              })["catch"](function (err) {
+                var error = new Error(err);
+                error.httpStatusCode = 500;
+                console.log('getIndex - games catch');
+                return next(error);
+              });
+            })["catch"](function (err) {
+              var error = new Error(err);
+              error.httpStatusCode = 500;
+              console.log('getIndex - movie catch');
+              return next(error);
+            });
+          })["catch"](function (err) {
+            var error = new Error(err);
+            error.httpStatusCode = 500;
+            console.log('getIndex - books catch');
+            return next(error);
           });
 
-        case 1:
+        case 4:
         case "end":
           return _context.stop();
       }
@@ -120,55 +269,118 @@ exports.getAddItem = function _callee2(req, res, next) {
 
 
 exports.getMovies = function (req, res, next) {
+  var page = parseInt(req.query.page);
+  var totalItems;
+
+  if (!page) {
+    page = 1;
+  }
+
   var user = null;
 
   if (req.user) {
     user = req.user;
   }
 
-  Movie.find().then(function (movies) {
+  Movie.find().countDocuments().then(function (numOfMovies) {
+    totalItems = numOfMovies;
+    return Movie.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE);
+  }).then(function (movies) {
     res.render('general/movies', {
       pageTitle: 'Movies | Hermit Habitat',
       path: '/movies',
       content: movies,
-      user: user
+      user: user,
+      currentPage: page,
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
     });
+  })["catch"](function (err) {
+    var error = new Error(err);
+    error.httpStatusCode = 500;
+    console.log('getMovies catch');
+    return next(error);
   });
 }; // Get All Games and render
 
 
 exports.getGames = function (req, res, next) {
+  var page = parseInt(req.query.page);
+  var totalItems;
+
+  if (!page) {
+    page = 1;
+  }
+
   var user = null;
 
   if (req.user) {
     user = req.user;
   }
 
-  Game.find().then(function (games) {
+  Game.find().countDocuments().then(function (numOfGames) {
+    totalItems = numOfGames;
+    return Game.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE);
+  }).then(function (games) {
     res.render('general/games', {
       pageTitle: 'Games | Hermit Habitat',
       path: '/games',
       content: games,
-      user: user
+      user: user,
+      currentPage: page,
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
     });
+  })["catch"](function (err) {
+    var error = new Error(err);
+    error.httpStatusCode = 500;
+    console.log('getGames catch');
+    return next(error);
   });
 }; // Get All Books and render
 
 
 exports.getBooks = function (req, res, next) {
+  var page = parseInt(req.query.page);
+  var totalItems;
+
+  if (!page) {
+    page = 1;
+  }
+
   var user = null;
 
   if (req.user) {
     user = req.user;
   }
 
-  Book.find().then(function (books) {
+  Book.find().countDocuments().then(function (numOfBooks) {
+    totalItems = numOfBooks;
+    return Book.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE);
+  }).then(function (books) {
     res.render('general/books', {
       pageTitle: 'Books | Hermit Habitat',
       path: '/books',
       content: books,
-      user: user
+      user: user,
+      currentPage: page,
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
     });
+  })["catch"](function (err) {
+    var error = new Error(err);
+    error.httpStatusCode = 500;
+    console.log('getBooks catch');
+    return next(error);
   });
 }; // Get Randomizer
 
@@ -185,27 +397,27 @@ exports.getRandomizer = function (req, res, next) {
       Movie.find().then(function (movies) {
         var genreIteration = []; // Push all movie genre to array
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
 
         try {
-          for (var _iterator = movies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var movie = _step.value;
+          for (var _iterator4 = movies[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var movie = _step4.value;
             genreIteration.push(movie.genre);
           } // Filter movie genre to have unique values
 
         } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
+          _didIteratorError4 = true;
+          _iteratorError4 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-              _iterator["return"]();
+            if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+              _iterator4["return"]();
             }
           } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
+            if (_didIteratorError4) {
+              throw _iteratorError4;
             }
           }
         }
@@ -257,27 +469,27 @@ exports.getRandomizer = function (req, res, next) {
       Game.find().then(function (games) {
         var genreIteration = []; // Push all movie genre to array
 
-        var _iteratorNormalCompletion2 = true;
-        var _didIteratorError2 = false;
-        var _iteratorError2 = undefined;
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
 
         try {
-          for (var _iterator2 = games[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var game = _step2.value;
+          for (var _iterator5 = games[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var game = _step5.value;
             genreIteration.push(game.category);
           } // Filter movie genre to have unique values
 
         } catch (err) {
-          _didIteratorError2 = true;
-          _iteratorError2 = err;
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-              _iterator2["return"]();
+            if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
+              _iterator5["return"]();
             }
           } finally {
-            if (_didIteratorError2) {
-              throw _iteratorError2;
+            if (_didIteratorError5) {
+              throw _iteratorError5;
             }
           }
         }

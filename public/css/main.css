@@ -884,3 +884,21 @@ button:hover, a.btn:hover{
     width: 100%;
 }
 
+/* * * * * * * * * * * * PAGINATION * * * * * * * * * * * * * */
+.pagination{
+    text-align: center;
+}
+.pagination a{
+    color: #fff;
+    font-family: "Nixie One", sans-serif;
+    padding: 1.25rem;
+    border: 1px solid #385EC6;
+    margin: 1rem;
+    transition: 0.3s;
+}
+
+.active, .pagination a:hover{
+    background-color: #385EC6;
+    color: #fff;
+    font-weight: 700;
+}
