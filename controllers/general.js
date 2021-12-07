@@ -32,7 +32,8 @@ exports.getIndex = async (req, res, next) => {
     user = {
       bookLib: {favorites: [], lib: []},
       gameLib: {favorites: [], lib: []},
-      movieLib: {favorites: [], lib: []}
+      movieLib: {favorites: [], lib: []},
+      username: null
     }
   }
   

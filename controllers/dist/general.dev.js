@@ -95,7 +95,8 @@ exports.getIndex = function _callee(req, res, next) {
               movieLib: {
                 favorites: [],
                 lib: []
-              }
+              },
+              username: null
             };
           }
 
