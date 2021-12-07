@@ -2,119 +2,6 @@ const Book = require('../models/book');
 const Movie = require('../models/movie');
 const Game = require('../models/game');
 const User = require('../models/user');
-//
-/*
-exports.get = (req, res, next) => {
-  res.render('general/index', {
-    pageTitle: "Welcome to the Entertainment Library!",
-    path: '/'
-  });
-};
-*/
-
-//THIS ISN'T DONE- YOU NEED TO PULL WHAT'S IN THE LIBRARY, NOT WHAT THEY'VE CREATED!
-// exports.getMyLibrary = async (req, res, next) => {
-//   let bookList = [];
-//   let movieList = [];
-//   let gameList = [];
-//   let favorites = [];
-//   let user = req.user;
-//   // console.log`favorites (getMyLibrary): ${favorites}`;
-//   Book.find({userId: req.user._id})
-//   .then(books => {
-//     bookList = books;
-//     Movie.find({userId: req.user._id})
-//     .then(movies => {
-//       movieList = movies;
-//       Game.find({userId: req.user._id})
-//       .then(games => {
-//         gameList = games;
-//           User.findById(user)
-//           .then(user => {
-//             console.log("in getFavorites!")
-//             let faveBooks = user.bookLib.favorites;
-//             let faveMovies = user.movieLib.favorites;
-//             let faveGames = user.gameLib.favorites;
-//             let title, genre, img, item, type, id;  
-//             Book.find({_id: {$in: faveBooks}})
-//             .then(books => {
-//               for(let book of books){
-//                 title = book.title;
-//                 genre = book.genre;
-//                 img = book.imageUrl;
-//                 type = "book";
-//                 id = book._id;
-//                 item = {type: type, title: title, genre: genre, imageUrl: img, id: id};
-//                 favorites.push(item);
-//               }
-//               console.log("getFavorites book.find loop complete");
-//               Movie.find({_id: {$in: faveMovies}})
-//               .then(movies => {
-//                 for(let movie of movies){
-//                 title = movie.title;
-//                 genre = movie.genre;
-//                 img = movie.imageUrl;
-//                 type = "movie";
-//                 id = movie._id;
-//                 item = {type: type, title: title, genre: genre, imageUrl: img, id: id};
-//                 favorites.push(item);
-//               }
-//               console.log("getFavorites movie.find loop complete");
-//                 Game.find({_id: {$in: faveGames}})
-//                 .then(games => {
-//                   for(let game of games){
-//                   title = game.title;
-//                   genre = game.category;
-//                   img = game.imageUrl;
-//                   type = "game";
-//                   id = game._id;
-//                   item = {type: type, title: title, genre: genre, imageUrl: img, id: id};
-//                   favorites.push(item);
-//                 }
-//                 console.log("getFavorites game.find loop complete");
-//                 console.log`favorites 1: ${favorites}`;
-//                 //render the page using those items
-//                 res.render('admin/my-library', {
-//                   books: bookList,
-//                   movies: movieList,
-//                   games: gameList,
-//                   favorites: favorites,
-//                   pageTitle: 'My Library',
-//                   path: '/my-library',
-//                   user: req.user
-//                 });
-//                 })
-//               })
-//               .catch(err => {
-//                 const error = new Error(err);
-//                 error.httpStatusCode = 500;
-//                 console.log('getMyLibrary 1086');
-//                 return next(error);
-//               });
-//             })
-//             .catch(err => {
-//               const error = new Error(err);
-//               error.httpStatusCode = 500;
-//               console.log('getMyLibrary 1093');
-//               return next(error);
-//             });
-//           })
-//           .catch(err => {
-//             const error = new Error(err);
-//             error.httpStatusCode = 500;
-//             console.log('getMyLibrary 1100');
-//             return next(error);
-//           });            
-//       })
-//     })
-//   })
-//   .catch(err => {
-//     const error = new Error(err);
-//     error.httpStatusCode = 500;
-//     console.log('getMyLibrary 1109');
-//     return next(error);
-//   });
-// }
 
 exports.getMyLibrary = async (req, res, next) => {
   let bookList = [];
@@ -254,10 +141,6 @@ exports.getMyLibrary = async (req, res, next) => {
         return next(error);
       });
     })
-
-
-
-
 })
 }
 

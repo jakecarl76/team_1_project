@@ -16,13 +16,88 @@ const defaultBookImg = "default-book-image.png";
 const defaultMovieImg =  "default-movie-image.png";
 const defaultGameImg = "default-game-image.png";
 
+const ITEMS_PER_PAGE = 20;
 //get index
 exports.getIndex = async (req, res, next) => {
-  res.render('general/index', {
-    pageTitle: "Welcome to the Entertainment Library!",
-    path: '/'
-  });
-};
+  // res.render('general/index', {
+  //   pageTitle: "Welcome to the Entertainment Library!",
+  //   path: '/'
+  // });
+  let bookList = [];
+  let movieList = [];
+  let gameList = [];
+  
+      Book.find()
+      .limit(10)
+      .then(books => {
+        for(let book of books){
+          title = book.title;
+          genre = book.genre;
+          img = book.imageUrl;
+          type = "book";
+          id = book._id;
+          item = {type: type, title: title, genre: genre, imageUrl: img, id: id};
+          bookList.push(item);
+        }
+        console.log("getIndex- books loop complete");
+        Movie.find()
+        .limit(10)
+        .then(movies => {
+          for(let movie of movies){
+          title = movie.title;
+          genre = movie.genre;
+          img = movie.imageUrl;
+          type = "movie";
+          id = movie._id;
+          item = {type: type, title: title, genre: genre, imageUrl: img, id: id};
+          movieList.push(item);
+        }
+        console.log("getIndex- movie loop complete");
+          Game.find()
+          .limit(10)
+          .then(games => {
+            for(let game of games){
+            title = game.title;
+            genre = game.category;
+            img = game.imageUrl;
+            type = "game";
+            id = game._id;
+            item = {type: type, title: title, genre: genre, imageUrl: img, id: id};
+            gameList.push(item);
+          }
+          console.log("getIndex- game loop complete");
+          
+          //render the page using those items
+          res.render('general/index', {
+            books: bookList,
+            movies: movieList,
+            games: gameList,
+            pageTitle: 'Hermit Habitat',
+            path: '/',
+            user: req.user
+          });
+        })
+        .catch(err => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          console.log('getIndex - games catch');
+          return next(error);
+        });  
+      })
+      .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        console.log('getIndex - movie catch');
+        return next(error);
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log('getIndex - books catch');
+      return next(error);
+    });
+  }
 
 exports.getAddItem= async (req, res, next) => {
   await getBookGenres();
@@ -48,53 +123,125 @@ exports.getAddItem= async (req, res, next) => {
 
 // Get All Movies and render
 exports.getMovies = (req, res, next) => {
+  let page = parseInt(req.query.page);
+  let totalItems;
+  if(!page){
+    page = 1;
+  }
+  
   let user = null;
   if(req.user){
     user = req.user;
   }
-  Movie.find()
+  Movie.find().countDocuments().then(numOfMovies => {
+    totalItems = numOfMovies;
+    return Movie.find()
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
+    })
     .then(movies => {
       res.render('general/movies', {
         pageTitle: 'Movies | Hermit Habitat',
         path: '/movies',
         content: movies,
-        user: user
+        user: user,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems/ITEMS_PER_PAGE)
       });
-    });
+  })
+  .catch(err => {
+    const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log('getMovies catch');
+      return next(error);
+  })
 };
 
 // Get All Games and render
 exports.getGames = (req, res, next) => {
+  let page = parseInt(req.query.page);
+  let totalItems;
+  if(!page){
+    page = 1;
+  }
+
   let user = null;
   if(req.user){
     user = req.user;
   }
-  Game.find()
+
+  Game.find().countDocuments().then(numOfGames => {
+    totalItems = numOfGames;
+    return Game.find()
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
+    })
     .then(games => {
       res.render('general/games', {
         pageTitle: 'Games | Hermit Habitat',
         path: '/games',
         content: games,
-        user: user
+        user: user,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems/ITEMS_PER_PAGE)
       });
-    });
-};
+  })
+  .catch(err => {
+    const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log('getGames catch');
+      return next(error);
+  })
+}
 
 // Get All Books and render
 exports.getBooks = (req, res, next) => {
+  let page = parseInt(req.query.page);
+  let totalItems;
+  if(!page){
+    page = 1;
+  }
+
   let user = null;
   if(req.user){
     user = req.user;
   }
-  Book.find()
+
+  Book.find().countDocuments().then(numOfBooks => {
+    totalItems = numOfBooks;
+    return Book.find()
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
+    })
     .then(books => {
       res.render('general/books', {
         pageTitle: 'Books | Hermit Habitat',
         path: '/books',
         content: books,
-        user: user
+        user: user,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems/ITEMS_PER_PAGE)
       });
-    });
+  })
+  .catch(err => {
+    const error = new Error(err);
+      error.httpStatusCode = 500;
+      console.log('getBooks catch');
+      return next(error);
+  })
+  
 };
 
 // Get Randomizer

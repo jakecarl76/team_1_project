@@ -4,152 +4,154 @@
 <body>
   <%- include('../includes/nav.ejs') %>
   <main class="index-main">
-    <h1>
-      Here is our web app
-    </h1>
-    <p>this is placeholder info until index is updated- created for styling purposes</p>
     <section class="grid">
       <h2>Books</h2>
-      <div class="card-container">
-        <article class="card">
-          <h3 class="title">Book Title</h3>
-          <img src="" alt="Img of Book">
-          <div class="card_content">
-              <p>Author</p>
-              <p>Genre</p>
-              <p class="description">Description blah blah blah</p>
-          </div>
-          <div class="buttons">
-            <a href="/edit-item/618ee590f5481d165c4841a0/book" class="btn">Details</a>
-            <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-          </div>
+      
+  <% if (books.length > 0) { %>
+      <div class="card-container" id="books">
+          <% for (let book of books) { %>
+              <article class="card<% if(user.bookLib.favorites.includes(book.id)){ %> favorite<% } %>">
+                  <h3 class="title"><%= book.title %></h3>
+                  <div class="favorite-star">
+                      <form action="/add-favorite" method="POST">
+                          <input type="hidden" value="<%= book.id %>" name="id">
+                          <input type="hidden" value="book" name="itemType">
+                          <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                          <button class="favorite-btn" type="submit"><% if(user.bookLib.favorites.includes(book.id)){ %> <i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
+                      </form>
+                  </div>
+                  <img src="/images/<%= book.imageUrl %>" alt="Image of <%= book.title %>">
+                  <div class="card_content">
+                      <p><%= book.author %></p>
+                      <p><%= book.genre %></p>
+                      <p class="description"><%= book.description %></p>
+                  </div>
+                  <div class="one-button button-container">
+                      <a href="/edit-item/<%= book.id %>/book?edit=true" class="details-btn btn">Edit</a>
+                      <form action="/adjust-library" method="POST">
+                          <input type="hidden" value="<%= book.id %>" name="itemId">
+                          <input type="hidden" value="book" name="itemType">
+                          <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                          <button class="delete-btn btn" type="submit">Remove From Library</button>
+                      </form>
+                  </div>
+              </article>
+          <% } %>
+          <article class="card">
+            <h3 class="title">See More</h3>
+            
+            <img src="/images/more-books.jpg" alt="Image of More Books">
+            
+            <div class="one-button button-container">
+                <a href="/books" class="details-btn btn">More Books</a>
+                
+            </div>
         </article>
-        <article class="card">
-          <h3 class="title">Book Title</h3>
-          <img src="" alt="Img of Book">
-      <div class="card_content">
-          <p>Author</p>
-          <p>Genre</p>
-          <p class="description">Description blah blah blah</p>
       </div>
-      <div class="buttons">
-        <a href="edit-item/618ee176ea223f9340c14a48/book" class="btn">Details</a>
-        <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-      </div>
-    </article>
-    <article class="card">
-      <h3 class="title">Book Title</h3>
-      <img src="" alt="Img of Book">
-  <div class="card_content">
-      <p>Author</p>
-      <p>Genre</p>
-      <p class="description">Description blah blah blah</p>
-  </div>
-  <div class="buttons">
-    <a href="edit-item/618ee176ea223f9340c14a48/book" class="btn">Details</a>
-    <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-  </div>
-</article>
-      </div>
+  <% } else { %>
+      <h1>No Books Found</h1>
+  <% } %>
   </section>
-  <section class="grid">
-    <h2>Movies</h2>
-    <div class="card-container">
-      <article class="card">
-        <h3 class="title">Movie Title</h3>
-        <img src="" alt="Img of Movie">
-        <div class="card_content">
-          <p>Genre</p>
-          <p>Rating</p>
-          <p class="description">Description blah blah blah</p>
-        </div>
-        <div class="buttons">
-            <a href="edit-item/618ee176ea223f9340c14a48/book" class="btn">Details</a>
-            <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-        </div>
-      </article>
-      <article class="card">
-        <h3 class="title">Movie Title</h3>
-        <img src="" alt="Img of Movie">
-        <div class="card_content">
-          <p>Genre</p>
-          <p>Rating</p>
-          <p class="description">Description blah blah blah</p>
-        </div>
-        <div class="buttons">
-            <a href="edit-item/618ee176ea223f9340c14a48/movie" class="btn">Details</a>
-            <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-        </div>
-      </article>
-      <article class="card">
-        <h3 class="title">Movie Title</h3>
-        <img src="" alt="Img of Movie">
-        <div class="card_content">
-          <p>Genre</p>
-          <p>Rating</p>
-          <p class="description">Description blah blah blah</p>
-        </div>
-        <div class="buttons">
-            <a href="edit-item/618ee176ea223f9340c14a48/movie" class="btn">Details</a>
-            <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-        </div>
-      </article>   
-    </div>
 
-</section>
-<section class="grid">
-  <h2>Games</h2>
-  <div class="card-container">
-  <article class="card product-item">
-    <h3 class="title">Game Title</h3>
-    <img src="" alt="Img of Game">
-    <div class="card_content">
-      <p>Category</p>
-      <p class="description">Description blah blah blah</p>
-    </div>
-    <div class="buttons">
-        <a href="edit-item/618ee176ea223f9340c14a48/game" class="btn">Details</a>
-        <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-    </div>
-  </article> 
-  <article class="card product-item">
-    <h3 class="title">Game Title</h3>
-    <img src="" alt="Img of Game">
-    <div class="card_content">
-      <p>Category</p>
-      <p class="description">Description blah blah blah</p>
-    </div>
-    <div class="buttons">
-        <a href="edit-item/618ee176ea223f9340c14a48/game" class="btn">Details</a>
-        <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-    </div>
-  </article>
-  <article class="card product-item">
-    <h3 class="title">Game Title</h3>
-    <img src="" alt="Img of Game">
-    <div class="card_content">
-      <p>Category</p>
-      <p class="description">Description blah blah blah</p>
-    </div>
-    <div class="buttons">
-        <a href="edit-item/618ee176ea223f9340c14a48/game" class="btn">Details</a>
-        <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-    </div>
-  </article>
-  <article class="card product-item">
-    <h3 class="title">Game Title</h3>
-    <img src="" alt="Img of Game">
-    <div class="card_content">
-      <p>Category</p>
-      <p class="description">Description blah blah blah</p>
-    </div>
-    <div class="buttons">
-        <a href="edit-item/618ee176ea223f9340c14a48/game" class="btn">Details</a>
-        <a href="/add-to-library/618ee590f5481d165c4841a0/book" class="btn">Add to Library</a>
-    </div>
-  </article>  
-</div>
-</section>
+  <section class="grid">
+      <h2>Movies</h2>
+      
+  <% if (movies.length > 0) { %>
+      <div class="card-container" id="movies">
+          <% for (let movie of movies) { %>
+              <article class="card<% if(user.movieLib.favorites.includes(movie.id)){ %> favorite <% } %>">
+                  <h3 class="title"><%= movie.title %></h3>
+                  <div class="favorite-star">
+                      <form action="/add-favorite" method="POST">
+                          <input class="btn" type="hidden" value="<%= movie.id %>" name="id">
+                          <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                          <input type="hidden" value="movie" name="itemType">
+                          <button class="favorite-btn" type="submit"><% if(user.movieLib.favorites.includes(movie.id)){ %><i class="fas fa-star"></i><% } else { %><i class="far fa-star"></i><% } %></button>
+                      </form>
+                  </div>
+                  <img src="/images/<%= movie.imageUrl %>" alt="Image of <%= movie.title %>">
+                  <div class="card_content">
+                      <p><%= movie.rating %></p>
+                      <p><%= movie.genre %></p>
+                      <p class="description"><%= movie.description %></p>
+                  </div>
+                  <div class="one-button button-container">
+                      <a href="/edit-item/<%= movie.id %>/movie?edit=true"" class="details-btn btn">Edit</a>
+                      <form action="/adjust-library" method="POST">
+                          <input type="hidden" value="<%= movie.id %>" name="itemId">
+                          <input type="hidden" value="movie" name="itemType">
+                          <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                          <button class="delete-btn btn" type="submit">Remove From Library</button>
+                      </form>
+                  </div>
+              </article>
+          <% } %>
+          <article class="card">
+            <h3 class="title">See More</h3>
+            
+            <img src="/images/more-movies.jpg" alt="Image of More Movies">
+            
+            <div class="one-button button-container">
+                <a href="/movies" class="details-btn btn">More Movies</a>
+                
+            </div>
+        </article>
+      </div>
+  <% } else { %>
+      <h1>No Movies Found</h1>
+  <% } %>
+  </section>
+
+  <section class="grid">
+      <h2>Games</h2>
+      
+  <% if (games.length > 0) { %>
+      <div class="card-container"  id="games">
+              <% for (let game of games) { %>
+                  <article class="card<% if(user.gameLib.favorites.includes(game.id)){ %> favorite <% } %>">
+                      <h3 class="title"><%= game.title %></h3>
+                      <div class="favorite-star">
+                          <form action="/add-favorite" method="POST">
+                              <input class="btn" type="hidden" value="<%= game.id %>" name="id">
+                              <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                              <input type="hidden" value="game" name="itemType">
+                              <button class="favorite-btn" type="submit"><% if(user.gameLib.favorites.includes(game.id)){ %><i class="fas fa-star"></i> <% } else { %><i class="far fa-star"></i><% } %></button>
+                          </form>
+                      </div>
+                      <img src="/images/<%= game.imageUrl %>" alt="Image of <%= game.title %>">
+                      <div class="card_content">
+                          <p><%= game.category %></p>
+                          <p class="description"><%= game.description %></p>
+                      </div>
+                      <div class="one-button button-container">
+                          <a href="/edit-item/<%= game.id %>/game?edit=true"" class="details-btn btn">Edit</a>
+                          <form action="/adjust-library" method="POST">
+                              <input type="hidden" value="<%= game.id %>" name="itemId">
+                              <input type="hidden" value="game" name="itemType">
+                              <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                              <button class="delete-btn btn" type="submit">Remove From Library</button>
+                          </form>
+                          <!-- <a href="/add-favorite/<%= game.id %>/game" class="details-btn btn">Add to Favorites</a> -->
+                          
+
+                      </div>
+                  </article>
+          <% } %>
+          <article class="card">
+            <h3 class="title">See More</h3>
+            
+            <img src="/images/more-games.jpg" alt="Image of More Games">
+            
+            <div class="one-button button-container">
+                <a href="/games" class="details-btn btn">More Games</a>
+                
+            </div>
+        </article>
+      </div>
+  <% } else { %>
+      <h1>No Games Found</h1>
+  <% } %>
+  </section>
   </main>
 
   <%- include('../includes/end.ejs') %>
