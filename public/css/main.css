@@ -139,6 +139,14 @@ a:hover{
     color: #DC527E;
 }
 
+.invalid {
+    border: solid red 3px;
+  }
+
+  .valid {
+    border: solid green 3px;
+  }
+
 /* * * * * * * * * * SCROLLING* * * * * * * * * * */
 .toTopBtn {
     display: none;
@@ -347,9 +355,7 @@ header h1{
         border-radius: 5px;
     }
     .main-nav-item a:active,
-    .login-nav-item a:active,
-    .main-nav-item a.active,
-    .login-nav-item a.active { 
+    .main-nav-item a.active { 
         border: 2px solid #3850B1;
         transition: 0.2s;
     }
