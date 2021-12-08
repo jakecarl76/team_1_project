@@ -17,16 +17,16 @@
         <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
       </li>
       <li class="main-nav-item">
-        <a class="<%= path === '/Movies' ? 'active' : '' %> drpbtn" href="/Movies">Movies</a>
+        <a class="<%= path === '/movies' ? 'active' : '' %> drpbtn" href="/Movies">Movies</a>
       </li>
       <li class="main-nav-item">
-        <a class="<%= path === '/Books' ? 'active' : '' %>" href="/Books">Books</a>
+        <a class="<%= path === '/books' ? 'active' : '' %>" href="/Books">Books</a>
       </li>
       <li class="main-nav-item">
-        <a class="<%= path === '/Games' ? 'active' : '' %>" href="/Games">Games</a>
+        <a class="<%= path === '/games' ? 'active' : '' %>" href="/Games">Games</a>
       </li>
       <li class="main-nav-item">
-        <a href="/randomizer">Randomizer</a>
+        <a class="<%= path === '/randomizer' ? 'active' : '' %>" href="/randomizer">Randomizer</a>
       </li>
         <% if (!isAuthenticated) { %>
           <li class="login-nav-item">
