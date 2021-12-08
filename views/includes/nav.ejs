@@ -14,41 +14,41 @@
     
     <ul class="nav-item-list">
       <li class="main-nav-item">
-        <a class="<%= path === '/' ? 'active' : '' %>" href="/">Home</a>
+        <a class="<%= path === '/' ? 'activeNav' : '' %>" href="/">Home</a>
       </li>
       <li class="main-nav-item">
-        <a class="<%= path === '/Movies' ? 'active' : '' %> drpbtn" href="/Movies">Movies</a>
+        <a class="<%= path === '/movies' ? 'activeNav' : '' %>" href="/Movies">Movies</a>
       </li>
       <li class="main-nav-item">
-        <a class="<%= path === '/Books' ? 'active' : '' %>" href="/Books">Books</a>
+        <a class="<%= path === '/books' ? 'activeNav' : '' %>" href="/Books">Books</a>
       </li>
       <li class="main-nav-item">
-        <a class="<%= path === '/Games' ? 'active' : '' %>" href="/Games">Games</a>
+        <a class="<%= path === '/games' ? 'activeNav' : '' %>" href="/Games">Games</a>
       </li>
       <li class="main-nav-item">
-        <a href="/randomizer">Randomizer</a>
+        <a class="<%= path === '/randomizer' ? 'activeNav' : '' %>" href="/randomizer">Randomizer</a>
       </li>
         <% if (!isAuthenticated) { %>
           <li class="login-nav-item">
-            <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
+            <a class="<%= path === '/login' ? 'activeNav' : '' %>" href="/login">Login</a>
           </li>
           <li class="login-nav-item">
-            <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+            <a class="<%= path === '/signup' ? 'activeNav' : '' %>" href="/signup">Signup</a>
           </li>
         <% } else { %>
           <div class="drop">
             <li class="main-nav-item">
-              <a class="<%= path === '/user-profile' ? 'active' : '' %>" href="/user-profile">My Profile </a>
+              <a class="<%= path === '/user-profile' ? 'activeNav' : '' %>" href="/user-profile">My Profile </a>
             </li>
             <div class="drop-items">
           <li class="main-nav-item">
-            <a class="<%= path === '/user-profile' ? 'active' : '' %>" href="/user-profile">Settings</a>
+            <a class="<%= path === '/user-profile' ? 'activeNav' : '' %>" href="/user-profile">Settings</a>
           </li>
           <li class="main-nav-item">
-            <a class="<%= path === '/lib' ? 'active' : '' %>" href="/my-library">My Library</a>
+            <a class="<%= path === '/lib' ? 'activeNav' : '' %>" href="/my-library">My Library</a>
           </li>
           <li class="main-nav-item">
-            <a class="<%= path === '/add-item' ? 'active' : '' %>" href="/add-item">Add Item</a>
+            <a class="<%= path === '/add-item' ? 'activeNav' : '' %>" href="/add-item">Add Item</a>
           </li>
           
           </div>

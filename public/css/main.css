@@ -91,9 +91,18 @@ footer{
     margin-top: 1rem;
 }
 
-h1, h2, h3, h4, h5, h6{
+h1 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
     /* font-family: 'Anton', sans-serif; */
     font-family: "Nixie One", sans-serif;
+ }
+
+ .slogan {
+    font-family: "Nixie One", sans-serif;
+    font-size: large; 
  }
 
  main {
@@ -338,27 +347,24 @@ header h1{
         text-decoration: none;
         padding: .5rem;
         transition: 0.3s;
-        border: 0px solid #000;
+        /* border: 0px solid #000; */
         width: 100vw;
     }
     
     .main-nav-item a:hover,
     .login-nav-item a:hover,
-    .main-nav-item button.nav-button:hover{
-        /* box-shadow: 
-        0 0 0 2px rgba( 26, 52, 160, 0.35),
-        0 0 0 4px rgba( 26, 52, 160, 0.35),
-        0 0 0 6px rgba( 26, 52, 160, 0.35), 
-        inset 0 0 0 10px rgba( 0, 0, 0, 0.1);     */
+    .main-nav-item button.nav-button:hover {
         box-shadow: 0px 0px 10px rgba( 255, 255, 255, 0.5);
         border: 2px solid #556BC5;
         border-radius: 5px;
     }
-    .main-nav-item a:active,
-    .main-nav-item a.active { 
+    
+    .activeNav  { 
         border: 2px solid #3850B1;
+        border-radius: 5px;
         transition: 0.2s;
     }
+    
     
     .main-nav-item form{
         display: flex;
@@ -926,3 +932,5 @@ button:hover, a.btn:hover, input:hover {
     color: #fff;
     font-weight: 700;
 }
+
+
