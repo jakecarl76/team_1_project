@@ -4,6 +4,7 @@ const {body} = require('express-validator/check');
 
 //import custom controllers
 const authCtrl = require('../controllers/auth');
+const isAuth = require('../middleware/is-auth');
 //...
 
 
@@ -15,11 +16,11 @@ const router = express.Router();
 //routes
 //...
 
-router.patch('/change-admin-status', authCtrl.makeUserAdmin);
+router.patch('/change-admin-status', isAuth, authCtrl.makeUserAdmin);
 
-router.get('/admin/', authCtrl.getAdminPanel);
+router.get('/admin/', isAuth, authCtrl.getAdminPanel);
 
-router.delete('/delete-account', authCtrl.delAccount);
+router.delete('/delete-account', isAuth, authCtrl.delAccount);
 
 router.get('/reset-password/:token', authCtrl.getResetPassword);
 
@@ -61,9 +62,9 @@ router.get('/create-password-reset', authCtrl.getCreatePasswordReset);
 
 router.post('/create-password-reset',authCtrl.postCreatePasswordReset);
 
-router.post('/change-user-image', authCtrl.postChangeUserImage);
+router.post('/change-user-image', isAuth, authCtrl.postChangeUserImage);
 
-router.put('/change-password',
+router.put('/change-password', isAuth,
             body('oldPwd', 'You must enter your old password in order to change it.')
             .notEmpty(),
             body('newPwd')
@@ -101,7 +102,7 @@ router.put('/change-password',
 
 router.put('/check-user-name', authCtrl.postCheckUsername);
 
-router.put('/change-user-name', authCtrl.postChangeUsername);
+router.put('/change-user-name', isAuth, authCtrl.postChangeUsername);
 
 router.put('/check-email',
             body('email', "Email is invalid. You must enter a valid email.")
@@ -110,16 +111,16 @@ router.put('/check-email',
             .normalizeEmail(),
             authCtrl.postCheckEmail);
 
-router.put('/change-email',
+router.put('/change-email', isAuth,
             body('email', "Email is invalid. You must enter a valid email.")
             .notEmpty()
             .isEmail()
             .normalizeEmail(),
             authCtrl.postChangeEmail);
 
-router.post('/logout', authCtrl.postLogout);
+router.post('/logout', isAuth, authCtrl.postLogout);
 
-router.get('/user-profile', authCtrl.getProfile);
+router.get('/user-profile', isAuth, authCtrl.getProfile);
 
 router.get('/login', authCtrl.getLogin);
 
