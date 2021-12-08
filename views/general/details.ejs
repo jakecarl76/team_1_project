@@ -27,7 +27,7 @@
          </div>
       </div>
 
-      <% if(user && user.adminStatus === "isAdmin" || user.adminStatus === "isModerator") { %>
+      <% if(user && (user.adminStatus === "isAdmin" || user.adminStatus === "isModerator")) { %>
          <div>
             <form action="/delete-item" method="POST">
                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
