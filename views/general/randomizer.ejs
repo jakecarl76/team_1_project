@@ -36,8 +36,9 @@
       <% } else { %> 
          <h2 class="random-details"><%= content.title %></h2>
          <h3 class="random-details"><%= content.rating%></h3>
+         <a href="/details/<%= content._id %>?type=movie">
          <img class="random-display-img" src="images/<%= content.imageUrl %>" alt="<%= content.title %>">
-         
+         </a>
          <form action="/randomizer" method="get">
          <div class="center">
          <button id="generate" class="center btn" type="submit">Randomize!</button>
