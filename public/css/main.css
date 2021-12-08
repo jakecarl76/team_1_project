@@ -95,6 +95,10 @@ h1 {
     text-align: center;
 }
 
+.details-right h1 {
+    text-align: left;
+}
+
 h1, h2, h3, h4, h5, h6 {
     /* font-family: 'Anton', sans-serif; */
     font-family: "Nixie One", sans-serif;
