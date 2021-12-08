@@ -1,131 +1,161 @@
 <%- include('../includes/head.ejs') %>
 
-<body>
-   <%- include('../includes/nav.ejs') %>
-   <main class="details-main">
+   <body>
+      <%- include('../includes/nav.ejs') %>
+         <main class="details-main">
 
-      <div class="details-item">
-         <div class="details-left">
-            <img src="/images/<%= item.imageUrl %>" alt="<%= item.title %>">
-         </div>
+            <div class="details-item">
+               <div class="details-left">
+                  <img src="/images/<%= item.imageUrl %>" alt="<%= item.title %>">
+               </div>
 
-         <div class="details-right">
-            <h1>Title: <span class="details-title"><%= item.title %></span></h1>
-            <% if (item.rating) { %>
-            <h2>Rating: <span class="details-title"><%= item.rating %></span></h2>
-            <% } %>
-            <h2 class="details-genre">Genre: <span class="details-title"><%= item.genre || item.category %></span></h2>
-            <h2>Description: <span class="details-desc"><%= item.description %></span></h2>
-            <%if(user){%>
-               <form action="/adjust-library" method="POST">
-                  <input type="hidden" value="<%= item.id %>" name="itemId">
-                  <input type="hidden" value="movie" name="itemType">
-                  <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                  <button class="delete-btn btn" type="submit"><% if(user.movieLib.lib.includes(item.id)){ %>Remove from Library<% } else { %>Add to Library <% } %></button>
-              </form>
-              <% } %>
-         </div>
-      </div>
-
-      <% if(user && (user.adminStatus === "isAdmin" || user.adminStatus === "isModerator")) { %>
-         <div>
-            <form action="/delete-item" method="POST">
-               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-               <input type="hidden" name="itemId" value="<%= item._id %>">
-               <input type="hidden" name="type" value="<%= type %>">
-               <input type="hidden" name="uid" value="<%= user._id %>">
-               <input type="submit" value="Delete Item">
-            </form>
-         </div>
-       <% } %>
-      <div class="reviews">
-         <% if (!user)  { %>
-
-         <h3><a href="/login">Login</a> or <a href="/signup">Sign Up</a> to submit a review!</h3>
-         <% } else { %>
-         <% if (your_reviews)  { %>
-         <h3>Your Reviews:</h3>
-         <% if (!(your_reviews.length > 0)) { %>
-         <!-- If there are no reviews -->
-         <p>You have no reviews yet for <span class="details-title"><%= item.title %></span>. Add one now!</p>
-         <% } else { %>
-         <div class="your-reviews">
-            <% for (let review of your_reviews) { %>
-            <div class="review-item">
-
-               <!-- Review -->
-               <span class="review-top">
-                  <p><%= review.username %></p>
-                  <p><%= review.date.toLocaleDateString() %></p>
-               </span>
-               <p><%= review.reviewText %></p>
-
-               <!-- Edit Review Button -->
-               <% if(user._id.toString() === review.userId.toString() ) { %>
-               <form action="/edit-review" method="post">
-                  <input type="hidden" name="reviewText" value="<%= review.reviewText%>">
-                  <input type="hidden" name="itemTitle" value="<%=item.title%>">
-                  <input type="hidden" name="itemId" value="<%=item._id%>">
-                  <input type="hidden" name="type" value=<%= type %>>
-                  <input type="hidden" name="reviewId" value="<%=review._id%>">
-                  <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                  <button type="submit">Edit Review</button>
-               </form>
-               <% } %>
-
-               <!-- Delete Button -->
-               <form action="/del-review" method="post">
-                  <input type="hidden" name="itemId" value="<%=item._id%>">
-                  <input type="hidden" name="type" value=<%= type %>>
-                  <input type="hidden" name="reviewId" value="<%=review._id%>">
-                  <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                  <button type="submit">Delete Review</button>
-               </form>
+               <div class="details-right">
+                  <h1>Title: <span class="details-title">
+                        <%= item.title %>
+                     </span></h1>
+                  <% if (item.rating) { %>
+                     <h2>Rating: <span class="details-title">
+                           <%= item.rating %>
+                        </span></h2>
+                     <% } %>
+                        <h2 class="details-genre">Genre: <span class="details-title">
+                              <%= item.genre || item.category %>
+                           </span></h2>
+                        <h2>Description: <span class="details-desc">
+                              <%= item.description %>
+                           </span></h2>
+                        <%if(user){%>
+                           <form action="/adjust-library" method="POST">
+                              <input type="hidden" value="<%= item.id %>" name="itemId">
+                              <input type="hidden" value="movie" name="itemType">
+                              <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                              <button class="delete-btn btn" type="submit">
+                                 <% if(user.movieLib.lib.includes(item.id)){ %>Remove from Library<% } else { %>Add to
+                                       Library <% } %>
+                              </button>
+                           </form>
+                           <% } %>
+                              <% if(user && (user.adminStatus==="isAdmin" || user.adminStatus==="isModerator" )) { %>
+                                 <div>
+                                    <form action="/delete-item" method="POST">
+                                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                       <input type="hidden" name="itemId" value="<%= item._id %>">
+                                       <input type="hidden" name="type" value="<%= type %>">
+                                       <input type="hidden" name="uid" value="<%= user._id %>">
+                                       <input type="submit" value="Delete Item">
+                                    </form>
+                                 </div>
+                                 <% } %>
+               </div>
             </div>
-            <% } %>
-         </div>
-         <% } %>
-         <% } %>
 
-         <br>
 
-         <!-- Add Review -->
-         <form action="/add-review" method="post">
-            <label for="fullReview">
-               <h3>Add Your Review:</h3>
-            </label>
-            <textarea name="fullReview" id="fullReview" required></textarea><br>
-            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-            <input type="hidden" name="itemId" value="<%=item._id%>">
-            <input type="hidden" name="type" value=<%= type%>>
-            <button type="submit">Submit Review</button>
-         </form>
-         <% } %>
-         <br>
-      </div>
-      <div class="reviews">
+            <div class="reviews">
+               <% if (!user) { %>
 
-         <div class="all-reviews">
-            <h3>All Reviews for <span class="details-title"><%= item.title %></span></h3>
-            <% if (reviews.length > 0) { %>
-            <% for (let review of reviews) { %>
-            <div class="review-item">
-               <span class="review-top">
-                  <p><em><%= review.username %></em></p>
-                  <p><em><%= review.date.toLocaleDateString() %></em></p>
-               </span>
-               <p><%= review.reviewText %></p>
+                  <h3><a href="/login">Login</a> or <a href="/signup">Sign Up</a> to submit a review!</h3>
+                  <% } else { %>
+                     <% if (your_reviews) { %>
+                        <h3>Your Reviews:</h3>
+                        <% if (!(your_reviews.length> 0)) { %>
+                           <!-- If there are no reviews -->
+                           <p>You have no reviews yet for <span class="details-title">
+                                 <%= item.title %>
+                              </span>. Add one now!</p>
+                           <% } else { %>
+                              <div class="your-reviews">
+                                 <% for (let review of your_reviews) { %>
+                                    <div class="review-item">
+
+                                       <!-- Review -->
+                                       <span class="review-top">
+                                          <p>
+                                             <%= review.username %>
+                                          </p>
+                                          <p>
+                                             <%= review.date.toLocaleDateString() %>
+                                          </p>
+                                       </span>
+                                       <p>
+                                          <%= review.reviewText %>
+                                       </p>
+
+                                       <!-- Edit Review Button -->
+                                       <% if(user._id.toString()===review.userId.toString() ) { %>
+                                          <form action="/edit-review" method="post">
+                                             <input type="hidden" name="reviewText" value="<%= review.reviewText%>">
+                                             <input type="hidden" name="itemTitle" value="<%=item.title%>">
+                                             <input type="hidden" name="itemId" value="<%=item._id%>">
+                                             <input type="hidden" name="type" value=<%=type %>>
+                                             <input type="hidden" name="reviewId" value="<%=review._id%>">
+                                             <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                                             <button type="submit">Edit Review</button>
+                                          </form>
+                                          <% } %>
+
+                                             <!-- Delete Button -->
+                                             <form action="/del-review" method="post">
+                                                <input type="hidden" name="itemId" value="<%=item._id%>">
+                                                <input type="hidden" name="type" value=<%=type %>>
+                                                <input type="hidden" name="reviewId" value="<%=review._id%>">
+                                                <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                                                <button type="submit">Delete Review</button>
+                                             </form>
+                                    </div>
+                                    <% } %>
+                              </div>
+                              <% } %>
+                                 <% } %>
+
+                                    <br>
+
+                                    <!-- Add Review -->
+                                    <form action="/add-review" method="post">
+                                       <label for="fullReview">
+                                          <h3>Add Your Review:</h3>
+                                       </label>
+                                       <textarea name="fullReview" id="fullReview" required></textarea><br>
+                                       <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                                       <input type="hidden" name="itemId" value="<%=item._id%>">
+                                       <input type="hidden" name="type" value=<%=type%>>
+                                       <button type="submit">Submit Review</button>
+                                    </form>
+                                    <% } %>
+                                       <br>
             </div>
-            <% } %>
-            <% } else { %>
-               <p>Looks like there are no reviews for <span class="details-title"><%= item.title %></span>. Be the first to add a review!</p>
-            <% } %> 
-         </div>
+            <div class="reviews">
 
-      </div>
+               <div class="all-reviews">
+                  <h3>All Reviews for <span class="details-title">
+                        <%= item.title %>
+                     </span></h3>
+                  <% if (reviews.length> 0) { %>
+                     <% for (let review of reviews) { %>
+                        <div class="review-item">
+                           <span class="review-top">
+                              <p><em>
+                                    <%= review.username %>
+                                 </em></p>
+                              <p><em>
+                                    <%= review.date.toLocaleDateString() %>
+                                 </em></p>
+                           </span>
+                           <p>
+                              <%= review.reviewText %>
+                           </p>
+                        </div>
+                        <% } %>
+                           <% } else { %>
+                              <p>Looks like there are no reviews for <span class="details-title">
+                                    <%= item.title %>
+                                 </span>. Be the first to add a review!</p>
+                              <% } %>
+               </div>
 
-   </main>
-   <%- include('../includes/end.ejs') %>
-</body>
+            </div>
 
-</html>
+         </main>
+         <%- include('../includes/end.ejs') %>
+   </body>
+
+   </html>
